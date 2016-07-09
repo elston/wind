@@ -1,0 +1,64 @@
+{% extends "bootstrap/base.html" %}
+
+{% block title %}Wind power trading{% endblock %}
+
+{% block styles %}
+{{ super() }}
+<link type="text/css" href="{{ url_for('.static', filename='css/alertify.min.css') }}" rel='stylesheet'/>
+<link type="text/css" href="{{ url_for('.static', filename='css/themes/bootstrap.min.css') }}" rel='stylesheet'/>
+<link type="text/css" href="{{ url_for('.static', filename='css/style.css') }}" rel='stylesheet'/>
+<link type="text/css" href="{{ url_for('.static', filename='editablegrid/editablegrid.css') }}" rel='stylesheet'/>
+<link href="{{ url_for('static', filename='img/favicon.png') }}" rel="shortcut icon"/>
+{% endblock styles %}
+
+{% block scripts %}
+{{ super() }}
+<script>
+    $SCRIPT_ROOT = {{ request.script_root+'/api'|tojson|safe }};
+    $STATIC_ROOT = {{ url_for('.static', filename='') }};
+{% if current_user.has_role('admin') %}
+    $ADMIN_ROLE = true;
+{% else %}
+    $ADMIN_ROLE = false;
+{% endif %}
+</script>
+<script src="http://code.highcharts.com/stock/highstock.js"></script>
+<script src="{{ url_for('.static', filename='js/alertify.min.js') }}"></script>
+<script src="{{ url_for('.static', filename='editablegrid/editablegrid.js') }}"></script>
+<script src="{{ url_for('.static', filename='editablegrid/editablegrid_renderers.js') }}"></script>
+<script src="{{ url_for('.static', filename='editablegrid/editablegrid_editors.js') }}"></script>
+<script src="{{ url_for('.static', filename='editablegrid/editablegrid_validators.js') }}"></script>
+<script src="{{ url_for('.static', filename='editablegrid/editablegrid_utils.js') }}"></script>
+<script src="{{ url_for('.static', filename='js/app.js') }}"></script>
+{% if current_user.has_role('admin') %}
+<script src="{{ url_for('.static', filename='js/admin.js') }}"></script>
+{% endif %}
+{% endblock scripts %}
+
+{% block content %}
+<div>
+    <ul class="nav">
+        <li role="presentation" class="logo-in-tabs">
+            <img src="{{ url_for('static', filename='img/TISLogoWeb-h30.png') }}"/>
+        </li>
+        <li role="presentation" class="button-in-tabs"><a href="{{ url_for('security.logout') }}" class="btn btn-info">Logout</a>
+        </li>
+    </ul>
+    <!-- Nav tabs -->
+    <ul class="nav nav-tabs" role="tablist">
+        <li role="presentation" class="active"><a href="#locations" aria-controls="symbols" role="tab" data-toggle="tab">Locations</a></li>
+        {% if current_user.has_role('admin') %}
+        <li role="presentation"><a href="#admin" aria-controls="admin" role="tab" data-toggle="tab">Admin</a></li>
+        {% endif %}
+    </ul>
+    <!-- Tab panes -->
+    <div class="tab-content">
+        <div role="tabpanel" class="tab-pane active" id="locations">{% include "locations.jinja" %}</div>
+        {% if current_user.has_role('admin') %}
+        <div role="tabpanel" class="tab-pane" id="admin">{% include "admin.jinja" %}</div>
+        {% endif %}
+    </div>
+
+</div>
+{% include "loading.jinja" %}
+{% endblock content %}

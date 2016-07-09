@@ -1,0 +1,16 @@
+COMMON: &common
+  DEBUG: False
+  SECRET_KEY: b9f7f316c81febf2a374282a9673696f
+  ADMIN_EMAIL: admin
+  ADMIN_PASSWORD: $pbkdf2-sha256$29000$N.Ycw7gXYowxBoAwpnSO0Q$aYLgt8DDSgwmy7ZQ7OfyFfGA6lJlmqO2bxio9bbDUHY
+  SECURITY_PASSWORD_HASH: pbkdf2_sha256
+  SECURITY_PASSWORD_SALT: cab9b61a998495604132625e65e78868
+  SQLALCHEMY_DATABASE_URI: sqlite:///data/db.sqlite
+  SQLALCHEMY_TRACK_MODIFICATIONS: false
+
+DEVELOPMENT: &development
+  <<: *common
+  DEBUG: True
+
+PRODUCTION: &production
+  <<: *common

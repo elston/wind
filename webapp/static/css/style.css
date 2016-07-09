@@ -1,0 +1,51 @@
+ul.nav li.logo-in-tabs {
+    padding: 5px 15px;
+    float: left;
+}
+
+ul.nav li.button-in-tabs {
+    padding: 6px 15px;
+    float: right;
+}
+
+ul.nav li.button-in-tabs a {
+    display: inline-block;
+    margin-right: inherit;
+    margin-top: inherit;
+    position: inherit;
+    padding: 3px 12px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    line-height: inherit;
+}
+
+#ajax_loader {
+    text-align: center;
+    position: fixed;
+    width: 20%;
+    min-width: 300px;
+    height: 10%;
+    min-height: 100px;
+    left: 40%;
+    top: 45%;
+    display: none;
+    z-index: 9999;
+    color: #ff333b;
+}
+
+#ajax_loader img {
+    display: inline-block;
+}
+
+.modal-backdrop {
+    background-color: rgba(0, 0, 0, 0.7);
+}
+
+td.editablegrid-action button.btn, a.btn {
+    margin-left: 5px;
+}
+
+#users-table td.editablegrid-action a {
+    margin-left: 30px;
+    vertical-align: middle;
+}

@@ -1,0 +1,25 @@
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% extends "security/index.html" %}
+
+{% block title %}
+Wind power trading
+{% endblock %}
+
+{% block form_content %}
+<h2>Login</h2>
+<form action="{{ url_for('security.login') }}" method="POST" name="register_user_form">
+    {{ login_user_form.hidden_tag() }}
+
+    {{ wtf.form_errors(login_user_form) }}
+
+    {# wtf.form_field(login_user_form.email) #}
+    <div class="form-group "><label class="control-label" for="email">Username</label>
+        <input class="form-control" id="email" name="email" type="text" value="">
+    </div>
+    {{ wtf.form_field(login_user_form.password) }}
+    {{ wtf.form_field(login_user_form.remember) }}
+    {{ wtf.form_field(login_user_form.submit) }}
+
+</form>
+{% endblock %}

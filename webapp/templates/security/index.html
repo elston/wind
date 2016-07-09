@@ -1,0 +1,30 @@
+{% extends "bootstrap/base.html" %}
+
+{% block styles %}
+{{ super() }}
+<link type="text/css" href="{{ url_for('static', filename='css/style.css') }}" rel='stylesheet'/>
+<link href="{{ url_for('static', filename='img/favicon.png') }}" rel="shortcut icon"/>
+{% endblock styles %}
+
+{% block scripts %}
+{{ super() }}
+{% endblock scripts %}
+
+
+{% block title %}
+Wind power trading
+{% endblock title %}
+
+{% block content %}
+<img class="center-block" src="{{ url_for('static', filename='img/TISLogoBig.png') }}" width="80%">
+<h1 align="center">Wind power trading
+</h1>
+<div class="row">
+    <div class="col-xs-1"></div>
+    <div class="col-xs-5">
+        {{ content }}
+        {% block form_content %}{% endblock %}
+    </div>
+    <div class="col-xs-6"></div>
+</div>
+{% endblock %}
