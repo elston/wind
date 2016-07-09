@@ -1,6 +1,7 @@
 import logging
 
 from flask import jsonify, request
+from flask_login import current_user
 from flask_security import roles_required
 from flask_security.utils import encrypt_password
 from webapp import app, user_datastore, db, User
@@ -9,8 +10,9 @@ logger = logging.getLogger(__name__)
 
 
 @app.route('/api/users')
-@roles_required('admin')
 def get_users():
+    if not current_user.has_role('admin'):
+        return jsonify({'error': 'User unauthorized'})
     try:
         users = db.session.query(User).all()
         admin_role = user_datastore.find_role('admin')
@@ -32,8 +34,9 @@ def get_users():
 
 
 @app.route('/api/users', methods=['POST', ])
-@roles_required('admin')
 def new_user():
+    if not current_user.has_role('admin'):
+        return jsonify({'error': 'User unauthorized'})
     try:
         email = request.values.get('user-email')
         active = request.values.get('user-active') == 'active'
@@ -57,8 +60,9 @@ def new_user():
 
 
 @app.route('/api/users/<uid>', methods=['PUT', ])
-@roles_required('admin')
 def modify_user(uid):
+    if not current_user.has_role('admin'):
+        return jsonify({'error': 'User unauthorized'})
     try:
         key = request.values.get('key')
         value = request.values.get('value')
@@ -102,8 +106,9 @@ def modify_user(uid):
 
 
 @app.route('/api/users/<uid>', methods=['DELETE', ])
-@roles_required('admin')
 def remove_user(uid):
+    if not current_user.has_role('admin'):
+        return jsonify({'error': 'User unauthorized'})
     try:
         user = user_datastore.find_user(id=uid)
         if user is None:
