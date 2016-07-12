@@ -1,3 +1,5 @@
+import logging
+
 from flask import Flask, jsonify
 from flask_bootstrap import Bootstrap
 from flask_environments import Environments
@@ -12,10 +14,19 @@ Bootstrap(app)
 env = Environments(app)
 env.from_yaml('config.yml')
 
+wu_api_key = None
+try:
+    with open('wu_api_key') as f:
+        wu_api_key = f.read().strip()
+except Exception, e:
+    logging.warning('WU API key not found: %s', e)
+
 # Create database connection object
 db = SQLAlchemy(app)
 
-# Define models
+import models
+
+# Define security models
 roles_users = db.Table('roles_users',
                        db.Column('user_id', db.Integer(), db.ForeignKey('user.id')),
                        db.Column('role_id', db.Integer(), db.ForeignKey('role.id')))

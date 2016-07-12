@@ -2,11 +2,14 @@
 
 {% block title %}Wind power trading{% endblock %}
 
+{% block html_attribs %} ng-app="app" {% endblock %}
+
 {% block styles %}
 {{ super() }}
 <link type="text/css" href="{{ url_for('.static', filename='css/alertify.min.css') }}" rel='stylesheet'/>
 <link type="text/css" href="{{ url_for('.static', filename='css/themes/bootstrap.min.css') }}" rel='stylesheet'/>
 <link type="text/css" href="{{ url_for('.static', filename='css/style.css') }}" rel='stylesheet'/>
+<link type="text/css" href="{{ url_for('.static', filename='css/ui-grid.min.css') }}" rel='stylesheet'/>
 <link type="text/css" href="{{ url_for('.static', filename='editablegrid/editablegrid.css') }}" rel='stylesheet'/>
 <link href="{{ url_for('static', filename='img/favicon.png') }}" rel="shortcut icon"/>
 {% endblock styles %}
@@ -29,7 +32,10 @@
 <script src="{{ url_for('.static', filename='editablegrid/editablegrid_editors.js') }}"></script>
 <script src="{{ url_for('.static', filename='editablegrid/editablegrid_validators.js') }}"></script>
 <script src="{{ url_for('.static', filename='editablegrid/editablegrid_utils.js') }}"></script>
+<script src="{{ url_for('.static', filename='js/angular.min.js') }}"></script>
+<script src="{{ url_for('.static', filename='js/ui-grid.min.js') }}"></script>
 <script src="{{ url_for('.static', filename='js/app.js') }}"></script>
+<script src="{{ url_for('.static', filename='js/controllers.js') }}"></script>
 {% if current_user.has_role('admin') %}
 <script src="{{ url_for('.static', filename='js/admin.js') }}"></script>
 {% endif %}
@@ -46,7 +52,8 @@
     </ul>
     <!-- Nav tabs -->
     <ul class="nav nav-tabs" role="tablist">
-        <li role="presentation" class="active"><a href="#locations" aria-controls="symbols" role="tab" data-toggle="tab">Locations</a></li>
+        <li role="presentation" class="active"><a href="#locations" aria-controls="symbols" role="tab" data-toggle="tab">Locations</a>
+        </li>
         {% if current_user.has_role('admin') %}
         <li role="presentation"><a href="#admin" aria-controls="admin" role="tab" data-toggle="tab">Admin</a></li>
         {% endif %}
