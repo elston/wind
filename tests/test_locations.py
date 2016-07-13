@@ -116,6 +116,14 @@ class LocationsTestCase(unittest.TestCase):
         self.assertEqual(first_result['city'], u'Fântânele')
         self.assertEqual(first_result['country_iso3166'], u'RO')
 
+    def test_update_history(self):
+        test_location = Location(user_id=user_id, name=test_name, l='/q/zmw:00000.1.10400', lookback=2)
+        self.session.add(test_location)
+        self.session.commit()
+
+        test_location.update_history()
+        self.session.delete(test_location)
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -1,11 +1,9 @@
 import logging
-import urllib
 
 import re
-import requests
 from flask import jsonify, request
 from flask_login import current_user
-from webapp import app, db, wu_api_key
+from webapp import app, db, wuclient
 from webapp.models import Location
 
 logger = logging.getLogger(__name__)
@@ -19,11 +17,7 @@ def get_locations():
         locations = db.session.query(Location).filter_by(user_id=current_user.id)
         table_data = []
         for location in locations:
-            item = {}
-            for k in ['id', 'name', 'country_iso3166', 'country_name', 'city',
-                      'tz_short', 'tz_long', 'lat', 'lon', 'l', 'lookback', 'lookforward']:
-                item[k] = location.__getattribute__(k)
-            table_data.append(item)
+            table_data.append(location.to_dict())
 
         js = jsonify({'data': table_data})
         return js
@@ -38,12 +32,10 @@ def add_locations():
     if not current_user.is_authenticated:
         return jsonify({'error': 'User unauthorized'})
     try:
-        values = {'user_id': current_user.id}
-        for k in ['name', 'country_iso3166', 'country_name', 'city', 'tz_short', 'tz_long', 'lat', 'lon', 'l',
-                  'lookback', 'lookforward']:
-            values[k] = request.get_json().get(k)
-        location = Location(**values)
+        values = request.get_json()
+        location = Location.from_excess_args(user_id=current_user.id, **values)
         db.session.add(location)
+        location.update_history()
         db.session.commit()
 
         js = jsonify({'data': 'OK'})
@@ -79,10 +71,8 @@ def get_location():
             query = re.sub(r' +', '', query)
         else:
             query = re.sub(r', *', '/', query)
-        url = 'http://api.wunderground.com/api/%s/geolookup/q/%s.json' % (wu_api_key,
-                                                                          urllib.quote(query.encode('utf-8')))
-        r = requests.get(url)
-        response = r.json()
+
+        response = wuclient.geolookup(query)
         js = jsonify({'data': response})
         return js
     except Exception, e:
