@@ -200,6 +200,7 @@ app.controller('NewLocationCtrl', ['$scope', '$rootScope', '$http', '$log', func
         $scope.location.name = $scope.name;
         $scope.location.lookback = $scope.lookback;
         $scope.location.lookforward = $scope.lookforward;
+        alertify.message('Wait until data will be loaded');
         $http({
             url: $SCRIPT_ROOT + '/locations',
             method: "POST",
