@@ -1,0 +1,23 @@
+{
+  "name": "Wind power trading",
+  "authors": [
+    "Alexey Porotnikov <alexey.porotnikov@gmail.com>"
+  ],
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angular-ui-grid": "^3.2.1",
+    "angular": "^1.5.7",
+    "alertify-js": "^1.7.1",
+    "angular-modal-service": "^0.10.1",
+    "highcharts": "^4.2.5"
+  },
+  "resolutions": {
+    "angular": ">=1.2.16 1.4.x"
+  }
+}
