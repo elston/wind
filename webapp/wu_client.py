@@ -6,7 +6,7 @@ import requests
 
 
 class WuClient:
-    min_interval_sec = 60.0 / 300
+    min_interval_sec = 60.0 / 10
 
     def __init__(self):
         self.wu_api_key = None
