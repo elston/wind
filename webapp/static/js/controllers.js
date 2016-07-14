@@ -38,12 +38,38 @@ app.controller('LocationsCtrl', ['$scope', '$http', '$log', function ($scope, $h
             {field: 'lat'},
             {field: 'lon'},
             {field: 'lookback', visible: false},
-            {field: 'lookforward', visible: false}
+            {field: 'lookforward', visible: false},
+            {
+                field: 'action',
+                headerCellTemplate: ' ',
+                cellTemplate: '<button type="button" class="btn btn-default btn-sm" ng-click="$emit(\'updateHistory\')">Force update</button>' +
+                    '<button type="button" class="btn btn-default btn-sm" ng-click="$emit(\'viewHistory\')">View history</button>'
+            }
         ]
     };
 
+    $scope.$on('updateHistory', function($event){
+        var locationId = $event.targetScope.row.entity.id;
+        var locationName = $event.targetScope.row.entity.name;
+        $http.post($SCRIPT_ROOT + '/locations/' + locationId + '/update_history')
+            .then(function (data) {
+                    if ('error' in data.data) {
+                        alertify.error('Error while updating history for location"' + locationName + '": ' + data.data.error);
+                    } else {
+                        alertify.success('History for location "' + locationName + '" updated');
+                    }
+                },
+                function (error) {
+                    alertify.error('Error while updating history for location"' + locationName + '": ' + error);
+                });
+    });
+
+    $scope.$on('viewHistory', function($event){
+        var locationId = $event.targetScope.row.entity.id;
+        $('#weather-history-modal').modal('show');
+    });
+
     $scope.deleteLocation = function (row) {
-        $log.log(row);
         $http.delete($SCRIPT_ROOT + '/locations/' + row.entity.id)
             .then(function (data) {
                     if ('error' in data.data) {
@@ -64,7 +90,7 @@ app.controller('LocationsCtrl', ['$scope', '$http', '$log', function ($scope, $h
                         alertify.error(data.data.error);
                     } else {
                         $scope.gridOptions.data = data.data.data;
-                        $scope.noLocations = data.data.data.length == 0;
+                        $scope.noLocations = data.data.data.length === 0;
                     }
                 },
                 function (error) {
@@ -178,6 +204,6 @@ app.controller('NewLocationCtrl', ['$scope', '$rootScope', '$http', '$log', func
                 function (error) {
                     alertify.error(error);
                 });
-    }
+    };
 
 }]);

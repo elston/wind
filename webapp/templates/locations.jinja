@@ -33,7 +33,8 @@
                             <label for="location-name" class="col-xs-3 control-label">Name: </label>
 
                             <div class="col-xs-9">
-                                <input type="text" ng-model="name" id="location-name" name="location-name" class="form-control"/>
+                                <input type="text" ng-model="name" id="location-name" name="location-name"
+                                       class="form-control"/>
                             </div>
                         </div>
 
@@ -41,10 +42,10 @@
                             <div class="panel-heading">Search</div>
                             <div class="panel-body">
                                 <p>Enter something identifying the location. Examples:
+                                    York (city),
                                     Deutschland, Düsseldorf (country and city),
                                     CA, Los Angeles (USA state and city),
-                                    44.590278, 28.565278 (latitude and longitude),
-                                    autoip (guess from your IP).
+                                    44.590278, 28.565278 (latitude and longitude).
                                 </p>
 
                                 <div class="input-group">
@@ -56,7 +57,8 @@
                                       </span>
                                 </div>
                                 <div ng-if='manyLocations'>
-                                    <div id="select-location-grid" ui-grid="gridOptions" ui-grid-selection class="grid"></div>
+                                    <div id="select-location-grid" ui-grid="gridOptions" ui-grid-selection
+                                         class="grid"></div>
                                 </div>
                                 <div ng-if='oneLocation'>
                                     <dl class="dl-horizontal">
@@ -100,7 +102,31 @@
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                 <button type="button" id="new-location" class="btn btn-primary"
-                        ng-class="{disabled: !oneLocation}" ng-click="addLocation()">Add</button>
+                        ng-class="{disabled: !oneLocation}" ng-click="addLocation()">Add
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endraw %}
+<!-- Modal -->
+{% raw %}  <!-- Angular templating -->
+<div class="modal fade" id="weather-history-modal" tabindex="-1" role="dialog"
+     aria-labelledby="weather-history-modal-label">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="weather-history-modal-label">Weather history for location ???</h4>
+            </div>
+
+            <div class="modal-body">
+                <div id="weather-chart-container" style="width:100%; height:400px;"></div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
             </div>
         </div>
     </div>

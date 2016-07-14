@@ -79,3 +79,18 @@ def get_location():
         logger.exception(e)
         js = jsonify({'error': repr(e)})
         return js
+
+
+@app.route('/api/locations/<loc_id>/update_history', methods=['POST', ])
+def update_history(loc_id):
+    if not current_user.is_authenticated:
+        return jsonify({'error': 'User unauthorized'})
+    try:
+        location = db.session.query(Location).filter_by(id=loc_id).first()
+        location.update_history()
+        js = jsonify({'data': 'OK'})
+        return js
+    except Exception, e:
+        logger.exception(e)
+        js = jsonify({'error': repr(e)})
+        return js
