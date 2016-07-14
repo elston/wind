@@ -1,6 +1,6 @@
-var app = angular.module('app', ['ui.grid', 'ui.grid.selection']);
+var app = angular.module('app', ['ui.grid', 'ui.grid.selection', 'angularModalService']);
 
-app.controller('LocationsCtrl', ['$scope', '$http', '$log', function ($scope, $http, $log) {
+app.controller('LocationsCtrl', ['$scope', '$http', '$log', 'ModalService', function ($scope, $http, $log, ModalService) {
 
     $scope.gridOptions = {
         enableSorting: false,
@@ -43,30 +43,39 @@ app.controller('LocationsCtrl', ['$scope', '$http', '$log', function ($scope, $h
                 field: 'action',
                 headerCellTemplate: ' ',
                 cellTemplate: '<button type="button" class="btn btn-default btn-sm" ng-click="$emit(\'updateHistory\')">Force update</button>' +
-                    '<button type="button" class="btn btn-default btn-sm" ng-click="$emit(\'viewHistory\')">View history</button>'
+                '<button type="button" class="btn btn-default btn-sm" ng-click="$emit(\'viewHistory\')">View history</button>'
             }
         ]
     };
 
-    $scope.$on('updateHistory', function($event){
+    $scope.$on('updateHistory', function ($event) {
         var locationId = $event.targetScope.row.entity.id;
         var locationName = $event.targetScope.row.entity.name;
         $http.post($SCRIPT_ROOT + '/locations/' + locationId + '/update_history')
             .then(function (data) {
                     if ('error' in data.data) {
-                        alertify.error('Error while updating history for location"' + locationName + '": ' + data.data.error);
+                        alertify.error('Error while updating history for location "' + locationName + '": ' + data.data.error);
                     } else {
                         alertify.success('History for location "' + locationName + '" updated');
                     }
                 },
                 function (error) {
-                    alertify.error('Error while updating history for location"' + locationName + '": ' + error);
+                    alertify.error('Error while updating history for location "' + locationName + '": ' + error);
                 });
     });
 
-    $scope.$on('viewHistory', function($event){
+    $scope.$on('viewHistory', function ($event) {
         var locationId = $event.targetScope.row.entity.id;
-        $('#weather-history-modal').modal('show');
+        ModalService.showModal({
+            templateUrl: "static/partials/weather-history-modal.html",
+            controller: "WeatherHistoryCtrl",
+            inputs: {
+                locationId: locationId,
+                locationName: $event.targetScope.row.entity.name
+            }
+        }).then(function (modal) {
+            modal.element.modal();
+        });
     });
 
     $scope.deleteLocation = function (row) {
@@ -207,3 +216,75 @@ app.controller('NewLocationCtrl', ['$scope', '$rootScope', '$http', '$log', func
     };
 
 }]);
+
+app.controller('WeatherHistoryCtrl', ['$scope', '$http', 'close', 'locationId', 'locationName',
+    function ($scope, $http, close, locationId, locationName) {
+        $scope.locationId = locationId;
+        $scope.locationName = locationName;
+
+        $scope.closeModal = function (result) {
+            close(result, 500); // close, but give 200ms for bootstrap to animate
+        };
+
+        $http.get($SCRIPT_ROOT + '/locations/' + locationId + '/history')
+            .then(function (data) {
+                    if ('error' in data.data) {
+                        alertify.error('Error while getting history for location "' + locationName + '": ' + data.data.error);
+                    } else {
+                        var observations = data.data.data;
+                        $('#weather-chart-container').highcharts('StockChart', {
+                            rangeSelector: {
+                                selected: 1
+                            },
+                            title: {
+                                text: locationName
+                            },
+                            tooltip: {
+                                xDateFormat: '%b %e, %Y'
+                            },
+                            credits: {
+                                enabled: false
+                            },
+                            yAxis: [{
+                                title: {
+                                    text: 'Temperature, C'
+                                }
+                            }, {
+                                title: {
+                                    text: 'Wind speed, km/h'
+                                }
+                            }, {
+                                title: {
+                                    text: 'Wind direction, degrees'
+                                }
+                            }],
+                            series: [{
+                                name: 'Temperature, C',
+                                data: observations.tempm,
+                                tooltip: {
+                                    valueDecimals: 1
+                                }
+                            }, {
+                                name: 'Wind speed, km/h',
+                                data: observations.wspdm,
+                                tooltip: {
+                                    valueDecimals: 1
+                                },
+                                yAxis: 1
+                            }, {
+                                name: 'Wind direction, degrees',
+                                data: observations.wdird,
+                                tooltip: {
+                                    valueDecimals: 0
+                                },
+                                yAxis: 2
+                            }]
+                        });
+                    }
+                },
+                function (error) {
+                    alertify.error('Error while getting history for location "' + locationName + '": ' + error.statusText);
+                });
+
+    }
+]);

@@ -124,6 +124,26 @@ class LocationsTestCase(unittest.TestCase):
         test_location.update_history()
         self.session.delete(test_location)
 
+    def test_get_history(self):
+        test_location = Location(user_id=user_id, name=test_name, l='/q/zmw:00000.1.10400', lookback=2)
+        self.session.add(test_location)
+        self.session.commit()
+
+        test_location.update_history()
+
+        rv = self.app.get('/api/locations/%d/history' % test_location.id)
+        result = json.loads(rv.data)
+        self.assertIn('data', result)
+        self.assertNotIn('error', result)
+        data = result['data']
+        print data
+
+        self.assertIsInstance(data, dict)
+        self.assertIsInstance(data['tempm'], list)
+        self.assertIsInstance(data['wspdm'], list)
+        self.assertIsInstance(data['wdird'], list)
+
+        self.session.delete(test_location)
 
 if __name__ == '__main__':
     unittest.main()

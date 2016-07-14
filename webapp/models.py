@@ -21,7 +21,7 @@ class Location(db.Model):
     lookback = db.Column(db.Integer())
     lookforward = db.Column(db.Integer())
 
-    observations = relationship('Observation', back_populates='location',
+    observations = relationship('Observation', back_populates='location', order_by='Observation.time',
                                 cascade='all, delete-orphan')
     history_downloads = relationship('HistoryDownloadStatus', back_populates='location',
                                      cascade='all, delete-orphan')

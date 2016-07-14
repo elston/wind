@@ -1,3 +1,4 @@
+import calendar
 import logging
 
 import re
@@ -89,6 +90,25 @@ def update_history(loc_id):
         location = db.session.query(Location).filter_by(id=loc_id).first()
         location.update_history()
         js = jsonify({'data': 'OK'})
+        return js
+    except Exception, e:
+        logger.exception(e)
+        js = jsonify({'error': repr(e)})
+        return js
+
+
+@app.route('/api/locations/<loc_id>/history')
+def get_history(loc_id):
+    if not current_user.is_authenticated:
+        return jsonify({'error': 'User unauthorized'})
+    try:
+        location = db.session.query(Location).filter_by(id=loc_id).first()
+        result = {'tempm': [], 'wspdm': [], 'wdird': []}
+        for obs in location.observations:
+            unix_ts = calendar.timegm(obs.time.timetuple())
+            for k in result.iterkeys():
+                result[k].append([unix_ts * 1000, getattr(obs, k)])
+        js = jsonify({'data': result})
         return js
     except Exception, e:
         logger.exception(e)
