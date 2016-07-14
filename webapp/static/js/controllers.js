@@ -1,6 +1,6 @@
-var app = angular.module('app', ['ui.grid', 'ui.grid.selection', 'angularModalService']);
+var app = angular.module('app', ['ui.grid', 'ui.grid.selection', 'ui.bootstrap']);
 
-app.controller('LocationsCtrl', ['$scope', '$http', '$log', 'ModalService', function ($scope, $http, $log, ModalService) {
+app.controller('LocationsCtrl', ['$scope', '$http', '$log', '$uibModal', function ($scope, $http, $log, $uibModal) {
 
     $scope.gridOptions = {
         enableSorting: false,
@@ -66,16 +66,20 @@ app.controller('LocationsCtrl', ['$scope', '$http', '$log', 'ModalService', func
 
     $scope.$on('viewHistory', function ($event) {
         var locationId = $event.targetScope.row.entity.id;
-        ModalService.showModal({
-            templateUrl: "static/partials/weather-history-modal.html",
-            controller: "WeatherHistoryCtrl",
-            inputs: {
-                locationId: locationId,
-                locationName: $event.targetScope.row.entity.name
+        var locationName = $event.targetScope.row.entity.name;
+
+        var modalInstance = $uibModal.open({
+            animation: false,
+            templateUrl: 'static/partials/weather-history-modal.html',
+            controller: 'WeatherHistoryCtrl',
+            size: 'lg',
+            resolve: {
+                entity: function () {
+                    return $event.targetScope.row.entity;
+                }
             }
-        }).then(function (modal) {
-            modal.element.modal();
         });
+
     });
 
     $scope.deleteLocation = function (row) {
@@ -217,30 +221,33 @@ app.controller('NewLocationCtrl', ['$scope', '$rootScope', '$http', '$log', func
 
 }]);
 
-app.controller('WeatherHistoryCtrl', ['$scope', '$http', 'close', 'locationId', 'locationName',
-    function ($scope, $http, close, locationId, locationName) {
-        $scope.locationId = locationId;
-        $scope.locationName = locationName;
+app.controller('WeatherHistoryCtrl', ['$scope', '$http', '$uibModalInstance', 'entity',
+    function ($scope, $http, $uibModalInstance, entity) {
 
-        $scope.closeModal = function (result) {
-            close(result, 500); // close, but give 200ms for bootstrap to animate
+        var locationId = entity.id;
+        $scope.locationName = entity.name;
+
+        $scope.close = function () {
+            $uibModalInstance.close();
         };
+
 
         $http.get($SCRIPT_ROOT + '/locations/' + locationId + '/history')
             .then(function (data) {
                     if ('error' in data.data) {
-                        alertify.error('Error while getting history for location "' + locationName + '": ' + data.data.error);
+                        alertify.error('Error while getting history for location "' + $scope.locationName + '": ' + data.data.error);
                     } else {
                         var observations = data.data.data;
+                        $('#weather-chart-container').empty();
                         $('#weather-chart-container').highcharts('StockChart', {
                             rangeSelector: {
                                 selected: 1
                             },
                             title: {
-                                text: locationName
+                                text: $scope.locationName
                             },
                             tooltip: {
-                                xDateFormat: '%b %e, %Y'
+                                xDateFormat: '%b %e, %Y, %H:%M'
                             },
                             credits: {
                                 enabled: false
@@ -283,7 +290,7 @@ app.controller('WeatherHistoryCtrl', ['$scope', '$http', 'close', 'locationId', 
                     }
                 },
                 function (error) {
-                    alertify.error('Error while getting history for location "' + locationName + '": ' + error.statusText);
+                    alertify.error('Error while getting history for location "' + $scope.locationName + '": ' + error.statusText);
                 });
 
     }
