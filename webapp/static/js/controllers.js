@@ -38,17 +38,17 @@ app.controller('LocationsCtrl', ['$scope', '$http', '$log', '$uibModal', functio
             {field: 'lat'},
             {field: 'lon'},
             {field: 'lookback', visible: false},
-            {field: 'lookforward', visible: false},
+//            {field: 'lookforward', visible: false},
             {
                 field: 'action',
                 headerCellTemplate: ' ',
-                cellTemplate: '<button type="button" class="btn btn-default btn-sm" ng-click="$emit(\'updateHistory\')">Force update</button>' +
-                '<button type="button" class="btn btn-default btn-sm" ng-click="$emit(\'viewHistory\')">View history</button>'
+                cellTemplate: '<button type="button" class="btn btn-default btn-xs" ng-click="$emit(\'updateWeather\')">Force update</button>' +
+                '<button type="button" class="btn btn-default btn-xs" ng-click="$emit(\'viewWeather\')">View weather</button>'
             }
         ]
     };
 
-    $scope.$on('updateHistory', function ($event) {
+    $scope.$on('updateWeather', function ($event) {
         var locationId = $event.targetScope.row.entity.id;
         var locationName = $event.targetScope.row.entity.name;
         $http.post($SCRIPT_ROOT + '/locations/' + locationId + '/update_history')
@@ -62,16 +62,27 @@ app.controller('LocationsCtrl', ['$scope', '$http', '$log', '$uibModal', functio
                 function (error) {
                     alertify.error('Error while updating history for location "' + locationName + '": ' + error);
                 });
+        $http.post($SCRIPT_ROOT + '/locations/' + locationId + '/update_forecast')
+            .then(function (data) {
+                    if ('error' in data.data) {
+                        alertify.error('Error while updating forecast for location "' + locationName + '": ' + data.data.error);
+                    } else {
+                        alertify.success('Forecast for location "' + locationName + '" updated');
+                    }
+                },
+                function (error) {
+                    alertify.error('Error while updating forecast for location "' + locationName + '": ' + error);
+                });
     });
 
-    $scope.$on('viewHistory', function ($event) {
+    $scope.$on('viewWeather', function ($event) {
         var locationId = $event.targetScope.row.entity.id;
         var locationName = $event.targetScope.row.entity.name;
 
         var modalInstance = $uibModal.open({
             animation: false,
-            templateUrl: 'static/partials/weather-history-modal.html',
-            controller: 'WeatherHistoryCtrl',
+            templateUrl: 'static/partials/weather-plot-modal.html',
+            controller: 'WeatherPlotCtrl',
             size: 'lg',
             resolve: {
                 entity: function () {
@@ -117,8 +128,8 @@ app.controller('LocationsCtrl', ['$scope', '$http', '$log', '$uibModal', functio
 }]);
 
 app.controller('NewLocationCtrl', ['$scope', '$rootScope', '$http', '$log', function ($scope, $rootScope, $http, $log) {
-    $scope.lookback = 300;
-    $scope.lookforward = 10;
+    $scope.lookback = 10;
+//    $scope.lookforward = 10;
 
     $scope.gridOptions = {
         minRowsToShow: 5,
@@ -199,7 +210,7 @@ app.controller('NewLocationCtrl', ['$scope', '$rootScope', '$http', '$log', func
         $('#new-location-dialog').modal('hide');
         $scope.location.name = $scope.name;
         $scope.location.lookback = $scope.lookback;
-        $scope.location.lookforward = $scope.lookforward;
+//        $scope.location.lookforward = $scope.lookforward;
         alertify.message('Wait until data will be loaded');
         $http({
             url: $SCRIPT_ROOT + '/locations',
@@ -222,8 +233,8 @@ app.controller('NewLocationCtrl', ['$scope', '$rootScope', '$http', '$log', func
 
 }]);
 
-app.controller('WeatherHistoryCtrl', ['$scope', '$http', '$uibModalInstance', 'entity',
-    function ($scope, $http, $uibModalInstance, entity) {
+app.controller('WeatherPlotCtrl', ['$scope', '$http', '$q', '$uibModalInstance', 'entity',
+    function ($scope, $http, $q, $uibModalInstance, entity) {
 
         var locationId = entity.id;
         $scope.locationName = entity.name;
@@ -232,13 +243,26 @@ app.controller('WeatherHistoryCtrl', ['$scope', '$http', '$uibModalInstance', 'e
             $uibModalInstance.close();
         };
 
-
-        $http.get($SCRIPT_ROOT + '/locations/' + locationId + '/history')
-            .then(function (data) {
-                    if ('error' in data.data) {
-                        alertify.error('Error while getting history for location "' + $scope.locationName + '": ' + data.data.error);
-                    } else {
-                        var observations = data.data.data;
+        $q.all([
+            $http.get($SCRIPT_ROOT + '/locations/' + locationId + '/history').then(function(response) {
+                if ('error' in response.data) {
+                        alertify.error('Error while getting history for location "' + $scope.locationName + '": ' + response.data.error);
+                }
+              $scope.history_data = response.data.data
+            },
+                function (error) {
+                    alertify.error('Error while getting history for location "' + $scope.locationName + '": ' + error.statusText);
+                }),
+            $http.get($SCRIPT_ROOT + '/locations/' + locationId + '/forecast').then(function(response) {
+                if ('error' in response.data) {
+                        alertify.error('Error while getting forecast for location "' + $scope.locationName + '": ' + response.data.error);
+                }
+              $scope.forecast_data = response.data.data
+            },
+                function (error) {
+                    alertify.error('Error while getting history for location "' + $scope.locationName + '": ' + error.statusText);
+                })
+          ]).then(function() {
                         $('#weather-chart-container').empty();
                         $('#weather-chart-container').highcharts('StockChart', {
                             rangeSelector: {
@@ -268,31 +292,45 @@ app.controller('WeatherHistoryCtrl', ['$scope', '$http', '$uibModalInstance', 'e
                             }],
                             series: [{
                                 name: 'Temperature, C',
-                                data: observations.tempm,
+                                data: $scope.history_data.tempm.concat($scope.forecast_data.tempm),
+                                zoneAxis: 'x',
+                                zones: [{
+                                    value: $scope.forecast_data.tempm[0][0]
+                                }, {
+                                    dashStyle: 'dot'
+                                }],
                                 tooltip: {
                                     valueDecimals: 1
                                 }
                             }, {
                                 name: 'Wind speed, km/h',
-                                data: observations.wspdm,
+                                data: $scope.history_data.wspdm.concat($scope.forecast_data.wspdm),
+                                zoneAxis: 'x',
+                                zones: [{
+                                    value: $scope.forecast_data.wspdm[0][0]
+                                }, {
+                                    dashStyle: 'dot'
+                                }],
                                 tooltip: {
                                     valueDecimals: 1
                                 },
                                 yAxis: 1
                             }, {
                                 name: 'Wind direction, degrees',
-                                data: observations.wdird,
+                                data: $scope.history_data.wdird.concat($scope.forecast_data.wdird),
+                                zoneAxis: 'x',
+                                zones: [{
+                                    value: $scope.forecast_data.wdird[0][0]
+                                }, {
+                                    dashStyle: 'dot'
+                                }],
                                 tooltip: {
                                     valueDecimals: 0
                                 },
                                 yAxis: 2
                             }]
                         });
-                    }
-                },
-                function (error) {
-                    alertify.error('Error while getting history for location "' + $scope.locationName + '": ' + error.statusText);
-                });
+          })
 
     }
 ]);

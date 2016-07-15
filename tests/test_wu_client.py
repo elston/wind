@@ -44,6 +44,26 @@ class WuClientTestCase(unittest.TestCase):
         self.assertIsInstance(observations, list)
         self.assertIsInstance(observations[0], dict)
 
+    def test_hourly_forecast(self):
+        data = self.wu_client.hourly_forecast('/q/zmw:00000.1.10400')
+        print data
+        self.assertIsInstance(data, dict)
+        self.assertIsInstance(data['response'], dict)
+        self.assertIsInstance(data['hourly_forecast'], list)
+        first_forecast = data['hourly_forecast'][0]
+        self.assertIsInstance(first_forecast, dict)
+        self.assertIsInstance(first_forecast['FCTTIME'], dict)
+
+    def test_hourly_forecast_10days(self):
+        data = self.wu_client.hourly_forecast_10days('/q/zmw:00000.1.10400')
+        print data
+        self.assertIsInstance(data, dict)
+        self.assertIsInstance(data['response'], dict)
+        self.assertIsInstance(data['hourly_forecast'], list)
+        first_forecast = data['hourly_forecast'][0]
+        self.assertIsInstance(first_forecast, dict)
+        self.assertIsInstance(first_forecast['FCTTIME'], dict)
+
 
 if __name__ == '__main__':
     unittest.main()

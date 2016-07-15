@@ -23,22 +23,25 @@ class WuClient:
             time.sleep(time_to_wait)
         self.last_call_time = time.time()
 
-    def geolookup(self, query):
+    def api_call(self, call, query):
         self.throttle()
 
-        url = 'http://api.wunderground.com/api/%s/geolookup/q/%s.json' % (self.wu_api_key,
-                                                                          urllib.quote(query.encode('utf-8')))
+        url = 'http://api.wunderground.com/api/%s/%s%s.json' % (self.wu_api_key,
+                                                                call,
+                                                                urllib.quote(query.encode('utf-8')))
         r = requests.get(url)
         response = r.json()
         return response
+
+    def geolookup(self, query):
+        return self.api_call('geolookup', '/q/' + query)
 
     def history(self, date, location):
-        self.throttle()
-
         date_str = date.strftime('%Y%m%d')
-        url = 'http://api.wunderground.com/api/%s/history_%s/%s.json' % (self.wu_api_key,
-                                                                         date_str,
-                                                                         location)
-        r = requests.get(url)
-        response = r.json()
-        return response
+        return self.api_call('history_' + date_str, location)
+
+    def hourly_forecast(self, location):
+        return self.api_call('hourly', location)
+
+    def hourly_forecast_10days(self, location):
+        return self.api_call('hourly10day', location)

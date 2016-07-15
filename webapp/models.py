@@ -25,6 +25,8 @@ class Location(db.Model):
                                 cascade='all, delete-orphan')
     history_downloads = relationship('HistoryDownloadStatus', back_populates='location',
                                      cascade='all, delete-orphan')
+    forecasts = relationship('Forecast', back_populates='location', order_by='Forecast.time',
+                             cascade='all, delete-orphan')
 
     def __str__(self):
         return '<Location id=%s user=%s name=%s city=%s>' % (self.id, self.user_id, self.name, self.city)
@@ -83,6 +85,24 @@ class Location(db.Model):
             first()
         return dls
 
+    def update_forecast(self):
+        now = datetime.utcnow()
+        data = wuclient.hourly_forecast_10days(self.l)
+        forecast = Forecast(location_id=self.id, time=now)
+        db.session.add(forecast)
+        db.session.flush()
+        db.session.refresh(forecast)
+        for hourly_data in data['hourly_forecast']:
+            ts = int(hourly_data['FCTTIME']['epoch'])
+            time = datetime.utcfromtimestamp(ts)
+            tempm = float(hourly_data['temp']['metric'])
+            wspdm = float(hourly_data['wspd']['metric'])
+            wdird = int(hourly_data['wdir']['degrees'])
+            hourly_forecast = HourlyForecast(forecast_id=forecast.id, time=time, tempm=tempm,
+                                             wspdm=wspdm, wdird=wdird)
+            forecast.hourly_forecasts.append(hourly_forecast)
+        db.session.commit()
+
 
 class HistoryDownloadStatus(db.Model):
     __tablename__ = 'history_download_status'
@@ -125,3 +145,28 @@ class Observation(db.Model):
         for c in self.__table__.columns:
             d[c.name] = getattr(self, c.name)
         return d
+
+
+class Forecast(db.Model):
+    __tablename__ = 'forecasts'
+
+    id = db.Column(db.Integer(), primary_key=True)
+    location_id = db.Column(db.Integer(), db.ForeignKey('locations.id'), index=True)
+    time = db.Column(db.DateTime(), index=True)  # UTC time
+
+    location = relationship('Location', back_populates='forecasts')
+    hourly_forecasts = relationship('HourlyForecast', back_populates='forecast', order_by='HourlyForecast.time',
+                                    cascade='all, delete-orphan')
+
+
+class HourlyForecast(db.Model):
+    __tablename__ = 'hourly_forecasts'
+
+    id = db.Column(db.Integer(), primary_key=True)
+    forecast_id = db.Column(db.Integer(), db.ForeignKey('forecasts.id'), index=True)
+    time = db.Column(db.DateTime(), index=True)  # UTC time
+    tempm = db.Column(db.Float())  # Temp in C
+    wspdm = db.Column(db.Float())  # WindSpeed kph
+    wdird = db.Column(db.Integer())  # Wind direction in degrees
+
+    forecast = relationship('Forecast', back_populates='hourly_forecasts')

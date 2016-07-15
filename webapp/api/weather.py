@@ -4,8 +4,9 @@ import logging
 import re
 from flask import jsonify, request
 from flask_login import current_user
+from sqlalchemy import func
 from webapp import app, db, wuclient
-from webapp.models import Location
+from webapp.models import Location, Forecast, HourlyForecast
 
 logger = logging.getLogger(__name__)
 
@@ -37,6 +38,7 @@ def add_locations():
         location = Location.from_excess_args(user_id=current_user.id, **values)
         db.session.add(location)
         location.update_history()
+        location.update_forecast()
         db.session.commit()
 
         js = jsonify({'data': 'OK'})
@@ -105,6 +107,45 @@ def get_history(loc_id):
         location = db.session.query(Location).filter_by(id=loc_id).first()
         result = {'tempm': [], 'wspdm': [], 'wdird': []}
         for obs in location.observations:
+            unix_ts = calendar.timegm(obs.time.timetuple())
+            for k in result.iterkeys():
+                result[k].append([unix_ts * 1000, getattr(obs, k)])
+        js = jsonify({'data': result})
+        return js
+    except Exception, e:
+        logger.exception(e)
+        js = jsonify({'error': repr(e)})
+        return js
+
+
+@app.route('/api/locations/<loc_id>/update_forecast', methods=['POST', ])
+def update_forecast(loc_id):
+    if not current_user.is_authenticated:
+        return jsonify({'error': 'User unauthorized'})
+    try:
+        location = db.session.query(Location).filter_by(id=loc_id).first()
+        location.update_forecast()
+        js = jsonify({'data': 'OK'})
+        return js
+    except Exception, e:
+        logger.exception(e)
+        js = jsonify({'error': repr(e)})
+        return js
+
+
+@app.route('/api/locations/<loc_id>/forecast')
+def get_forecast(loc_id):
+    if not current_user.is_authenticated:
+        return jsonify({'error': 'User unauthorized'})
+    try:
+        subqry = db.session.query(func.max(Forecast.time)).filter(Forecast.location_id == loc_id)
+        qry = db.session.query(HourlyForecast).filter(
+            Forecast.location_id == loc_id,
+            Forecast.time == subqry,
+            HourlyForecast.forecast_id == Forecast.id).order_by(
+            HourlyForecast.time)
+        result = {'tempm': [], 'wspdm': [], 'wdird': []}
+        for obs in qry.all():
             unix_ts = calendar.timegm(obs.time.timetuple())
             for k in result.iterkeys():
                 result[k].append([unix_ts * 1000, getattr(obs, k)])

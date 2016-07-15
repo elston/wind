@@ -6,7 +6,7 @@ from urllib import urlencode
 from flask import json
 import webapp
 import re
-from webapp.models import Location
+from webapp.models import Location, HourlyForecast
 
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
@@ -144,6 +144,52 @@ class LocationsTestCase(unittest.TestCase):
         self.assertIsInstance(data['wdird'], list)
 
         self.session.delete(test_location)
+
+    def test_update_forecast_int(self):
+        test_location = Location(user_id=user_id, name=test_name, l='/q/zmw:00000.1.10400', lookback=2)
+        self.session.add(test_location)
+        self.session.commit()
+
+        test_location.update_forecast()
+
+        test_location_1 = self.session.query(Location).filter_by(id=test_location.id).first()
+        forecast_1 = test_location_1.forecasts[0]
+        self.assertEqual(len(forecast_1), 240)
+        hourly_forecast_1 = forecast_1.hourly_forecasts[0]
+        self.assertIsInstance(hourly_forecast_1, HourlyForecast)
+
+        self.session.delete(test_location)
+
+    def test_update_forecast_api(self):
+        test_location = Location(user_id=user_id, name=test_name, l='/q/zmw:00000.1.10400', lookback=2)
+        self.session.add(test_location)
+        self.session.commit()
+
+        rv = self.app.post('/api/locations/%d/update_forecast' % test_location.id)
+        result = json.loads(rv.data)
+        self.assertNotIn('error', result)
+        self.assertEqual(result['data'], 'OK')
+
+    def test_get_forecast(self):
+        test_location = Location(user_id=user_id, name=test_name, l='/q/zmw:00000.1.10400', lookback=2)
+        self.session.add(test_location)
+        self.session.commit()
+        test_location.update_forecast()
+
+        rv = self.app.get('/api/locations/%d/forecast' % test_location.id)
+        result = json.loads(rv.data)
+        self.assertIn('data', result)
+        self.assertNotIn('error', result)
+        data = result['data']
+        print data
+
+        self.assertIsInstance(data, dict)
+        self.assertIsInstance(data['tempm'], list)
+        self.assertIsInstance(data['wspdm'], list)
+        self.assertIsInstance(data['wdird'], list)
+        self.assertEqual(len(data['tempm']), 240)
+        self.assertEqual(len(data['wspdm']), 240)
+        self.assertEqual(len(data['wdird']), 240)
 
 if __name__ == '__main__':
     unittest.main()
