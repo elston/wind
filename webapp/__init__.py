@@ -1,5 +1,3 @@
-import logging
-
 from flask import Flask, jsonify
 from flask_bootstrap import Bootstrap
 from flask_environments import Environments
@@ -50,7 +48,9 @@ class User(db.Model, UserMixin):
 user_datastore = SQLAlchemyUserDatastore(db, User, Role)
 security = Security(app, user_datastore)
 
-with app.app_context():
+
+@app.before_first_request
+def init_db():
     db.create_all()
     # Create admin user if doesn't exist
     admin_role = user_datastore.find_or_create_role('admin')
