@@ -11,3 +11,5 @@
     $('ul.nav-tabs a[href="' + hash + '"]').tab('show');
 
 }());
+
+var app = angular.module('app', ['ui.grid', 'ui.grid.selection', 'ui.bootstrap']);

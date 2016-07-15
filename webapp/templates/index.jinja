@@ -36,7 +36,9 @@
 <script src="{{ url_for('.static', filename='editablegrid/editablegrid_validators.js') }}"></script>
 <script src="{{ url_for('.static', filename='editablegrid/editablegrid_utils.js') }}"></script>
 <script src="{{ url_for('.static', filename='js/app.js') }}"></script>
-<script src="{{ url_for('.static', filename='js/controllers.js') }}"></script>
+<script src="{{ url_for('.static', filename='js/controllers/locationCtrl.js') }}"></script>
+<script src="{{ url_for('.static', filename='js/controllers/newLocationCtrl.js') }}"></script>
+<script src="{{ url_for('.static', filename='js/controllers/weatherPlotCtrl.js') }}"></script>
 {% if current_user.has_role('admin') %}
 <script src="{{ url_for('.static', filename='js/admin.js') }}"></script>
 {% endif %}
