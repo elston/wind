@@ -15,4 +15,4 @@ log.setLevel(logging.INFO if logging_level == logging.DEBUG else logging.WARN)  
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=12080,
-            debug=logging_level == logging.DEBUG)
+            debug=logging_level == logging.DEBUG, threaded=True)
