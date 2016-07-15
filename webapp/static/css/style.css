@@ -49,3 +49,7 @@ td.editablegrid-action button.btn, a.btn {
     margin-left: 30px;
     vertical-align: middle;
 }
+
+#locations-grid button.btn-xs {
+    margin: 4px
+}

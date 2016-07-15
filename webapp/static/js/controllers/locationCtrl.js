@@ -42,7 +42,8 @@ app.controller('LocationsCtrl', ['$scope', '$http', '$log', '$uibModal', functio
                 field: 'action',
                 headerCellTemplate: ' ',
                 cellTemplate: '<button type="button" class="btn btn-default btn-xs" ng-click="$emit(\'updateWeather\')">Force update</button>' +
-                '<button type="button" class="btn btn-default btn-xs" ng-click="$emit(\'viewWeather\')">View weather</button>'
+                '<button type="button" class="btn btn-default btn-xs" ng-click="$emit(\'viewWeather\')">View weather</button>',
+                width: 200
             }
         ]
     };
