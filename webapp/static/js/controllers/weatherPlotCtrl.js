@@ -1,12 +1,35 @@
+/*global app,$SCRIPT_ROOT,alertify,Highcharts*/
 
 app.controller('WeatherPlotCtrl', ['$scope', '$http', '$q', '$uibModalInstance', 'entity',
     function ($scope, $http, $q, $uibModalInstance, entity) {
+        'use strict';
 
         var locationId = entity.id;
         $scope.locationName = entity.name;
+        $scope.tempmEnabled = true;
+        $scope.wspdmEnabled = true;
+        $scope.wdirdEnabled = false;
 
         $scope.close = function () {
             $uibModalInstance.close();
+        };
+
+        $scope.updateSeriesSet = function () {
+            if ($scope.tempmEnabled) {
+                $scope.chart.series[0].show();
+            } else {
+                $scope.chart.series[0].hide();
+            }
+            if ($scope.wspdmEnabled) {
+                $scope.chart.series[1].show();
+            } else {
+                $scope.chart.series[1].hide();
+            }
+            if ($scope.wdirdEnabled) {
+                $scope.chart.series[2].show();
+            } else {
+                $scope.chart.series[2].hide();
+            }
         };
 
         $q.all([
@@ -16,7 +39,7 @@ app.controller('WeatherPlotCtrl', ['$scope', '$http', '$q', '$uibModalInstance',
                                 alertify.error('Error while getting history for location "' + $scope.locationName +
                                     '": ' + response.data.error);
                             }
-                            $scope.history_data = response.data.data
+                            $scope.history_data = response.data.data;
                         },
                         function (error) {
                             alertify.error('Error while getting history for location "' + $scope.locationName +
@@ -28,7 +51,7 @@ app.controller('WeatherPlotCtrl', ['$scope', '$http', '$q', '$uibModalInstance',
                                 alertify.error('Error while getting forecast for location "' + $scope.locationName +
                                     '": ' + response.data.error);
                             }
-                            $scope.forecast_data = response.data.data
+                            $scope.forecast_data = response.data.data;
                         },
                         function (error) {
                             alertify.error('Error while getting history for location "' + $scope.locationName +
@@ -37,12 +60,39 @@ app.controller('WeatherPlotCtrl', ['$scope', '$http', '$q', '$uibModalInstance',
             ])
             .then(function () {
                 $('#weather-chart-container').empty();
-                $('#weather-chart-container').highcharts('StockChart', {
-                    rangeSelector: {
-                        selected: 1
+                $scope.chart = new Highcharts.StockChart({
+                    chart: {
+                        renderTo: 'weather-chart-container',
+                        animation: false
                     },
-                    title: {
-                        text: $scope.locationName
+                    rangeSelector: {
+                        selected: 5,
+                        buttons: [
+                            {
+                                type: 'day',
+                                count: 1,
+                                text: '24h'
+                            }, {
+                                type: 'day',
+                                count: 7,
+                                text: '7d'
+                            }, {
+                                type: 'month',
+                                count: 1,
+                                text: '1m'
+                            }, {
+                                type: 'month',
+                                count: 3,
+                                text: '3m'
+                            }, {
+                                type: 'month',
+                                count: 6,
+                                text: '6m'
+                            }, {
+                                type: 'all',
+                                text: 'All'
+                            }
+                        ]
                     },
                     tooltip: {
                         xDateFormat: '%b %e, %Y, %H:%M'
@@ -106,7 +156,9 @@ app.controller('WeatherPlotCtrl', ['$scope', '$http', '$q', '$uibModalInstance',
                         color: 'darkgrey'
                     }]
                 });
-            })
+
+                $scope.updateSeriesSet();
+            });
 
     }
 ]);
