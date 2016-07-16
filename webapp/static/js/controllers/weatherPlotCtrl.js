@@ -74,7 +74,8 @@ app.controller('WeatherPlotCtrl', ['$scope', '$http', '$q', '$uibModalInstance',
                         }],
                         tooltip: {
                             valueDecimals: 1
-                        }
+                        },
+                        color: 'red'
                     }, {
                         name: 'Wind speed, km/h',
                         data: $scope.history_data.wspdm.concat($scope.forecast_data.wspdm),
@@ -87,7 +88,8 @@ app.controller('WeatherPlotCtrl', ['$scope', '$http', '$q', '$uibModalInstance',
                         tooltip: {
                             valueDecimals: 1
                         },
-                        yAxis: 1
+                        yAxis: 1,
+                        color: 'blue'
                     }, {
                         name: 'Wind direction, degrees',
                         data: $scope.history_data.wdird.concat($scope.forecast_data.wdird),
@@ -100,7 +102,8 @@ app.controller('WeatherPlotCtrl', ['$scope', '$http', '$q', '$uibModalInstance',
                         tooltip: {
                             valueDecimals: 0
                         },
-                        yAxis: 2
+                        yAxis: 2,
+                        color: 'darkgrey'
                     }]
                 });
             })
