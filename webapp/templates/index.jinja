@@ -25,6 +25,7 @@
     $ADMIN_ROLE = false;
 {% endif %}
 </script>
+<script src='https://maps.googleapis.com/maps/api/js?v=3.exp&key={{ gmap_api_key }}'></script>
 <script src="{{ url_for('.static', filename='bower_components/highcharts/highstock.js') }}"></script>
 <script src="{{ url_for('.static', filename='bower_components/alertify-js/build/alertify.min.js') }}"></script>
 <script src="{{ url_for('.static', filename='bower_components/angular/angular.min.js') }}"></script>

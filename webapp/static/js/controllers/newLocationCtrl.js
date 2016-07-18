@@ -1,5 +1,6 @@
 
-app.controller('NewLocationCtrl', ['$scope', '$rootScope', '$http', '$log', function ($scope, $rootScope, $http, $log) {
+app.controller('NewLocationCtrl', ['$scope', '$rootScope', '$http', '$log', '$timeout',
+function ($scope, $rootScope, $http, $log, $timeout) {
     $scope.lookback = 10;
 //    $scope.lookforward = 10;
 
@@ -33,6 +34,20 @@ app.controller('NewLocationCtrl', ['$scope', '$rootScope', '$http', '$log', func
                         if ($scope.oneLocation) {
                             $scope.location = result.location;
                             $scope.name = result.location.city;
+                            var mapOptions = {
+                                zoom: 7,
+                                center: new google.maps.LatLng($scope.location.lat, $scope.location.lon),
+                                mapTypeId: google.maps.MapTypeId.ROADMAP
+                            };
+                            // ROADMAP, SATELLITE, HYBRID, TERRAIN
+                            $timeout(function () {
+                                map = new google.maps.Map(document.getElementById('gmap_canvas'), mapOptions);
+                                marker = new google.maps.Marker({
+                                    map: map,
+                                    position: new google.maps.LatLng($scope.location.lat, $scope.location.lon)
+                                });
+                            }, 1000);
+
                         }
                         if ($scope.manyLocations) {
                             $scope.gridOptions.data = result.response.results;
@@ -65,6 +80,19 @@ app.controller('NewLocationCtrl', ['$scope', '$rootScope', '$http', '$log', func
                                 if ($scope.oneLocation) {
                                     $scope.location = result.location;
                                     $scope.name = result.location.city;
+                                    var mapOptions = {
+                                        zoom: 7,
+                                        center: new google.maps.LatLng($scope.location.lat, $scope.location.lon),
+                                        mapTypeId: google.maps.MapTypeId.ROADMAP
+                                    };
+                                    // ROADMAP, SATELLITE, HYBRID, TERRAIN
+                                    $timeout(function () {
+                                        map = new google.maps.Map(document.getElementById('gmap_canvas'), mapOptions);
+                                        marker = new google.maps.Marker({
+                                            map: map,
+                                            position: new google.maps.LatLng($scope.location.lat, $scope.location.lon)
+                                        });
+                                    }, 1000);
                                 }
                             }
                         },

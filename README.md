@@ -10,6 +10,8 @@ install git, python-dev, python-virtualenv
 
 put WU API key in the file named wu_api_key in this directory
 
+put Google maps API key in the file named gmap_api_key in this directory
+
 `venv/bin/alembic upgrade head`
 
 `venv/bin/python run_server.py`

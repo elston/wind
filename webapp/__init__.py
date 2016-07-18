@@ -1,3 +1,4 @@
+import logging
 from flask import Flask, jsonify
 from flask_bootstrap import Bootstrap
 from flask_environments import Environments
@@ -17,6 +18,12 @@ env.from_yaml('config.yml')
 db = SQLAlchemy(app)
 
 wuclient = WuClient()
+
+try:
+    with open('gmap_api_key') as f:
+        gmap_api_key = f.read().strip()
+except Exception, e:
+    logging.warning('Google map API key not found: %s', e)
 
 import models
 
