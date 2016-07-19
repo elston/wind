@@ -1,0 +1,177 @@
+$title SHORT-TERM TRADING FOR A WIND POWER PRODUCER
+
+* DA: Day-ahead market
+* AM: Adjustment market
+* BM: Balancing market
+
+***************************************************************************
+* DATA
+***************************************************************************
+
+SET
+D Index for DA price scenarios /d1, d2/
+A Index for price differences between DA and AM /a1, a2/
+L Index for scenarios modeling wind production in between DA and AM /l1, l2/
+W Index for scenarios modeling wind production after AM /w1, w2/
+K Index for scenarios representing imbalance price ratios /k1, k2/;
+
+ALIAS(D,Daux);
+
+SCALARS
+dt 	Time span between two consecutive time periods (h) /1/
+Pmax 	Wind farm capacity (MW) /100/
+alfa 	Confidence level /0.95/
+beta 	Risk-aversion parameter /10/;
+
+TABLE P(L,W) Wind power production
+	w1	w2
+l1	100 	50
+l2 	0   	40;
+
+PARAMETERS
+lambdaD(D) Day-ahead market prices
+/ d1 	50
+  d2 	20 /
+
+MAvsMD(A) Price difference between day-ahead and adjustment markets
+/ a1 	-10
+  a2 	3 /
+
+r_pos(K) Imbalance price ratio for positive energy deviations
+/ k1 	1
+  k2 	0.9 /
+
+r_neg(K) Imbalance price ratio for negative energy deviations
+/ k1 	1.5
+  k2	1 /
+
+lambdaI(D,A) Adjustment market prices
+
+pi(D,L,A,W,K) Scenario probabilities
+/ d1.l1.a1.w1.k1 	0.0098
+  d1.l1.a1.w1.k2	0.0042
+  d1.l1.a1.w2.k1	0.0294
+  d1.l1.a1.w2.k2	0.0126
+  d1.l1.a2.w1.k1	0.0182
+  d1.l1.a2.w1.k2	0.0078
+  d1.l1.a2.w2.k1	0.0546
+  d1.l1.a2.w2.k2	0.0234
+  d1.l2.a1.w1.k1	0.0343
+  d1.l2.a1.w1.k2	0.0147
+  d1.l2.a1.w2.k1	0.0245
+  d1.l2.a1.w2.k2	0.0105
+  d1.l2.a2.w1.k1	0.0637
+  d1.l2.a2.w1.k2	0.0273
+  d1.l2.a2.w2.k1	0.0455
+  d1.l2.a2.w2.k2	0.0195
+  d2.l1.a1.w1.k1	0.0147
+  d2.l1.a1.w1.k2	0.0063
+  d2.l1.a1.w2.k1	0.0441
+  d2.l1.a1.w2.k2	0.0189
+  d2.l1.a2.w1.k1	0.0273
+  d2.l1.a2.w1.k2	0.0117
+  d2.l1.a2.w2.k1	0.0819
+  d2.l1.a2.w2.k2	0.0351
+  d2.l2.a1.w1.k1	0.05145
+  d2.l2.a1.w1.k2	0.02205
+  d2.l2.a1.w2.k1	0.03675
+  d2.l2.a1.w2.k2	0.01575
+  d2.l2.a2.w1.k1	0.09555
+  d2.l2.a2.w1.k2	0.04095
+  d2.l2.a2.w2.k1	0.06825
+  d2.l2.a2.w2.k2 	0.02925 /;
+
+lambdaI(D,A) = lambdaD(D) + MAvsMD(A);
+
+***************************************************************************
+* DECLARATION OF VARIABLES
+***************************************************************************
+
+VARIABLES
+
+z 			Objective function value
+profit(D,L,A,W,K) 	Profit per scenario
+
+** FIRST-STAGE VARIABLES
+
+Pd(D) 			Power sold in the day-ahead market
+
+** SECOND-STAGE VARIABLES
+
+Pa(D,L) 		Power traded in the adjustment market
+Ps(D,L) 		Final power schedule
+
+** THIRD-STAGE VARIABLES
+
+desvP(D,L,W) 		Positive energy deviation
+desvN(D,L,W) 		Negative energy deviation
+
+** VARIABLES ASSOCIATED WITH RISK MODELING
+
+CVaR 			Conditional value-at-risk
+var 			Value-at-risk
+eta(D,L,A,W,K) 		Auxiliary variable
+
+***************************************************************************
+* MATHEMATICAL CHARACTERIZATION OF VARIABLES
+***************************************************************************
+
+POSITIVE VARIABLES Pd(D), Ps(D,L), desvP(D,L,W), desvN(D,L,W), eta(D,L,A,W,K);
+
+Pd.up(D) = Pmax;
+Ps.up(D,L) = Pmax;
+
+***************************************************************************
+* EQUATIONS
+***************************************************************************
+
+EQUATIONS
+
+OF 				Objective function
+CVaRfunction 			CVaR definition
+PROFITfunction(D,L,A,W,K) 	Profit definition
+DesvDEF(D,L,W) 			Definition of energy imbalances
+MAXdesvPOS(D,L,W) 		Maximum positive energy deviation
+MAXdesvNEG(D,L,W) 		Maximum negative energy deviation
+PsDEF(D,L) 			Computation of final power schedule
+curve(D,Daux) 			Non-decreasing condition of offering curves
+noANTICIPd(D,Daux) 		Non-anticipativity constraints for the DA market
+CVaRrest(D,L,A,W,K) 		Constraints associated with risk modeling;
+
+OF.. z =e= sum((D,L,A,W,K), pi(D,L,A,W,K)*profit(D,L,A,W,K)) + beta*CVaR;
+
+CVaRfunction..
+
+CVaR =e= var - (1/(1-alfa))*sum((D,L,A,W,K), pi(D,L,A,W,K)*eta(D,L,A,W,K));
+
+PROFITfunction(D,L,A,W,K)..
+
+profit(D,L,A,W,K) =e= dt*lambdaD(D)*Pd(D)
+			+ dt*lambdaI(D,A)*Pa(D,L)
+			+ lambdaD(D)*r_pos(K)*desvP(D,L,W)
+			- lambdaD(D)*r_neg(K)*desvN(D,L,W);
+
+DesvDEF(D,L,W).. desvP(D,L,W)-desvN(D,L,W) =e= dt*(P(L,W) - Ps(D,L));
+
+MAXdesvPOS(D,L,W).. desvP(D,L,W) =l= P(L,W)*dt;
+
+MAXdesvNEG(D,L,W).. desvN(D,L,W) =l= Pmax*dt;
+
+PsDEF(D,L).. Ps(D,L) =e= Pd(D) + Pa(D,L);
+
+curve(D,Daux)$(lambdaD(Daux) GT lambdaD(D)).. Pd(D)-Pd(Daux) =l= 0;
+
+noANTICIPd(D,Daux)$(lambdaD(Daux) EQ lambdaD(D)).. Pd(D) =e= Pd(Daux);
+
+CVaRrest(D,L,A,W,K).. var - profit(D,L,A,W,K) - eta(D,L,A,W,K) =l= 0;
+
+***************************************************************************
+* MODEL
+***************************************************************************
+
+MODEL WindProdProblem /ALL/;
+OPTION iterlim = 1e8;
+OPTION reslim = 1e10;
+Option lp=cplex;
+WindProdProblem.optcr=0;
+SOLVE WindProdProblem USING lp MAXIMIZING z;

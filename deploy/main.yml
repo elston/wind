@@ -1,0 +1,119 @@
+- name: application server
+  hosts: 127.0.0.1
+  connection: local
+  vars:
+    tools_dir: /srv/apps/tools
+
+  tasks:
+
+  - name: set variables conditionally
+    set_fact: apps_user=www-data
+    when: ansible_os_family == "Debian"
+
+  - name: set variables conditionally
+    set_fact: apps_user=nobody
+    when: ansible_os_family == "RedHat"
+
+  - name: install packages
+    apt: name={{ item }} state=installed update_cache=yes
+    with_items:
+      - python-virtualenv
+      - python-numpy
+      - python-dev
+      - build-essential
+      - gfortran
+      - nginx
+      - libblas-dev
+      - liblapack-dev
+    when: ansible_os_family == "Debian"
+
+  - name: install packages
+    yum: name={{ item }} state=installed
+    with_items:
+      - python-virtualenv
+      - python-devel
+      - gcc-gfortran
+      - nginx
+      - blas-devel
+      - lapack-devel
+      - autoconf
+      - automake
+      - binutils
+      - bison
+      - flex
+      - gcc
+      - gcc-c++
+      - gettext
+      - libtool
+      - make
+      - patch
+      - pkgconfig
+      - redhat-rpm-config
+      - rpm-build
+    when: ansible_os_family == "RedHat"
+
+  - name: create virtualenv
+    command: virtualenv env
+    args:
+      chdir: "{{ tools_dir }}"
+      creates: env/bin/python
+
+  - name: install numpy in venv
+    command: env/bin/pip install numpy==1.9.1
+    args:
+      chdir: "{{ tools_dir }}"
+      creates: env/lib/python2.7/site-packages/numpy/__init__.py
+
+  - name: download lpsolve
+    get_url: url=http://sourceforge.net/projects/lpsolve/files/lpsolve/5.5.2.0/lp_solve_5.5.2.0_source.tar.gz/download dest=/tmp/lp_solve_5.5.2.0_source.tar.gz
+
+  - name: unpack lpsolve
+    command: tar xvfz lp_solve_5.5.2.0_source.tar.gz creates=lp_solve_5.5 chdir=/tmp
+
+  - name: build lpsolve
+    command: sh ccc chdir=/tmp/lp_solve_5.5/lpsolve55 creates=bin/ux64/liblpsolve55.so
+
+  - name: install lpsolve
+    command: install lp_solve_5.5/lpsolve55/bin/ux64/{{ item }} /usr/local/lib
+    args:
+      chdir: /tmp
+      creates: /usr/local/lib/liblpsolve55.so
+    with_items:
+      - liblpsolve55.so
+      - liblpsolve55.a
+    register: install_lpsolve
+    when: ansible_os_family == "Debian"
+
+  - name: install lpsolve
+    command: install lp_solve_5.5/lpsolve55/bin/ux64/{{ item }} /usr/lib64
+    args:
+      chdir: /tmp
+      creates: /usr/local/lib/liblpsolve55.so
+    with_items:
+      - liblpsolve55.so
+      - liblpsolve55.a
+    register: install_lpsolve
+    when: ansible_os_family == "RedHat"
+
+  - name: update ldconfig
+    command: ldconfig
+    when: install_lpsolve|success
+
+  - name: download lpsolve-python
+    get_url: url=http://sourceforge.net/projects/lpsolve/files/lpsolve/5.5.2.0/lp_solve_5.5.2.0_Python_source.tar.gz/download dest=/tmp/lp_solve_5.5.2.0_Python_source.tar.gz
+
+  - name: unpack lpsolve-python
+    command: tar xvfz lp_solve_5.5.2.0_Python_source.tar.gz creates=lp_solve_5.5/extra/Python chdir=/tmp
+
+  - name: build lpsolve-python
+    command: "{{ tools_dir }}/env/bin/python setup.py install"
+    args:
+      chdir: /tmp/lp_solve_5.5/extra/Python
+      creates: "{{ tools_dir }}/env/lib/python2.7/site-packages/lpsolve55.so"
+
+  - name: install main python requirements
+    command: env/bin/pip install -r requirements.txt
+    args:
+        chdir: "{{ tools_dir }}"
+        creates: env/lib/python2.7/site-packages/flask
+
