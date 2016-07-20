@@ -31,6 +31,9 @@
 <script src="{{ url_for('.static', filename='bower_components/angular/angular.min.js') }}"></script>
 <script src="{{ url_for('.static', filename='bower_components/angular-ui-grid/ui-grid.min.js') }}"></script>
 <script src="{{ url_for('.static', filename='bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js') }}"></script>
+<script src="{{ url_for('.static', filename='bower_components/spin.js/spin.js') }}"></script>
+<script src="{{ url_for('.static', filename='bower_components/angular-spinner/angular-spinner.min.js') }}"></script>
+<script src="{{ url_for('.static', filename='bower_components/angular-loading-spinner/angular-loading-spinner.js') }}"></script>
 <script src="{{ url_for('.static', filename='editablegrid/editablegrid.js') }}"></script>
 <script src="{{ url_for('.static', filename='editablegrid/editablegrid_renderers.js') }}"></script>
 <script src="{{ url_for('.static', filename='editablegrid/editablegrid_editors.js') }}"></script>
@@ -71,5 +74,5 @@
     </div>
 
 </div>
-{% include "loading.jinja" %}
+<span us-spinner="{radius:30, width:8, length: 16}"></span>
 {% endblock content %}

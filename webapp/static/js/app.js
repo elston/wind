@@ -12,4 +12,4 @@
 
 }());
 
-var app = angular.module('app', ['ui.grid', 'ui.grid.selection', 'ui.bootstrap']);
+var app = angular.module('app', ['ui.grid', 'ui.grid.selection', 'ui.bootstrap', 'ngLoadingSpinner']);
