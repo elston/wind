@@ -18,9 +18,9 @@ class WuClientTestCase(unittest.TestCase):
     def test_throttle(self):
         WuClient.min_interval_sec = 0.21
         start1 = time.time()
-        self.wu_client.throttle()
+        self.wu_client.check_limits()
         time.sleep(0.15)
-        self.wu_client.throttle()
+        self.wu_client.check_limits()
         end = time.time()
         self.assertAlmostEqual(end - start1, 0.21, 2)
 

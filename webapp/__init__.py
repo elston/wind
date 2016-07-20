@@ -1,9 +1,9 @@
 import logging
+
 from flask import Flask, jsonify
 from flask_bootstrap import Bootstrap
 from flask_environments import Environments
 from flask_sqlalchemy import SQLAlchemy
-from webapp.wu_client import WuClient
 from werkzeug.exceptions import HTTPException
 from flask_security import RoleMixin, UserMixin, SQLAlchemyUserDatastore, Security
 
@@ -16,6 +16,8 @@ env.from_yaml('config.yml')
 
 # Create database connection object
 db = SQLAlchemy(app)
+
+from webapp.wu_client import WuClient
 
 wuclient = WuClient()
 
