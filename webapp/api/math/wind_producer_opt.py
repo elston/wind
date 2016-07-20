@@ -1,16 +1,17 @@
 #!/usr/bin/env python
 import logging
-import warnings
 from collections import OrderedDict, Iterable
 from operator import itemgetter
 import sys
 
+import warnings
 import numpy as np
 from FuncDesigner import oovar
 from openopt import MILP
 
-
 warnings.simplefilter(action="ignore", category=FutureWarning)
+
+
 # logging.basicConfig(filename='wind_producer_opt.log', level=logging.DEBUG)
 
 
@@ -20,16 +21,16 @@ class Input(tuple):
     __slots__ = ()  # prevents the creation of instance dictionaries
 
     _fields = (
-        "D", "L", "A", "W", "K", "dt", "Pmax", "alfa", "beta", "P", "lambdaD", "MAvsMD", "r_pos", "r_neg", "pi", )
+        "D", "L", "A", "W", "K", "dt", "Pmax", "alfa", "beta", "P", "lambdaD", "MAvsMD", "r_pos", "r_neg", "pi", "NT")
 
-    def __new__(_cls, D, L, A, W, K, dt, Pmax, alfa, beta, P, lambdaD, MAvsMD, r_pos, r_neg, pi):
-        'Create new instance of Input(D, L, A, W, K, dt, Pmax, alfa, beta, P, lambdaD, MAvsMD, r_pos, r_neg, pi)'
+    def __new__(_cls, D, L, A, W, K, dt, Pmax, alfa, beta, P, lambdaD, MAvsMD, r_pos, r_neg, pi, NT):
+        'Create new instance of Input(D, L, A, W, K, dt, Pmax, alfa, beta, P, lambdaD, MAvsMD, r_pos, r_neg, pi, NT)'
         return tuple.__new__(_cls, (
-            D, L, A, W, K, dt, Pmax, alfa, beta, P, lambdaD, MAvsMD, r_pos, r_neg, pi, ))
+            D, L, A, W, K, dt, Pmax, alfa, beta, P, lambdaD, MAvsMD, r_pos, r_neg, pi, NT,))
 
     def __repr__(self):
         'Return a nicely formatted representation string'
-        return 'Input(D=%r, L=%r, A=%r, W=%r, K=%r, dt=%r, Pmax=%r, alfa=%r, beta=%r, P=%r, lambdaD=%r, MAvsMD=%r, r_pos=%r, r_neg=%r, pi=%r)' % self
+        return 'Input(D=%r, L=%r, A=%r, W=%r, K=%r, dt=%r, Pmax=%r, alfa=%r, beta=%r, P=%r, lambdaD=%r, MAvsMD=%r, r_pos=%r, r_neg=%r, pi=%r, NT=%r)' % self
 
     def _asdict(self):
         'Return a new OrderedDict which maps field names to their values'
@@ -41,21 +42,26 @@ class Input(tuple):
         'Return self as a plain tuple.  Used by copy and pickle.'
         return tuple(self)
 
-    D = property(itemgetter(0), doc='Index for DA price scenarios')
-    L = property(itemgetter(1), doc='Index for price differences between DA and AM')
-    A = property(itemgetter(2), doc='Index for scenarios modeling wind production in between DA and AM')
-    W = property(itemgetter(3), doc='Index for scenarios modeling wind production after AM')
-    K = property(itemgetter(4), doc='Index for scenarios representing imbalance price ratios')
-    dt = property(itemgetter(5), doc='Time span between two consecutive time periods (h)')
-    Pmax = property(itemgetter(6), doc='Wind farm capacity (MW)')
-    alfa = property(itemgetter(7), doc='Confidence level ')
-    beta = property(itemgetter(8), doc='Risk-aversion parameter')
-    P = property(itemgetter(9), doc='Wind power production')
-    lambdaD = property(itemgetter(10), doc='Day-ahead market prices')
-    MAvsMD = property(itemgetter(11), doc='Price difference between day-ahead and adjustment markets')
-    r_pos = property(itemgetter(12), doc='Imbalance price ratio for positive energy deviations')
-    r_neg = property(itemgetter(13), doc='Imbalance price ratio for negative energy deviations')
-    pi = property(itemgetter(14), doc='Scenario probabilities')
+    D = property(itemgetter(0), doc='Index for DA price scenarios, integer scalar')
+    L = property(itemgetter(1), doc='Index for scenarios modeling wind production in between DA and AM, integer scalar')
+    A = property(itemgetter(2), doc='Index for price differences between DA and AM, integer scalar')
+    W = property(itemgetter(3), doc='Index for scenarios modeling wind production after AM, integer scalar')
+    K = property(itemgetter(4), doc='Index for scenarios representing imbalance price ratios, integer scalar')
+    dt = property(itemgetter(5), doc='Time span between two consecutive time periods (h), real scalar')
+    Pmax = property(itemgetter(6), doc='Wind farm capacity (MW), real scalar')
+    alfa = property(itemgetter(7), doc='Confidence level, real scalar')
+    beta = property(itemgetter(8), doc='Risk-aversion parameter, real scalar')
+    P = property(itemgetter(9),
+                 doc='Wind power production, real LxW for s.p. LxWxNT for m.p.')  # s.p./m.p. = single/multi period
+    lambdaD = property(itemgetter(10), doc='Day-ahead market prices, real D vec. for s.p. DxNT matr. for m.p.')
+    MAvsMD = property(itemgetter(11),
+                      doc='Price difference between day-ahead and adjustment markets, real A vec. for s.p. AxNT matr. for m.p.')
+    r_pos = property(itemgetter(12),
+                     doc='Imbalance price ratio for positive energy deviations, real K vec. for s.p. KxNT matr. for m.p.')
+    r_neg = property(itemgetter(13),
+                     doc='Imbalance price ratio for negative energy deviations, real K vec. for s.p. KxNT matr. for m.p.')
+    pi = property(itemgetter(14), doc='Scenario probabilities, real DxLxAxWxK matrix')
+    NT = property(itemgetter(15), doc='Index for time periods, integer scalar')
 
 
 class Variables(tuple):
@@ -83,13 +89,13 @@ class Variables(tuple):
         'Return self as a plain tuple.  Used by copy and pickle.'
         return tuple(self)
 
-    Pd = property(itemgetter(0), doc='Power sold in the day-ahead market')
-    Pa = property(itemgetter(1), doc='Power traded in the adjustment market')
-    Ps = property(itemgetter(2), doc='Final power schedule')
-    desvP = property(itemgetter(3), doc='Positive energy deviation')
-    desvN = property(itemgetter(4), doc='Negative energy deviation')
-    var = property(itemgetter(5), doc='Value-at-risk')
-    eta = property(itemgetter(6), doc='Auxiliary variable')
+    Pd = property(itemgetter(0), doc='Power sold in the day-ahead market, real D vec for s.p., DxNT matr. for m.p.')
+    Pa = property(itemgetter(1), doc='Power traded in the adjustment market, real DxL for s.p., DxLxNT for s.p.')
+    Ps = property(itemgetter(2), doc='Final power schedule, real DxL for s.p., DxLxNT for m.p.')
+    desvP = property(itemgetter(3), doc='Positive energy deviation, real DxLxW for s.p. DxLxWxNT for m.p.')
+    desvN = property(itemgetter(4), doc='Negative energy deviation, real DxLxW for s.p. DxLxWxNT for m.p.')
+    var = property(itemgetter(5), doc='Value-at-risk, real scalar')
+    eta = property(itemgetter(6), doc='Auxiliary variable, real DxLxAxWxK metrix')
 
 
 class Output(tuple):
@@ -130,12 +136,15 @@ class Output(tuple):
                 for a in xrange(self.inp.A):
                     for w in xrange(self.inp.W):
                         for k in xrange(self.inp.K):
-                            distribution[d][l][a][w][k] = self.inp.dt * self.inp.lambdaD[d] * self.variables.Pd[d] \
-                                                          + self.inp.dt * self.lambdaI[d][a] * self.variables.Pa[d][l] \
-                                                          + self.inp.lambdaD[d] * self.inp.r_pos[k] * \
-                                                            self.variables.desvP[d][l][w] \
-                                                          - self.inp.lambdaD[d] * self.inp.r_neg[k] * \
-                                                            self.variables.desvN[d][l][w]
+                            profit = 0
+                            for t in xrange(self.inp.NT):
+                                profit += self.inp.dt * self.inp.lambdaD[d][t] * self.variables.Pd[d][t] \
+                                          + self.inp.dt * self.lambdaI[d][a][t] * self.variables.Pa[d][l][t] \
+                                          + self.inp.lambdaD[d][t] * self.inp.r_pos[k][t] * \
+                                            self.variables.desvP[d][l][w][t] \
+                                          - self.inp.lambdaD[d][t] * self.inp.r_neg[k][t] * \
+                                            self.variables.desvN[d][l][w][t]
+                            distribution[d][l][a][w][k] = profit
 
         return distribution
 
@@ -150,6 +159,12 @@ class Output(tuple):
         return self.variables.var - \
                np.sum(self.inp.pi * self.variables.eta) / (1 - self.inp.alfa)
 
+    def print_3d_array(self, data):
+        print '# Array shape: {0}'.format(data.shape)
+        for data_slice in data:
+            np.savetxt(sys.stdout, data_slice, fmt='%-7.2f')
+            print '# New slice'
+
     def print_output(self):
         print "beta: ", self.inp.beta
         print 'expected profit: %.2f' % self.expected_profit()
@@ -158,9 +173,9 @@ class Output(tuple):
         print 'power sold in the day-ahead market'
         np.savetxt(sys.stdout, self.variables.Pd, fmt='%7.1f')
         print 'power traded in the adjustment market'
-        np.savetxt(sys.stdout, self.variables.Pa, fmt='%7.1f')
+        self.print_3d_array(self.variables.Pa)
         print 'final power schedule'
-        np.savetxt(sys.stdout, self.variables.Ps, fmt='%7.1f')
+        self.print_3d_array(self.variables.Ps)
         print 'initialization time: %.2fs, solver time: %.2fs' % \
               (self.internals.elapsed['initialization_time'], self.internals.elapsed['solver_time'])
 
@@ -183,8 +198,19 @@ class Optimizator():
                 yield elem
 
     @staticmethod
+    def check_dimensions(inp):
+        assert inp.P.shape == (inp.L, inp.W, inp.NT)
+        assert inp.lambdaD.shape == (inp.D, inp.NT)
+        assert inp.MAvsMD.shape == (inp.A, inp.NT)
+        assert inp.r_pos.shape == (inp.K, inp.NT)
+        assert inp.r_neg.shape == (inp.K, inp.NT)
+        assert inp.pi.shape == (inp.D, inp.L, inp.A, inp.W, inp.K)
+
+    @staticmethod
     def optimize(inp):
-        lambdaI = inp.lambdaD.reshape(inp.D, 1) + inp.MAvsMD.reshape(1, inp.A)
+        Optimizator.check_dimensions(inp)
+
+        lambdaI = inp.lambdaD.reshape(inp.D, 1, inp.NT) + inp.MAvsMD.reshape(1, inp.A, inp.NT)
 
         variables = Optimizator._make_variables(inp)
         objective = Optimizator._make_objective(inp, variables, lambdaI)
@@ -201,41 +227,55 @@ class Optimizator():
         optimized_variables = Optimizator._parse_result(inp, variables, x)
         return Output(objective=f, variables=optimized_variables, inp=inp, lambdaI=lambdaI, internals=result)
 
-
     @staticmethod
     def _make_variables(inp):
 
-        Pd = []  # Pd(D) Power sold in the day-ahead market
+        Pd = []  # single period: Pd(D) Power sold in the day-ahead market
+        # multi-perios Pd(D,NT)
         for d in xrange(inp.D):
-            Pd.append(oovar("Pd(%d)" % (d), lb=0, ub=inp.Pmax))
+            Pd.append([])
+            for t in xrange(inp.NT):
+                Pd[d].append(oovar("Pd(%d,%d)" % (d, t), lb=0, ub=inp.Pmax))
 
-        Pa = []  # Pa(D,L) Power traded in the adjustment market
+        Pa = []  # single period: Pa(D,L) Power traded in the adjustment market
+        # multi period Pa(D,L,NT)
         for d in xrange(inp.D):
             Pa.append([])
             for l in xrange(inp.L):
-                Pa[d].append(oovar("Pa(%d,%d)" % (d, l)))
+                Pa[d].append([])
+                for t in xrange(inp.NT):
+                    Pa[d][l].append(oovar("Pa(%d,%d,%d)" % (d, l, t)))
 
-        Ps = []  # Ps(D,L) Final power schedule
+        Ps = []  # single period: Ps(D,L) Final power schedule
+        # multi period: Ps(D,L,NT)
         for d in xrange(inp.D):
             Ps.append([])
             for l in xrange(inp.L):
-                Ps[d].append(oovar("Ps(%d,%d)" % (d, l), lb=0, ub=inp.Pmax))
+                Ps[d].append([])
+                for t in xrange(inp.NT):
+                    Ps[d][l].append(oovar("Ps(%d,%d,%d)" % (d, l, t), lb=0, ub=inp.Pmax))
 
-        desvP = []  # desvP(D,L,W) Positive energy deviation
+        desvP = []  # single period: desvP(D,L,W) Positive energy deviation
+        # multi period desvP(D,L,W,NT)
         for d in xrange(inp.D):
             desvP.append([])
             for l in xrange(inp.L):
                 desvP[d].append([])
                 for w in xrange(inp.W):
-                    desvP[d][l].append(oovar("desvP(%d,%d,%d)" % (d, l, w), lb=0))
+                    desvP[d][l].append([])
+                    for t in xrange(inp.NT):
+                        desvP[d][l][w].append(oovar("desvP(%d,%d,%d,%d)" % (d, l, w, t), lb=0))
 
-        desvN = []  # desvN(D,L,W) Negative energy deviation
+        desvN = []  # single period: desvN(D,L,W) Negative energy deviation
+        # multi period desvN(D,L,W,NT)
         for d in xrange(inp.D):
             desvN.append([])
             for l in xrange(inp.L):
                 desvN[d].append([])
                 for w in xrange(inp.W):
-                    desvN[d][l].append(oovar("desvN(%d,%d,%d)" % (d, l, w), lb=0))
+                    desvN[d][l].append([])
+                    for t in xrange(inp.NT):
+                        desvN[d][l][w].append(oovar("desvN(%d,%d,%d,%d)" % (d, l, w, t), lb=0))
 
         var = oovar("var")  # Value-at-risk
         eta = []  # eta(D,L,A,W,K) Auxiliary variable
@@ -252,7 +292,6 @@ class Optimizator():
 
         return Variables(Pd=Pd, Pa=Pa, Ps=Ps, desvP=desvP, desvN=desvN, var=var, eta=eta)
 
-
     @staticmethod
     def _make_objective(inp, var, lambdaI):
         profit_exp = 0
@@ -262,10 +301,12 @@ class Optimizator():
                 for a in xrange(inp.A):
                     for w in xrange(inp.W):
                         for k in xrange(inp.K):
-                            profit = inp.dt * inp.lambdaD[d] * var.Pd[d] \
-                                     + inp.dt * lambdaI[d][a] * var.Pa[d][l] \
-                                     + inp.lambdaD[d] * inp.r_pos[k] * var.desvP[d][l][w] \
-                                     - inp.lambdaD[d] * inp.r_neg[k] * var.desvN[d][l][w]
+                            profit = 0
+                            for t in xrange(inp.NT):
+                                profit += inp.dt * inp.lambdaD[d][t] * var.Pd[d][t] \
+                                          + inp.dt * lambdaI[d][a][t] * var.Pa[d][l][t] \
+                                          + inp.lambdaD[d][t] * inp.r_pos[k][t] * var.desvP[d][l][w][t] \
+                                          - inp.lambdaD[d][t] * inp.r_neg[k][t] * var.desvN[d][l][w][t]
                             profit_exp += inp.pi[d][l][a][w][k] * profit
                             cvar_sum += inp.pi[d][l][a][w][k] * var.eta[d][l][a][w][k]
         obj = profit_exp + inp.beta * (var.var - cvar_sum / (1 - inp.alfa))
@@ -273,81 +314,101 @@ class Optimizator():
         logging.debug("obj = %s", obj.expr)
         return obj
 
-
     @staticmethod
     def _make_constraints(inp, var, lambdaI):
         constraints = []
 
-        # DesvDEF(D,L,W).. desvP(D,L,W)-desvN(D,L,W) =e= dt*(P(L,W) - Ps(D,L));
+        # (6.53) defined in variable definition
+        # (6.55) defined in variable definition
+
+        # (6.56)+(6.57) devsP(d,l,w,t) - desvN(d,l,w,t) = dt * (P(l,w,t) - Ps(d,l,t))
+        # old GAMS DesvDEF(D,L,W).. desvP(D,L,W)-desvN(D,L,W) =e= dt*(P(L,W) - Ps(D,L));
         cons_part = []
         for d in xrange(inp.D):
             for l in xrange(inp.L):
                 for w in xrange(inp.W):
-                    cons_part.append(var.desvP[d][l][w] - var.desvN[d][l][w] == inp.dt * (inp.P[l][w] - var.Ps[d][l]))
+                    for t in xrange(inp.NT):
+                        cons_part.append(var.desvP[d][l][w][t] - var.desvN[d][l][w][t] == inp.dt * (
+                            inp.P[l][w][t] - var.Ps[d][l][t]))
         constraints.extend(cons_part)
 
         logging.debug("DesvDEF = \n%s", "\n".join([x.expr for x in cons_part]))
 
-        # MAXdesvPOS(D,L,W).. desvP(D,L,W) =l= P(L,W)*dt;
+        # (6.58) desvP(d,l,w,t) <= P(l,w,t) * dt
+        # old GAMS MAXdesvPOS(D,L,W).. desvP(D,L,W) =l= P(L,W)*dt;
         cons_part = []
         for d in xrange(inp.D):
             for l in xrange(inp.L):
                 for w in xrange(inp.W):
-                    cons_part.append(var.desvP[d][l][w] < inp.dt * inp.P[l][w])
+                    for t in xrange(inp.NT):
+                        cons_part.append(var.desvP[d][l][w][t] <= inp.dt * inp.P[l][w][t])
         constraints.extend(cons_part)
 
         logging.debug("MAXdesvPOS = \n%s", "\n".join([x.expr for x in cons_part]))
 
+        # (6.59) desvN(d,l,w,t) <= Pmax *dt
         # MAXdesvNEG(D,L,W).. desvN(D,L,W) =l= Pmax*dt;
         cons_part = []
         for d in xrange(inp.D):
             for l in xrange(inp.L):
                 for w in xrange(inp.W):
-                    cons_part.append(var.desvN[d][l][w] < inp.dt * inp.Pmax)
+                    for t in xrange(inp.NT):
+                        cons_part.append(var.desvN[d][l][w][t] <= inp.dt * inp.Pmax)
         constraints.extend(cons_part)
 
         logging.debug("MAXdesvNEG = \n%s", "\n".join([x.expr for x in cons_part]))
 
-        # PsDEF(D,L).. Ps(D,L) =e= Pd(D) + Pa(D,L);
+        # (6.54) Ps(d,l,t) = Pd(d,t) + Pa(d,l,t)
+        # old GAMS PsDEF(D,L).. Ps(D,L) =e= Pd(D) + Pa(D,L);
         cons_part = []
         for d in xrange(inp.D):
             for l in xrange(inp.L):
-                cons_part.append(var.Ps[d][l] == var.Pd[d] + var.Pa[d][l])
+                for t in xrange(inp.NT):
+                    cons_part.append(var.Ps[d][l][t] == var.Pd[d][t] + var.Pa[d][l][t])
         constraints.extend(cons_part)
 
         logging.debug("PsDEF = \n%s", "\n".join([x.expr for x in cons_part]))
 
-        # curve(D,Daux)$(lambdaD(Daux) GT lambdaD(D)).. Pd(D)-Pd(Daux) =l= 0;
+        # (6.60) Pd(d,t) - Pd(d',t) <= 0 if lambdaD(d',t) > lambdaD(d,t)
+        # old GAMS curve(D,Daux)$(lambdaD(Daux) GT lambdaD(D)).. Pd(D)-Pd(Daux) =l= 0;
         cons_part = []
         for d in xrange(inp.D):
             for daux in xrange(inp.D):
-                if d != daux and inp.lambdaD[daux] > inp.lambdaD[d]:
-                    cons_part.append(var.Pd[d] - var.Pd[daux] < 0)
+                for t in xrange(inp.NT):
+                    if d != daux and inp.lambdaD[daux][t] > inp.lambdaD[d][t]:
+                        cons_part.append(var.Pd[d][t] - var.Pd[daux][t] <= 0)
         constraints.extend(cons_part)
 
         logging.debug("curve = \n%s", "\n".join([x.expr for x in cons_part]))
 
-        # noANTICIPd(D,Daux)$(lambdaD(Daux) EQ lambdaD(D)).. Pd(D) =e= Pd(Daux);
+        # (6.61) Pd(d,t) = Pd(d',t) if lambdaD(d,t) = lambdaD(d',t)
+        # old GAMS noANTICIPd(D,Daux)$(lambdaD(Daux) EQ lambdaD(D)).. Pd(D) =e= Pd(Daux);
         cons_part = []
         for d in xrange(inp.D):
             for daux in xrange(inp.D):
-                if d != daux and inp.lambdaD[daux] == inp.lambdaD[d]:  # TODO: badness is obvious
-                    cons_part.append(var.Pd[d] == var.Pd[daux])
+                for t in xrange(inp.NT):
+                    if d != daux and inp.lambdaD[daux][t] == inp.lambdaD[d][t]:  # TODO: don't compare real numbers
+                        cons_part.append(var.Pd[d][t] == var.Pd[daux][t])
         constraints.extend(cons_part)
 
         logging.debug("noANTICIPd = \n%s", "\n".join([x.expr for x in cons_part]))
 
-        # CVaRrest(D,L,A,W,K).. var - profit(D,L,A,W,K) - eta(D,L,A,W,K) =l= 0;
+        # (6.62) covered with darkness
+
+        # (6.63) var - profit(d,l,a,w,k) - eta(d,l,a,w,k) < 0
+        # old GAMS CVaRrest(D,L,A,W,K).. var - profit(D,L,A,W,K) - eta(D,L,A,W,K) =l= 0;
         cons_part = []
         for d in xrange(inp.D):
             for l in xrange(inp.L):
                 for a in xrange(inp.A):
                     for w in xrange(inp.W):
                         for k in xrange(inp.K):
-                            profit = inp.dt * inp.lambdaD[d] * var.Pd[d] \
-                                     + inp.dt * lambdaI[d][a] * var.Pa[d][l] \
-                                     + inp.lambdaD[d] * inp.r_pos[k] * var.desvP[d][l][w] \
-                                     - inp.lambdaD[d] * inp.r_neg[k] * var.desvN[d][l][w]
+                            profit = 0
+                            for t in xrange(inp.NT):
+                                profit += inp.dt * inp.lambdaD[d][t] * var.Pd[d][t] \
+                                          + inp.dt * lambdaI[d][a][t] * var.Pa[d][l][t] \
+                                          + inp.lambdaD[d][t] * inp.r_pos[k][t] * var.desvP[d][l][w][t] \
+                                          - inp.lambdaD[d][t] * inp.r_neg[k][t] * var.desvN[d][l][w][t]
                             cons_part.append(var.var - profit - var.eta[d][l][a][w][k] < 0)
         constraints.extend(cons_part)
 
@@ -356,30 +417,34 @@ class Optimizator():
         logging.debug("constraints = \n%s", "\n".join([x.expr for x in constraints]))
         return constraints
 
-
     @staticmethod
     def _make_start_point(inp, var):
         start_point = {}
         for d in xrange(inp.D):
-            start_point[var.Pd[d]] = 0
+            for t in xrange(inp.NT):
+                start_point[var.Pd[d][t]] = 0
 
         for d in xrange(inp.D):
             for l in xrange(inp.L):
-                start_point[var.Pa[d][l]] = 0
+                for t in xrange(inp.NT):
+                    start_point[var.Pa[d][l][t]] = 0
 
         for d in xrange(inp.D):
             for l in xrange(inp.L):
-                start_point[var.Ps[d][l]] = 0
+                for t in xrange(inp.NT):
+                    start_point[var.Ps[d][l][t]] = 0
 
         for d in xrange(inp.D):
             for l in xrange(inp.L):
                 for w in xrange(inp.W):
-                    start_point[var.desvP[d][l][w]] = 0
+                    for t in xrange(inp.NT):
+                        start_point[var.desvP[d][l][w][t]] = 0
 
         for d in xrange(inp.D):
             for l in xrange(inp.L):
                 for w in xrange(inp.W):
-                    start_point[var.desvN[d][l][w]] = 0
+                    for t in xrange(inp.NT):
+                        start_point[var.desvN[d][l][w][t]] = 0
 
         start_point[var.var] = 0
 
@@ -392,34 +457,38 @@ class Optimizator():
 
         return start_point
 
-
     @staticmethod
     def _parse_result(inp, var, x):
-        Pd = np.empty((inp.D))
+        Pd = np.empty((inp.D, inp.NT))
         for d in xrange(inp.D):
-            Pd[d] = x[var.Pd[d]]
+            for t in xrange(inp.NT):
+                Pd[d][t] = x[var.Pd[d][t]]
 
-        Pa = np.empty((inp.D, inp.L))
-        for d in xrange(inp.D):
-            for l in xrange(inp.L):
-                Pa[d][l] = x[var.Pa[d][l]]
-
-        Ps = np.empty((inp.D, inp.L))
+        Pa = np.empty((inp.D, inp.L, inp.NT))
         for d in xrange(inp.D):
             for l in xrange(inp.L):
-                Ps[d][l] = x[var.Ps[d][l]]
+                for t in xrange(inp.NT):
+                    Pa[d][l][t] = x[var.Pa[d][l][t]]
 
-        desvP = np.empty((inp.D, inp.L, inp.W))
+        Ps = np.empty((inp.D, inp.L, inp.NT))
         for d in xrange(inp.D):
             for l in xrange(inp.L):
-                for w in xrange(inp.W):
-                    desvP[d][l][w] = x[var.desvP[d][l][w]]
+                for t in xrange(inp.NT):
+                    Ps[d][l][t] = x[var.Ps[d][l][t]]
 
-        desvN = np.empty((inp.D, inp.L, inp.W))
+        desvP = np.empty((inp.D, inp.L, inp.W, inp.NT))
         for d in xrange(inp.D):
             for l in xrange(inp.L):
                 for w in xrange(inp.W):
-                    desvN[d][l][w] = x[var.desvN[d][l][w]]
+                    for t in xrange(inp.NT):
+                        desvP[d][l][w][t] = x[var.desvP[d][l][w][t]]
+
+        desvN = np.empty((inp.D, inp.L, inp.W, inp.NT))
+        for d in xrange(inp.D):
+            for l in xrange(inp.L):
+                for w in xrange(inp.W):
+                    for t in xrange(inp.NT):
+                        desvN[d][l][w][t] = x[var.desvN[d][l][w][t]]
 
         xi = x[var.var]
         eta = np.empty((inp.D, inp.L, inp.A, inp.W, inp.K))
@@ -439,22 +508,23 @@ def test():
     A = 2
     W = 2
     K = 2
+    NT = 3
 
-    inp = Input(D=D, L=L, A=A, W=W, K=K,
+    inp = Input(D=D, L=L, A=A, W=W, K=K, NT=NT,
                 dt=1.0,
                 Pmax=100.0,
                 alfa=0.95,
                 beta=0,
-                P=np.array([[100, 50], [0, 40]]),
-                lambdaD=np.array([50, 20]),
-                MAvsMD=np.array([-10, 3]),
-                r_pos=np.array([1, 0.9]),
-                r_neg=np.array([1.5, 1]),
+                P=np.array([[[100, 100, 100], [50, 50, 50]], [[0, 0, 0], [40, 40, 40]]]),
+                lambdaD=np.array([[50, 51, 52], [20, 21, 22]]),
+                MAvsMD=np.array([[-10, -9, -8], [3, 4, 5]]),
+                r_pos=np.array([[1, 1, 1], [0.9, 0.9, 0.9]]),
+                r_neg=np.array([[1.5, 1.5, 1.5], [1, 1, 1]]),
                 pi=np.array([0.0098, 0.0042, 0.0294, 0.0126, 0.0182, 0.0078, 0.0546, 0.0234, 0.0343, 0.0147,
                              0.0245, 0.0105, 0.0637, 0.0273, 0.0455, 0.0195, 0.0147, 0.0063, 0.0441, 0.0189,
                              0.0273, 0.0117, 0.0819, 0.0351, 0.05145, 0.02205, 0.03675, 0.01575, 0.09555, 0.04095,
                              0.06825, 0.02925]).reshape((D, L, A, W, K))
-    )
+                )
     result = Optimizator()(inp)
     print result.inp
     print result.variables
