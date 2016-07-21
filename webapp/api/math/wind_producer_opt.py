@@ -502,34 +502,3 @@ class Optimizator():
         return Variables(Pd=Pd, Pa=Pa, Ps=Ps, desvP=desvP, desvN=desvN, var=xi, eta=eta)
 
 
-def test():
-    D = 2
-    L = 2
-    A = 2
-    W = 2
-    K = 2
-    NT = 3
-
-    inp = Input(D=D, L=L, A=A, W=W, K=K, NT=NT,
-                dt=1.0,
-                Pmax=100.0,
-                alfa=0.95,
-                beta=0,
-                P=np.array([[[100, 100, 100], [50, 50, 50]], [[0, 0, 0], [40, 40, 40]]]),
-                lambdaD=np.array([[50, 51, 52], [20, 21, 22]]),
-                MAvsMD=np.array([[-10, -9, -8], [3, 4, 5]]),
-                r_pos=np.array([[1, 1, 1], [0.9, 0.9, 0.9]]),
-                r_neg=np.array([[1.5, 1.5, 1.5], [1, 1, 1]]),
-                pi=np.array([0.0098, 0.0042, 0.0294, 0.0126, 0.0182, 0.0078, 0.0546, 0.0234, 0.0343, 0.0147,
-                             0.0245, 0.0105, 0.0637, 0.0273, 0.0455, 0.0195, 0.0147, 0.0063, 0.0441, 0.0189,
-                             0.0273, 0.0117, 0.0819, 0.0351, 0.05145, 0.02205, 0.03675, 0.01575, 0.09555, 0.04095,
-                             0.06825, 0.02925]).reshape((D, L, A, W, K))
-                )
-    result = Optimizator()(inp)
-    print result.inp
-    print result.variables
-    result.print_output()
-
-
-if __name__ == '__main__':
-    test()
