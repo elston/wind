@@ -145,7 +145,7 @@ class OptimizerTestCase(unittest.TestCase):
             for t in xrange(NT):
                 for i in xrange(len(results) - 1):
                     print 'd=%d t=%d Pd=%d %d' % (
-                    d, t, results[i].variables.Pd[d][t], results[i + 1].variables.Pd[d][t])
+                        d, t, results[i].variables.Pd[d][t], results[i + 1].variables.Pd[d][t])
                     self.assertGreaterEqual(results[i].variables.Pd[d][t] + 1e-6, results[i + 1].variables.Pd[d][t])
 
         for i in xrange(len(results)):
@@ -153,3 +153,75 @@ class OptimizerTestCase(unittest.TestCase):
 
         for i in xrange(len(results) - 1):
             self.assertGreaterEqual(results[i].expected_profit() + 1e-6, results[i + 1].expected_profit())
+
+    def test_66(self):
+        """
+        setup identical to the book chapter 6.6
+         expected profit should be 1086.40
+        """
+        D = 2
+        L = 1
+        A = 1
+        W = 4
+        K = 2
+        NT = 1
+
+        inp = Input(D=D, L=L, A=A, W=W, K=K, NT=NT,
+                    dt=1.0,
+                    Pmax=100.0,
+                    alfa=0.95,
+                    beta=0,
+                    P=np.array([[[100], [50], [0], [40]]]),
+                    lambdaD=np.array([[50], [20]]),
+                    MAvsMD=np.array([[0]]),
+                    r_pos=np.array([[1], [0.9]]),
+                    r_neg=np.array([[1.5], [1]]),
+                    pi=np.array(
+                        [0.028, 0.012, 0.084, 0.036, 0.098, 0.042, 0.070, 0.030, 0.042, 0.018, 0.126, 0.054, 0.147,
+                         0.063, 0.105, 0.045]).reshape((D, L, A, W, K))
+                    )
+        result = Optimizator()(inp, disable_AM=True)
+        result.print_output()
+
+        self.assertAlmostEqual(result.expected_profit(), 1086.40, 2)
+
+    def test_166(self):
+        """
+        setup identical to the book chapter 6.6 figure 6.16
+         Pd should match figure 6.16
+        """
+        D = 2
+        L = 1
+        A = 1
+        W = 4
+        K = 2
+        NT = 1
+
+        results = []
+        betas = range(7)
+        for beta in betas:
+            inp = Input(D=D, L=L, A=A, W=W, K=K, NT=NT,
+                        dt=1.0,
+                        Pmax=100.0,
+                        alfa=0.95,
+                        beta=beta,
+                        P=np.array([[[100], [50], [0], [40]]]),
+                        lambdaD=np.array([[50], [20]]),
+                        MAvsMD=np.array([[0]]),
+                        r_pos=np.array([[1], [0.1]]),
+                        r_neg=np.array([[1.02], [1]]),
+                        pi=np.array(
+                            [0.028, 0.012, 0.084, 0.036, 0.098, 0.042, 0.070, 0.030, 0.042, 0.018, 0.126, 0.054, 0.147,
+                             0.063, 0.105, 0.045]).reshape((D, L, A, W, K))
+                        )
+            result = Optimizator()(inp, disable_AM=True)
+            result.print_output()
+
+            results.append(result)
+
+        expected_Pds = [100.0, 50.0, 50.0, 50.0, 40.0, 40.0, 0.0]
+
+        for i in xrange(len(betas)):
+            Pd = results[i].variables.Pd[0][0]
+            print '%f: %f' % (betas[i], Pd)
+            self.assertAlmostEqual(Pd, expected_Pds[i], 6)
