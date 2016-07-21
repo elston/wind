@@ -181,8 +181,8 @@ class Output(tuple):
 
 
 class Optimizator():
-    def __call__(self, *args):
-        return self.optimize(args[0])
+    def __call__(self, *args, **kwargs):
+        return self.optimize(args[0], **kwargs)
 
     @staticmethod
     def _flatten(lolol):
@@ -207,12 +207,12 @@ class Optimizator():
         assert inp.pi.shape == (inp.D, inp.L, inp.A, inp.W, inp.K)
 
     @staticmethod
-    def optimize(inp):
+    def optimize(inp, disable_am=False):
         Optimizator.check_dimensions(inp)
 
         lambdaI = inp.lambdaD.reshape(inp.D, 1, inp.NT) + inp.MAvsMD.reshape(1, inp.A, inp.NT)
 
-        variables = Optimizator._make_variables(inp)
+        variables = Optimizator._make_variables(inp, disable_am)
         objective = Optimizator._make_objective(inp, variables, lambdaI)
         constraints = Optimizator._make_constraints(inp, variables, lambdaI)
         start_point = Optimizator._make_start_point(inp, variables)
@@ -228,7 +228,7 @@ class Optimizator():
         return Output(objective=f, variables=optimized_variables, inp=inp, lambdaI=lambdaI, internals=result)
 
     @staticmethod
-    def _make_variables(inp):
+    def _make_variables(inp, disable_am=False):
 
         Pd = []  # single period: Pd(D) Power sold in the day-ahead market
         # multi-perios Pd(D,NT)
@@ -244,7 +244,10 @@ class Optimizator():
             for l in xrange(inp.L):
                 Pa[d].append([])
                 for t in xrange(inp.NT):
-                    Pa[d][l].append(oovar("Pa(%d,%d,%d)" % (d, l, t)))
+                    if disable_am:
+                        Pa[d][l].append(oovar("Pa(%d,%d,%d)" % (d, l, t), lb=0, ub=0))
+                    else:
+                        Pa[d][l].append(oovar("Pa(%d,%d,%d)" % (d, l, t)))
 
         Ps = []  # single period: Ps(D,L) Final power schedule
         # multi period: Ps(D,L,NT)
@@ -500,5 +503,3 @@ class Optimizator():
                             eta[d][l][a][w][k] = x[var.eta[d][l][a][w][k]]
 
         return Variables(Pd=Pd, Pa=Pa, Ps=Ps, desvP=desvP, desvN=desvN, var=xi, eta=eta)
-
-
