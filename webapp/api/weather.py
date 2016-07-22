@@ -155,3 +155,18 @@ def get_forecast(loc_id):
         logger.exception(e)
         js = jsonify({'error': repr(e)})
         return js
+
+
+@app.route('/api/locations/<loc_id>/wspd_distr', methods=['POST', ])
+def fit_get_wspd_model(loc_id):
+    if not current_user.is_authenticated:
+        return jsonify({'error': 'User unauthorized'})
+    try:
+        location = db.session.query(Location).filter_by(id=loc_id).first()
+        result = location.fit_get_wspd_model()
+        js = jsonify({'data': result})
+        return js
+    except Exception, e:
+        logger.exception(e)
+        js = jsonify({'error': repr(e)})
+        return js

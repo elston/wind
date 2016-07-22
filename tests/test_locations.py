@@ -191,5 +191,19 @@ class LocationsTestCase(unittest.TestCase):
         self.assertEqual(len(data['wspdm']), 240)
         self.assertEqual(len(data['wdird']), 240)
 
+    def test_fit_get_wspd_model(self):
+        test_location = Location(user_id=user_id, name=test_name, l='/q/zmw:00000.1.10400', lookback=10)
+        self.session.add(test_location)
+        self.session.commit()
+
+        test_location.update_history()
+
+        rv = self.app.post('/api/locations/%d/wspd_distr' % test_location.id)
+        result = json.loads(rv.data)
+        self.assertIn('data', result)
+        self.assertNotIn('error', result)
+        data = result['data']
+        print data
+
 if __name__ == '__main__':
     unittest.main()

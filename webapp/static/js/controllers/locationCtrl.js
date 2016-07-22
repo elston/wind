@@ -1,4 +1,3 @@
-
 app.controller('LocationsCtrl', ['$scope', '$http', '$log', '$uibModal', function ($scope, $http, $log, $uibModal) {
 
     $scope.gridOptions = {
@@ -34,15 +33,24 @@ app.controller('LocationsCtrl', ['$scope', '$http', '$log', '$uibModal', functio
             {field: 'city'},
             {field: 'tz_short', visible: false},
             {field: 'tz_long', visible: false},
-            {field: 'lat'},
-            {field: 'lon'},
+            {field: 'lat', cellFilter: 'number: 5'},
+            {field: 'lon', cellFilter: 'number: 5'},
+            {field: 'wspd_shape', cellFilter: 'number: 2'},
+            {field: 'wspd_scale', cellFilter: 'number: 2'},
             {field: 'lookback', visible: false},
 //            {field: 'lookforward', visible: false},
             {
                 field: 'action',
                 headerCellTemplate: ' ',
-                cellTemplate: '<button type="button" class="btn btn-default btn-xs" ng-click="$emit(\'updateWeather\')">Force update</button>' +
-                '<button type="button" class="btn btn-default btn-xs" ng-click="$emit(\'viewWeather\')">View weather</button>',
+                cellTemplate: '<button type="button" class="btn btn-default btn-xs" ng-click="$emit(\'updateWeather\')" ' +
+                'tooltip-append-to-body="true" uib-tooltip="Reload">' +
+                '<span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></button>' +
+                '<button type="button" class="btn btn-default btn-xs" ng-click="$emit(\'viewWeather\')" ' +
+                'tooltip-append-to-body="true" uib-tooltip="View chart">' +
+                '<span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>' +
+                '<button type="button" class="btn btn-default btn-xs" ng-click="$emit(\'viewDistribution\')" ' +
+                'tooltip-append-to-body="true" uib-tooltip="Fit and view wind speed distribution">' +
+                '<span class="glyphicon glyphicon-stats" aria-hidden="true"></span></button>',
                 width: 200
             }
         ]
@@ -83,6 +91,24 @@ app.controller('LocationsCtrl', ['$scope', '$http', '$log', '$uibModal', functio
             animation: false,
             templateUrl: 'static/partials/weather-plot-modal.html',
             controller: 'WeatherPlotCtrl',
+            size: 'lg',
+            resolve: {
+                entity: function () {
+                    return $event.targetScope.row.entity;
+                }
+            }
+        });
+
+    });
+
+    $scope.$on('viewDistribution', function ($event) {
+        var locationId = $event.targetScope.row.entity.id;
+        var locationName = $event.targetScope.row.entity.name;
+
+        var modalInstance = $uibModal.open({
+            animation: false,
+            templateUrl: 'static/partials/wspd-distribution-modal.html',
+            controller: 'WspdDistributionCtrl',
             size: 'lg',
             resolve: {
                 entity: function () {

@@ -25,6 +25,7 @@
       - nginx
       - libblas-dev
       - liblapack-dev
+      - tk-dev
     when: ansible_os_family == "Debian"
 
   - name: install packages

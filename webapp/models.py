@@ -2,6 +2,7 @@ from datetime import datetime, timedelta
 
 from scipy import signal
 import numpy as np
+from scipy import stats
 from sqlalchemy import desc
 from sqlalchemy.orm import relationship
 from webapp import db, wuclient, app
@@ -23,6 +24,8 @@ class Location(db.Model):
     l = db.Column(db.String(255))  # /q/zmw:00000.14.10317
     lookback = db.Column(db.Integer())
     lookforward = db.Column(db.Integer())
+    wspd_shape = db.Column(db.Float())  # shape parameter of wind speed Weibull model
+    wspd_scale = db.Column(db.Float())  # scale parameter of wind speed Weibull model
 
     observations = relationship('Observation', back_populates='location', order_by='Observation.time',
                                 cascade='all, delete-orphan')
@@ -147,6 +150,28 @@ class Location(db.Model):
         for i in outlier_flags.nonzero():
             output_data[i] = medfiltered_data[i]
         return output_data
+
+    def fit_get_wspd_model(self):
+        observations = db.session.query(Observation) \
+            .filter(Observation.location_id == self.id) \
+            .order_by(desc(Observation.time)) \
+            .limit(self.lookback) \
+            .all()
+
+        wspdm_values = np.array([x.wspdm for x in observations])
+        shape, scale, histogram, pdf = self._fit_get_wspd_model(wspdm_values)
+        self.wspd_shape = shape
+        self.wspd_scale = scale
+        db.session.commit()
+        return shape, scale, histogram, pdf
+
+    @staticmethod
+    def _fit_get_wspd_model(data):
+        shape, location, scale = stats.weibull_min.fit(data, floc=0)
+        hist, bin_edges = np.histogram(data, bins='auto')
+        bin_centers = 0.5 * (bin_edges[1:] + bin_edges[:-1])
+        pdf = stats.weibull_min.pdf(bin_centers, shape, location, scale)
+        return shape, scale, zip(bin_centers, hist / float(sum(hist))), zip(bin_centers, pdf)
 
 
 class HistoryDownloadStatus(db.Model):
