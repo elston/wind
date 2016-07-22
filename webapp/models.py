@@ -72,14 +72,16 @@ class Location(db.Model):
                 wdird = 0
             else:
                 wdird = int(wdird_s)
-            obs = Observation(time=timestamp, tempm=tempm, wspdm_raw=wspdm, wdird=wdird)
-            self.observations.append(obs)
+            obs = Observation(location_id=self.id, time=timestamp, tempm=tempm, wspdm_raw=wspdm, wdird=wdird)
+            db.session.add(obs)
+            # self.observations.append(obs)
         if dls is None:
             dls = HistoryDownloadStatus(date=date, partial=True, full=not today)
             self.history_downloads.append(dls)
         else:
             dls.partial = True
             dls.full = not today
+        db.session.flush()
         db.session.commit()
 
     def get_download_status(self, date):
