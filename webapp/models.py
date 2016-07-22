@@ -1,7 +1,10 @@
 from datetime import datetime, timedelta
 
+from scipy import signal
+import numpy as np
+from sqlalchemy import desc
 from sqlalchemy.orm import relationship
-from webapp import db, wuclient
+from webapp import db, wuclient, app
 
 
 class Location(db.Model):
@@ -50,6 +53,7 @@ class Location(db.Model):
         self.download(now, today=True)
         for delta in xrange(1, self.lookback):
             self.download(now - timedelta(days=delta), today=False)
+        self.filter_history()
 
     def download(self, date, today):
         dls = self.get_download_status(date)
@@ -68,7 +72,7 @@ class Location(db.Model):
                 wdird = 0
             else:
                 wdird = int(wdird_s)
-            obs = Observation(time=timestamp, tempm=tempm, wspdm=wspdm, wdird=wdird)
+            obs = Observation(time=timestamp, tempm=tempm, wspdm_raw=wspdm, wdird=wdird)
             self.observations.append(obs)
         if dls is None:
             dls = HistoryDownloadStatus(date=date, partial=True, full=not today)
@@ -103,6 +107,45 @@ class Location(db.Model):
             forecast.hourly_forecasts.append(hourly_forecast)
         db.session.commit()
 
+    def filter_history(self):
+        """
+        replaces wspdm outliers for last self.lookback observation by median filter product
+        """
+        observations = db.session.query(Observation) \
+            .filter(Observation.location_id == self.id) \
+            .order_by(desc(Observation.time)) \
+            .limit(self.lookback) \
+            .all()
+
+        wspdm_raw_values = np.array([x.wspdm_raw for x in observations])
+        threshold = float(app.config['FILTER_THRESHOLD'])
+        kernel_size = int(app.config['FILTER_SIZE'])
+        wspdm = self._filter_history(wspdm_raw_values, threshold, kernel_size)
+
+        for idx, observation in enumerate(observations):
+            db.session.query(Observation) \
+                .filter(Observation.location_id == self.id) \
+                .filter(Observation.time == observation.time) \
+                .update({Observation.wspdm: wspdm[idx]}, synchronize_session=False)
+        db.session.commit()
+
+    @staticmethod
+    def _filter_history(raw_data, threshold=3.0, kernel_size=5):
+        outlier_flags = np.zeros(raw_data.shape, dtype=bool)
+        while True:
+            mean = np.mean(raw_data[~outlier_flags])
+            std = np.std(raw_data[~outlier_flags])
+            new_outlier_flags = np.abs(raw_data - mean) > threshold * std
+            if (new_outlier_flags == outlier_flags).all():
+                break
+            else:
+                outlier_flags = new_outlier_flags
+        medfiltered_data = signal.medfilt(raw_data, kernel_size=kernel_size)
+        output_data = raw_data.copy()
+        for i in outlier_flags.nonzero():
+            output_data[i] = medfiltered_data[i]
+        return output_data
+
 
 class HistoryDownloadStatus(db.Model):
     __tablename__ = 'history_download_status'
@@ -123,7 +166,8 @@ class Observation(db.Model):
     location_id = db.Column(db.Integer(), db.ForeignKey('locations.id'))
     time = db.Column(db.DateTime())  # UTC time
     tempm = db.Column(db.Float())  # Temp in C
-    wspdm = db.Column(db.Float())  # WindSpeed kph
+    wspdm_raw = db.Column(db.Float())  # WindSpeed kph
+    wspdm = db.Column(db.Float())  # WindSpeed kph with outliers filtered
     wdird = db.Column(db.Integer())  # Wind direction in degrees
 
     location = relationship('Location', back_populates='observations')
