@@ -12,6 +12,7 @@ logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(name)s - %(leve
 class OutliersTestCase(unittest.TestCase):
     sample_size = 100
     outliers_indices = (6, 7, 32, 50, 67, 69)
+    hole_indices = (40, 42)
 
     def setUp(self):
         a = 5.  # shape
@@ -21,6 +22,8 @@ class OutliersTestCase(unittest.TestCase):
         self.expected_max = np.max(self.raw_data)
         for i in self.outliers_indices:
             self.raw_data[i] = 10000 * sin(i)
+        for i in self.hole_indices:
+            self.raw_data[i] = None
 
     def tearDown(self):
         pass
@@ -37,13 +40,17 @@ class OutliersTestCase(unittest.TestCase):
 
         self.assertEqual(len(data), len(self.raw_data))
 
-        non_outliers_initial = [self.raw_data[i] for i in xrange(self.sample_size) if i not in self.outliers_indices]
-        non_outliers_filtered = [data[i] for i in xrange(self.sample_size) if i not in self.outliers_indices]
+        good_data_initial = [self.raw_data[i] for i in xrange(self.sample_size) if i not in self.outliers_indices
+                             and i not in self.hole_indices]
+        good_data_filtered = [data[i] for i in xrange(self.sample_size) if i not in self.outliers_indices
+                              and i not in self.hole_indices]
 
-        self.assertListEqual(non_outliers_initial, non_outliers_filtered)
+        self.assertListEqual(good_data_filtered, good_data_initial)
 
-        self.assertTrue(np.all(data <= self.expected_max))
-        self.assertTrue(np.all(data >= self.expected_min))
+        data_without_nans = data[np.isfinite(data)]
+
+        self.assertTrue(np.all(data_without_nans <= self.expected_max))
+        self.assertTrue(np.all(data_without_nans >= self.expected_min))
 
 
 if __name__ == '__main__':

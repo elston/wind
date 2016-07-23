@@ -121,7 +121,7 @@ class Location(db.Model):
             .order_by(Observation.time) \
             .all()
 
-        wspdm_raw_values = np.array([x.wspdm_raw for x in observations])
+        wspdm_raw_values = np.array([x.wspdm_raw for x in observations], dtype=np.float)
         threshold = float(app.config['FILTER_THRESHOLD'])
         kernel_size = int(app.config['FILTER_SIZE'])
         wspdm = self._filter_history(wspdm_raw_values, threshold, kernel_size)
@@ -136,9 +136,10 @@ class Location(db.Model):
     @staticmethod
     def _filter_history(raw_data, threshold=3.0, kernel_size=5):
         outlier_flags = np.zeros(raw_data.shape, dtype=bool)
+        raw_data = raw_data
         while True:
-            mean = np.mean(raw_data[~outlier_flags])
-            std = np.std(raw_data[~outlier_flags])
+            mean = np.mean(raw_data[~outlier_flags & np.isfinite(raw_data)])
+            std = np.std(raw_data[~outlier_flags & np.isfinite(raw_data)])
             new_outlier_flags = np.abs(raw_data - mean) > threshold * std
             if (new_outlier_flags == outlier_flags).all():
                 break
@@ -156,7 +157,8 @@ class Location(db.Model):
             .order_by(Observation.time) \
             .all()
 
-        wspdm_values = np.array([x.wspdm for x in observations])
+        wspdm_values = np.array([x.wspdm for x in observations], dtype=np.float)
+        wspdm_values = wspdm_values[np.isfinite(wspdm_values)]
         shape, scale, histogram, pdf = self._fit_get_wspd_model(wspdm_values)
         self.wspd_shape = shape
         self.wspd_scale = scale
