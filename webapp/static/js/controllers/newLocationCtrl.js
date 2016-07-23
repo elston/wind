@@ -9,6 +9,7 @@ function ($scope, $rootScope, $http, $log, $timeout) {
         enableSorting: false,
         enableRowSelection: true,
         multiSelect: false,
+        rowHeight: 40,
         columnDefs: [
             {field: 'name'},
             {field: 'city'},
