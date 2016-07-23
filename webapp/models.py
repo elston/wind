@@ -118,8 +118,7 @@ class Location(db.Model):
         """
         observations = db.session.query(Observation) \
             .filter(Observation.location_id == self.id) \
-            .order_by(desc(Observation.time)) \
-            .limit(self.lookback) \
+            .order_by(Observation.time) \
             .all()
 
         wspdm_raw_values = np.array([x.wspdm_raw for x in observations])
@@ -154,8 +153,7 @@ class Location(db.Model):
     def fit_get_wspd_model(self):
         observations = db.session.query(Observation) \
             .filter(Observation.location_id == self.id) \
-            .order_by(desc(Observation.time)) \
-            .limit(self.lookback) \
+            .order_by(Observation.time) \
             .all()
 
         wspdm_values = np.array([x.wspdm for x in observations])
