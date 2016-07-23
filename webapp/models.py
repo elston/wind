@@ -3,7 +3,6 @@ from datetime import datetime, timedelta
 from scipy import signal
 import numpy as np
 from scipy import stats
-from sqlalchemy import desc
 from sqlalchemy.orm import relationship
 from webapp import db, wuclient, app
 
@@ -12,7 +11,7 @@ class Location(db.Model):
     __tablename__ = 'locations'
 
     id = db.Column(db.Integer(), primary_key=True)
-    user_id = db.Column(db.Integer(), db.ForeignKey('user.id'))
+    user_id = db.Column(db.Integer(), db.ForeignKey('user.id'), index=True)
     name = db.Column(db.String(255))
     country_iso3166 = db.Column(db.String(4))  # DE
     country_name = db.Column(db.String(255))  # Germany
@@ -178,8 +177,8 @@ class HistoryDownloadStatus(db.Model):
     __tablename__ = 'history_download_status'
 
     id = db.Column(db.Integer(), primary_key=True)
-    location_id = db.Column(db.Integer(), db.ForeignKey('locations.id'))
-    date = db.Column(db.Date())  # UTC date
+    location_id = db.Column(db.Integer(), db.ForeignKey('locations.id'), index=True)
+    date = db.Column(db.Date(), index=True)  # UTC date
     partial = db.Column(db.Boolean())
     full = db.Column(db.Boolean())
 
@@ -190,8 +189,8 @@ class Observation(db.Model):
     __tablename__ = 'observations'
 
     id = db.Column(db.Integer(), primary_key=True)
-    location_id = db.Column(db.Integer(), db.ForeignKey('locations.id'))
-    time = db.Column(db.DateTime())  # UTC time
+    location_id = db.Column(db.Integer(), db.ForeignKey('locations.id'), index=True)
+    time = db.Column(db.DateTime(), index=True)  # UTC time
     tempm = db.Column(db.Float())  # Temp in C
     wspdm_raw = db.Column(db.Float())  # WindSpeed kph
     wspdm = db.Column(db.Float())  # WindSpeed kph with outliers filtered
