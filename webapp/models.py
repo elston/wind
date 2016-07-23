@@ -168,9 +168,10 @@ class Location(db.Model):
     def _fit_get_wspd_model(data):
         shape, location, scale = stats.weibull_min.fit(data, floc=0)
         hist, bin_edges = np.histogram(data, bins='auto')
+        bin_width = bin_edges[1] - bin_edges[0]
         bin_centers = 0.5 * (bin_edges[1:] + bin_edges[:-1])
         pdf = stats.weibull_min.pdf(bin_centers, shape, location, scale)
-        return shape, scale, zip(bin_centers, hist / float(sum(hist))), zip(bin_centers, pdf)
+        return shape, scale, zip(bin_centers, hist / float(sum(hist)) / bin_width), zip(bin_centers, pdf)
 
 
 class HistoryDownloadStatus(db.Model):
