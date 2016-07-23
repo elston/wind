@@ -12,6 +12,7 @@ logging.basicConfig(level=logging_level, format='%(asctime)s - %(name)s - %(leve
 
 log = logging.getLogger('werkzeug')
 log.setLevel(logging.INFO if logging_level == logging.DEBUG else logging.WARN)  # werkzeug is too blabbing
+logging.getLogger('sqlalchemy.engine').setLevel(logging.INFO if logging_level == logging.DEBUG else logging.WARN)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=12080,
