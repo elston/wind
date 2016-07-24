@@ -23,3 +23,7 @@ put Google maps API key in the file named gmap_api_key in this directory
 `venv/bin/alembic upgrade head` if database schema changed
 
 `venv/bin/pip install -r requirements.txt` if Python dependencies changed
+
+# notes
+
+`env/bin/pip install git+git://github.com/statsmodels/statsmodels.git`
