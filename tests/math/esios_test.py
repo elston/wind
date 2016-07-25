@@ -9,13 +9,26 @@ def test():
     plot_esios_data(test_data.data)
     test_data.fit_models()
 
-    # predict = test_data.lambdaD_model.predict(start=50, end=100)
 
     import matplotlib
     matplotlib.use('TkAgg')
     import matplotlib.pyplot as plt
-    # plt.plot(test_data.data.index[:100], test_data.data['lambdaD'][:100], predict.index, np.exp(predict), '--')
-    plt.plot(test_data.data.index, test_data.data.lambdaD)
+    predict_lambdaD = test_data.lambdaD_model.predict(start=100, end=200, dynamic=True)
+    plt.plot(test_data.data.index[:200], test_data.data['lambdaD'][:200])
+    plt.plot(predict_lambdaD.index, np.exp(predict_lambdaD), '--')
+    plt.title('e.sios $\lambda^D$ prediction')
+    plt.show()
+
+    predict_MAvsMD = test_data.MAvsMD_model.predict(start=100, end=200, dynamic=True)
+    plt.plot(test_data.data.index[:200], test_data.data['MAvsMD'][:200])
+    plt.plot(predict_MAvsMD.index, predict_MAvsMD, '--')
+    plt.title('e.sios $\Delta\lambda$ prediction')
+    plt.show()
+
+    predict_imbalance = test_data.imbalance_model.predict(start=100, end=200, dynamic=True)
+    plt.plot(test_data.data.index[:200], test_data.data['imbalance'][:200])
+    plt.plot(predict_imbalance.index, predict_imbalance, '--')
+    plt.title('e.sios $\sqrt{r}$ prediction')
     plt.show()
 
 
