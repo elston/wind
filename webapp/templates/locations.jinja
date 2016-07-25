@@ -50,11 +50,22 @@
 
                                 <div class="input-group">
                                     <input type="text" class="form-control" placeholder="Search for..."
-                                           ng-model="query" ng-keyup="$event.keyCode == 13 ? search() : null">
+                                           ng-model="query" ng-keyup="$event.keyCode == 13 ? search() : null"
+                                           uib-typeahead="location.name for location in getSuggestions($viewValue)"
+                                           typeahead-loading="loadingLocations"
+                                           typeahead-no-results="noResults"
+                                           typeahead-on-select="typeaheadSelected($item, $model, $label, $event)">
                                       <span class="input-group-btn">
                                         <button class="btn btn-primary" type="button" ng-click="search()">Search
                                         </button>
                                       </span>
+<!--
+                                    <i ng-show="loadingLocations" class="glyphicon glyphicon-refresh"></i>
+
+                                    <div ng-show="noResults">
+                                        <i class="glyphicon glyphicon-remove"></i> No Results Found
+                                    </div>
+-->
                                 </div>
                                 <div ng-if='manyLocations'>
                                     <div id="select-location-grid" ui-grid="gridOptions" ui-grid-selection
