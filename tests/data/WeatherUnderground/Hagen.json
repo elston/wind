@@ -1,0 +1,377 @@
+{
+  "response": {
+    "version": "0.1",
+    "termsofService": "http://www.wunderground.com/weather/api/d/terms.html",
+    "features": {
+      "geolookup": 1
+    }
+  },
+  "location": {
+    "type": "INTLCITY",
+    "country": "DL",
+    "country_iso3166": "DE",
+    "country_name": "Germany",
+    "state": "",
+    "city": "Hagen",
+    "tz_short": "CEST",
+    "tz_long": "Europe/Berlin",
+    "lat": "52.20000076",
+    "lon": "7.98333311",
+    "zip": "00000",
+    "magic": "14",
+    "wmo": "10317",
+    "l": "/q/zmw:00000.14.10317",
+    "requesturl": "global/stations/10317.html",
+    "wuiurl": "https://www.wunderground.com/global/stations/10317.html",
+    "nearby_weather_stations": {
+      "airport": {
+        "station": [
+          {
+            "city": "",
+            "state": "",
+            "country": "",
+            "icao": "",
+            "lat": "",
+            "lon": ""
+          },
+          {
+            "city": "Muenster",
+            "state": "",
+            "country": "DL",
+            "icao": "EDDG",
+            "lat": "52.13454819",
+            "lon": "7.69645977"
+          },
+          {
+            "city": "Diepholz",
+            "state": "",
+            "country": "DL",
+            "icao": "ETND",
+            "lat": "52.58811188",
+            "lon": "8.34255028"
+          },
+          {
+            "city": "Rheine Bentlage",
+            "state": "",
+            "country": "DL",
+            "icao": "ETHE",
+            "lat": "52.28916550",
+            "lon": "7.38638878"
+          }
+        ]
+      },
+      "pws": {
+        "station": [
+          {
+            "neighborhood": "Kiwittstraße",
+            "city": "Hagen",
+            "state": "",
+            "country": "DE",
+            "id": "IHAGEN54",
+            "lat": 52.200920,
+            "lon": 7.987139,
+            "distance_km": 0,
+            "distance_mi": 0
+          },
+          {
+            "neighborhood": "Pappelgraben",
+            "city": "Hagen",
+            "state": "",
+            "country": "DE",
+            "id": "IHAGEN68",
+            "lat": 52.192131,
+            "lon": 7.970740,
+            "distance_km": 1,
+            "distance_mi": 0
+          },
+          {
+            "neighborhood": "Sutthauser Straße",
+            "city": "Georgsmarienhütte",
+            "state": "",
+            "country": "DE",
+            "id": "IGEORGSM8",
+            "lat": 52.215603,
+            "lon": 8.003131,
+            "distance_km": 2,
+            "distance_mi": 1
+          },
+          {
+            "neighborhood": "Obere Findelstätte",
+            "city": "Georgsmarienhütte",
+            "state": "",
+            "country": "DL",
+            "id": "IGEORGSM18",
+            "lat": 52.197533,
+            "lon": 8.018095,
+            "distance_km": 2,
+            "distance_mi": 1
+          },
+          {
+            "neighborhood": "Schönblick",
+            "city": "Georgsmarienhütte",
+            "state": "",
+            "country": "DE",
+            "id": "IGEORGSM2",
+            "lat": 52.207314,
+            "lon": 8.016629,
+            "distance_km": 2,
+            "distance_mi": 1
+          },
+          {
+            "neighborhood": "Holperdorp Straße",
+            "city": "Lienen",
+            "state": "",
+            "country": "DL",
+            "id": "ILIENEN3",
+            "lat": 52.167175,
+            "lon": 7.992384,
+            "distance_km": 3,
+            "distance_mi": 2
+          },
+          {
+            "neighborhood": "Ringstraße",
+            "city": "Hagen",
+            "state": "",
+            "country": "DE",
+            "id": "IHAGEN58",
+            "lat": 52.206497,
+            "lon": 7.923273,
+            "distance_km": 4,
+            "distance_mi": 2
+          },
+          {
+            "neighborhood": "Irisweg",
+            "city": "Hasbergen",
+            "state": "",
+            "country": "DE",
+            "id": "IHASBERG10",
+            "lat": 52.231735,
+            "lon": 7.948459,
+            "distance_km": 4,
+            "distance_mi": 2
+          },
+          {
+            "neighborhood": "Ritterspornweg",
+            "city": "Osnabrück",
+            "state": "",
+            "country": "DE",
+            "id": "IOSNABRC107",
+            "lat": 52.230003,
+            "lon": 8.025246,
+            "distance_km": 4,
+            "distance_mi": 2
+          },
+          {
+            "neighborhood": "Stüvestraße",
+            "city": "Hasbergen",
+            "state": "",
+            "country": "DE",
+            "id": "IHASBERG2",
+            "lat": 52.232124,
+            "lon": 7.941230,
+            "distance_km": 4,
+            "distance_mi": 2
+          },
+          {
+            "neighborhood": "Adolf-Staperfeld-Straße",
+            "city": "Osnabrück",
+            "state": "",
+            "country": "DL",
+            "id": "IOSNABRC31",
+            "lat": 52.244144,
+            "lon": 8.019384,
+            "distance_km": 5,
+            "distance_mi": 3
+          },
+          {
+            "neighborhood": "Bischof-Benno-Straße",
+            "city": "Bad Iburg",
+            "state": "",
+            "country": "DE",
+            "id": "IBADIBUR2",
+            "lat": 52.162258,
+            "lon": 8.043391,
+            "distance_km": 5,
+            "distance_mi": 3
+          },
+          {
+            "neighborhood": "Hauptstraße",
+            "city": "Lienen",
+            "state": "",
+            "country": "DE",
+            "id": "ILIENEN2",
+            "lat": 52.146629,
+            "lon": 7.975491,
+            "distance_km": 5,
+            "distance_mi": 3
+          },
+          {
+            "neighborhood": "Lienen NRW",
+            "city": "Lienen",
+            "state": "NORDRHEIN-WESTFALEN",
+            "country": "DE",
+            "id": "INORDRHE421",
+            "lat": 52.142532,
+            "lon": 7.983391,
+            "distance_km": 6,
+            "distance_mi": 3
+          },
+          {
+            "neighborhood": "Eichholzweg",
+            "city": "Bad Iburg",
+            "state": "",
+            "country": "DE",
+            "id": "IBADIBUR5",
+            "lat": 52.160198,
+            "lon": 8.052072,
+            "distance_km": 6,
+            "distance_mi": 3
+          },
+          {
+            "neighborhood": "Irisweg",
+            "city": "Osnabrück",
+            "state": "",
+            "country": "DE",
+            "id": "IOSNABRC63",
+            "lat": 52.256523,
+            "lon": 8.004408,
+            "distance_km": 6,
+            "distance_mi": 3
+          },
+          {
+            "neighborhood": "Stettiner Straße",
+            "city": "Tecklenburg",
+            "state": "",
+            "country": "DE",
+            "id": "ITECKLEN5",
+            "lat": 52.216270,
+            "lon": 7.890249,
+            "distance_km": 6,
+            "distance_mi": 3
+          },
+          {
+            "neighborhood": "Heinrich-Schmedt-Straße",
+            "city": "Georgsmarienhütte",
+            "state": "",
+            "country": "DE",
+            "id": "IGEORGSM14",
+            "lat": 52.199757,
+            "lon": 8.087890,
+            "distance_km": 7,
+            "distance_mi": 4
+          },
+          {
+            "neighborhood": "Spenglerstraße",
+            "city": "Georgsmarienhütte",
+            "state": "",
+            "country": "DE",
+            "id": "IGEORGSM6",
+            "lat": 52.197109,
+            "lon": 8.087907,
+            "distance_km": 7,
+            "distance_mi": 4
+          },
+          {
+            "neighborhood": "Bröckerweg",
+            "city": "Osnabrück",
+            "state": "",
+            "country": "DE",
+            "id": "IOSNABRC59",
+            "lat": 52.251308,
+            "lon": 8.054517,
+            "distance_km": 7,
+            "distance_mi": 4
+          },
+          {
+            "neighborhood": "Jenaer Weg",
+            "city": "Osnabrück",
+            "state": "",
+            "country": "DE",
+            "id": "IOSNABRC77",
+            "lat": 52.263859,
+            "lon": 8.020330,
+            "distance_km": 7,
+            "distance_mi": 4
+          },
+          {
+            "neighborhood": "Am Nahner Turm",
+            "city": "Osnabrück",
+            "state": "",
+            "country": "DE",
+            "id": "IOSNABRC103",
+            "lat": 52.244354,
+            "lon": 8.068444,
+            "distance_km": 7,
+            "distance_mi": 4
+          },
+          {
+            "neighborhood": "Im Strehlande",
+            "city": "Georgsmarienhütte",
+            "state": "",
+            "country": "DE",
+            "id": "IGEORGSM4",
+            "lat": 52.186920,
+            "lon": 8.093983,
+            "distance_km": 7,
+            "distance_mi": 4
+          },
+          {
+            "neighborhood": "Frankfurter Heerstraße",
+            "city": "Osnabrück",
+            "state": "",
+            "country": "DE",
+            "id": "IOSNABRC71",
+            "lat": 52.243698,
+            "lon": 8.070998,
+            "distance_km": 7,
+            "distance_mi": 4
+          },
+          {
+            "neighborhood": "Schlesierstraße",
+            "city": "Lengerich",
+            "state": "",
+            "country": "DE",
+            "id": "ILENGERI8",
+            "lat": 52.179787,
+            "lon": 7.874254,
+            "distance_km": 7,
+            "distance_mi": 4
+          },
+          {
+            "neighborhood": "Poststraße",
+            "city": "Lengerich",
+            "state": "",
+            "country": "DE",
+            "id": "ILENGERI5",
+            "lat": 52.175873,
+            "lon": 7.875433,
+            "distance_km": 7,
+            "distance_mi": 4
+          },
+          {
+            "neighborhood": "Hiärm-Grupe-Straße",
+            "city": "Osnabrück",
+            "state": "",
+            "country": "DE",
+            "id": "IOSNABRC83",
+            "lat": 52.264687,
+            "lon": 8.029108,
+            "distance_km": 7,
+            "distance_mi": 4
+          },
+          {
+            "neighborhood": "Zum Stollen",
+            "city": "Georgsmarienhütte",
+            "state": "",
+            "country": "DE",
+            "id": "IGEORGSM3",
+            "lat": 52.203938,
+            "lon": 8.100018,
+            "distance_km": 7,
+            "distance_mi": 4
+          }
+        ]
+      }
+    }
+  }
+}

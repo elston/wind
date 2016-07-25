@@ -1,0 +1,51 @@
+{
+  "response": {
+    "version": "0.1",
+    "termsofService": "http://www.wunderground.com/weather/api/d/terms.html",
+    "features": {
+      "geolookup": 1
+    },
+    "results": [
+      {
+        "name": "Düsseldorf",
+        "city": "Düsseldorf",
+        "state": "",
+        "country": "DL",
+        "country_iso3166": "DE",
+        "country_name": "Germany",
+        "zmw": "00000.1.10400",
+        "l": "/q/zmw:00000.1.10400"
+      },
+      {
+        "name": "Düsseldorf",
+        "city": "Düsseldorf",
+        "state": "",
+        "country": "DL",
+        "country_iso3166": "DE",
+        "country_name": "Germany",
+        "zmw": "00000.5.10400",
+        "l": "/q/zmw:00000.5.10400"
+      },
+      {
+        "name": "Düsseldorf",
+        "city": "Düsseldorf",
+        "state": "",
+        "country": "DL",
+        "country_iso3166": "DE",
+        "country_name": "Germany",
+        "zmw": "00000.4.10400",
+        "l": "/q/zmw:00000.4.10400"
+      },
+      {
+        "name": "Düsseldorf",
+        "city": "Düsseldorf",
+        "state": "",
+        "country": "DL",
+        "country_iso3166": "DE",
+        "country_name": "Germany",
+        "zmw": "00000.3.10400",
+        "l": "/q/zmw:00000.3.10400"
+      }
+    ]
+  }
+}

@@ -1,0 +1,64 @@
+
+{
+  "response": {
+  "version":"0.1",
+  "termsofService":"http://www.wunderground.com/weather/api/d/terms.html",
+  "features": {
+  "geolookup": 1
+  }
+	}
+		,	"location": {
+		"type":"INTLCITY",
+		"country":"RO",
+		"country_iso3166":"RO",
+		"country_name":"Romania",
+		"state":"",
+		"city":"Fântânele",
+		"tz_short":"EEST",
+		"tz_long":"Europe/Bucharest",
+		"lat":"44.590000",
+		"lon":"28.560000",
+		"zip":"00000",
+		"magic":"6",
+		"wmo":"15481",
+		"l":"/q/zmw:00000.6.15481",
+		"requesturl":"global/stations/15481.html",
+		"wuiurl":"https://www.wunderground.com/global/stations/15481.html",
+		"nearby_weather_stations": {
+		"airport": {
+		"station": [
+		{ "city":"", "state":"", "country":"", "icao":"", "lat":"", "lon":"" }
+		,{ "city":"Kogalniceanu", "state":"", "country":"RO", "icao":"LRCK", "lat":"44.33333206", "lon":"28.43333244" }
+		,{ "city":"Tulcea", "state":"", "country":"RO", "icao":"LRTC", "lat":"45.06454849", "lon":"28.71585846" }
+		]
+		}
+		,
+		"pws": {
+		"station": [
+		{
+		"neighborhood":"ulitsa Mezentseva",
+		"city":"Constanța",
+		"state":"",
+		"country":"RO",
+		"id":"ICONSTAN25",
+		"lat":44.268562,
+		"lon":28.619129,
+		"distance_km":36,
+		"distance_mi":21
+		},
+		{
+		"neighborhood":"Bulevardul Mamaia",
+		"city":"Constanța",
+		"state":"",
+		"country":"RO",
+		"id":"ICONSTAN16",
+		"lat":44.256531,
+		"lon":28.618296,
+		"distance_km":37,
+		"distance_mi":22
+		}
+		]
+		}
+		}
+	}
+}

@@ -1,0 +1,41 @@
+
+{
+  "response": {
+  "version":"0.1",
+  "termsofService":"http://www.wunderground.com/weather/api/d/terms.html",
+  "features": {
+  "geolookup": 1
+  }
+	}
+		,	"location": {
+		"type":"INTLCITY",
+		"country":"DL",
+		"country_iso3166":"DE",
+		"country_name":"Germany",
+		"state":"",
+		"city":"Ufs Tw-Ems",
+		"tz_short":"CEST",
+		"tz_long":"Europe/Berlin",
+		"lat":"53.966667",
+		"lon":"6.550000",
+		"zip":"00000",
+		"magic":"1",
+		"wmo":"10004",
+		"l":"/q/zmw:00000.1.10004",
+		"requesturl":"global/stations/10004.html",
+		"wuiurl":"https://www.wunderground.com/global/stations/10004.html",
+		"nearby_weather_stations": {
+		"airport": {
+		"station": [
+		{ "city":"", "state":"", "country":"", "icao":"", "lat":"", "lon":"" }
+		,{ "city":"Awg-1 Sea", "state":"", "country":"NL", "icao":"EHMA", "lat":"53.49166870", "lon":"5.94166708" }
+		]
+		}
+		,
+		"pws": {
+		"station": [
+		]
+		}
+		}
+	}
+}

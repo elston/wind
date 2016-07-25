@@ -1,0 +1,2891 @@
+{
+  "response": {
+    "version": "0.1",
+    "termsofService": "http://www.wunderground.com/weather/api/d/terms.html",
+    "features": {
+      "hourly": 1
+    }
+  },
+  "hourly_forecast": [
+    {
+      "FCTTIME": {
+        "hour": "12",
+        "hour_padded": "12",
+        "min": "00",
+        "min_unpadded": "0",
+        "sec": "0",
+        "year": "2016",
+        "mon": "7",
+        "mon_padded": "07",
+        "mon_abbrev": "Jul",
+        "mday": "15",
+        "mday_padded": "15",
+        "yday": "196",
+        "isdst": "1",
+        "epoch": "1468576800",
+        "pretty": "12:00 PM CEST on July 15, 2016",
+        "civil": "12:00 PM",
+        "month_name": "July",
+        "month_name_abbrev": "Jul",
+        "weekday_name": "Friday",
+        "weekday_name_night": "Friday Night",
+        "weekday_name_abbrev": "Fri",
+        "weekday_name_unlang": "Friday",
+        "weekday_name_night_unlang": "Friday Night",
+        "ampm": "PM",
+        "tz": "",
+        "age": "",
+        "UTCDATE": ""
+      },
+      "temp": {
+        "english": "64",
+        "metric": "18"
+      },
+      "dewpoint": {
+        "english": "50",
+        "metric": "10"
+      },
+      "condition": "Partly Cloudy",
+      "icon": "partlycloudy",
+      "icon_url": "http://icons.wxug.com/i/c/k/partlycloudy.gif",
+      "fctcode": "2",
+      "sky": "48",
+      "wspd": {
+        "english": "9",
+        "metric": "14"
+      },
+      "wdir": {
+        "dir": "NW",
+        "degrees": "311"
+      },
+      "wx": "Partly Cloudy",
+      "uvi": "6",
+      "humidity": "61",
+      "windchill": {
+        "english": "-9999",
+        "metric": "-9999"
+      },
+      "heatindex": {
+        "english": "-9999",
+        "metric": "-9999"
+      },
+      "feelslike": {
+        "english": "64",
+        "metric": "18"
+      },
+      "qpf": {
+        "english": "0.0",
+        "metric": "0"
+      },
+      "snow": {
+        "english": "0.0",
+        "metric": "0"
+      },
+      "pop": "1",
+      "mslp": {
+        "english": "30.28",
+        "metric": "1025"
+      }
+    },
+    {
+      "FCTTIME": {
+        "hour": "13",
+        "hour_padded": "13",
+        "min": "00",
+        "min_unpadded": "0",
+        "sec": "0",
+        "year": "2016",
+        "mon": "7",
+        "mon_padded": "07",
+        "mon_abbrev": "Jul",
+        "mday": "15",
+        "mday_padded": "15",
+        "yday": "196",
+        "isdst": "1",
+        "epoch": "1468580400",
+        "pretty": "1:00 PM CEST on July 15, 2016",
+        "civil": "1:00 PM",
+        "month_name": "July",
+        "month_name_abbrev": "Jul",
+        "weekday_name": "Friday",
+        "weekday_name_night": "Friday Night",
+        "weekday_name_abbrev": "Fri",
+        "weekday_name_unlang": "Friday",
+        "weekday_name_night_unlang": "Friday Night",
+        "ampm": "PM",
+        "tz": "",
+        "age": "",
+        "UTCDATE": ""
+      },
+      "temp": {
+        "english": "64",
+        "metric": "18"
+      },
+      "dewpoint": {
+        "english": "50",
+        "metric": "10"
+      },
+      "condition": "Mostly Cloudy",
+      "icon": "mostlycloudy",
+      "icon_url": "http://icons.wxug.com/i/c/k/mostlycloudy.gif",
+      "fctcode": "3",
+      "sky": "60",
+      "wspd": {
+        "english": "8",
+        "metric": "13"
+      },
+      "wdir": {
+        "dir": "NW",
+        "degrees": "305"
+      },
+      "wx": "Mostly Cloudy",
+      "uvi": "6",
+      "humidity": "60",
+      "windchill": {
+        "english": "-9999",
+        "metric": "-9999"
+      },
+      "heatindex": {
+        "english": "-9999",
+        "metric": "-9999"
+      },
+      "feelslike": {
+        "english": "64",
+        "metric": "18"
+      },
+      "qpf": {
+        "english": "0.0",
+        "metric": "0"
+      },
+      "snow": {
+        "english": "0.0",
+        "metric": "0"
+      },
+      "pop": "6",
+      "mslp": {
+        "english": "30.27",
+        "metric": "1025"
+      }
+    },
+    {
+      "FCTTIME": {
+        "hour": "14",
+        "hour_padded": "14",
+        "min": "00",
+        "min_unpadded": "0",
+        "sec": "0",
+        "year": "2016",
+        "mon": "7",
+        "mon_padded": "07",
+        "mon_abbrev": "Jul",
+        "mday": "15",
+        "mday_padded": "15",
+        "yday": "196",
+        "isdst": "1",
+        "epoch": "1468584000",
+        "pretty": "2:00 PM CEST on July 15, 2016",
+        "civil": "2:00 PM",
+        "month_name": "July",
+        "month_name_abbrev": "Jul",
+        "weekday_name": "Friday",
+        "weekday_name_night": "Friday Night",
+        "weekday_name_abbrev": "Fri",
+        "weekday_name_unlang": "Friday",
+        "weekday_name_night_unlang": "Friday Night",
+        "ampm": "PM",
+        "tz": "",
+        "age": "",
+        "UTCDATE": ""
+      },
+      "temp": {
+        "english": "65",
+        "metric": "18"
+      },
+      "dewpoint": {
+        "english": "51",
+        "metric": "11"
+      },
+      "condition": "Overcast",
+      "icon": "cloudy",
+      "icon_url": "http://icons.wxug.com/i/c/k/cloudy.gif",
+      "fctcode": "4",
+      "sky": "80",
+      "wspd": {
+        "english": "7",
+        "metric": "11"
+      },
+      "wdir": {
+        "dir": "WNW",
+        "degrees": "300"
+      },
+      "wx": "Cloudy",
+      "uvi": "4",
+      "humidity": "60",
+      "windchill": {
+        "english": "-9999",
+        "metric": "-9999"
+      },
+      "heatindex": {
+        "english": "-9999",
+        "metric": "-9999"
+      },
+      "feelslike": {
+        "english": "65",
+        "metric": "18"
+      },
+      "qpf": {
+        "english": "0.0",
+        "metric": "0"
+      },
+      "snow": {
+        "english": "0.0",
+        "metric": "0"
+      },
+      "pop": "15",
+      "mslp": {
+        "english": "30.27",
+        "metric": "1025"
+      }
+    },
+    {
+      "FCTTIME": {
+        "hour": "15",
+        "hour_padded": "15",
+        "min": "00",
+        "min_unpadded": "0",
+        "sec": "0",
+        "year": "2016",
+        "mon": "7",
+        "mon_padded": "07",
+        "mon_abbrev": "Jul",
+        "mday": "15",
+        "mday_padded": "15",
+        "yday": "196",
+        "isdst": "1",
+        "epoch": "1468587600",
+        "pretty": "3:00 PM CEST on July 15, 2016",
+        "civil": "3:00 PM",
+        "month_name": "July",
+        "month_name_abbrev": "Jul",
+        "weekday_name": "Friday",
+        "weekday_name_night": "Friday Night",
+        "weekday_name_abbrev": "Fri",
+        "weekday_name_unlang": "Friday",
+        "weekday_name_night_unlang": "Friday Night",
+        "ampm": "PM",
+        "tz": "",
+        "age": "",
+        "UTCDATE": ""
+      },
+      "temp": {
+        "english": "66",
+        "metric": "19"
+      },
+      "dewpoint": {
+        "english": "51",
+        "metric": "11"
+      },
+      "condition": "Overcast",
+      "icon": "cloudy",
+      "icon_url": "http://icons.wxug.com/i/c/k/cloudy.gif",
+      "fctcode": "4",
+      "sky": "93",
+      "wspd": {
+        "english": "8",
+        "metric": "13"
+      },
+      "wdir": {
+        "dir": "WNW",
+        "degrees": "301"
+      },
+      "wx": "Cloudy",
+      "uvi": "3",
+      "humidity": "59",
+      "windchill": {
+        "english": "-9999",
+        "metric": "-9999"
+      },
+      "heatindex": {
+        "english": "-9999",
+        "metric": "-9999"
+      },
+      "feelslike": {
+        "english": "66",
+        "metric": "19"
+      },
+      "qpf": {
+        "english": "0.0",
+        "metric": "0"
+      },
+      "snow": {
+        "english": "0.0",
+        "metric": "0"
+      },
+      "pop": "18",
+      "mslp": {
+        "english": "30.27",
+        "metric": "1025"
+      }
+    },
+    {
+      "FCTTIME": {
+        "hour": "16",
+        "hour_padded": "16",
+        "min": "00",
+        "min_unpadded": "0",
+        "sec": "0",
+        "year": "2016",
+        "mon": "7",
+        "mon_padded": "07",
+        "mon_abbrev": "Jul",
+        "mday": "15",
+        "mday_padded": "15",
+        "yday": "196",
+        "isdst": "1",
+        "epoch": "1468591200",
+        "pretty": "4:00 PM CEST on July 15, 2016",
+        "civil": "4:00 PM",
+        "month_name": "July",
+        "month_name_abbrev": "Jul",
+        "weekday_name": "Friday",
+        "weekday_name_night": "Friday Night",
+        "weekday_name_abbrev": "Fri",
+        "weekday_name_unlang": "Friday",
+        "weekday_name_night_unlang": "Friday Night",
+        "ampm": "PM",
+        "tz": "",
+        "age": "",
+        "UTCDATE": ""
+      },
+      "temp": {
+        "english": "66",
+        "metric": "19"
+      },
+      "dewpoint": {
+        "english": "51",
+        "metric": "11"
+      },
+      "condition": "Overcast",
+      "icon": "cloudy",
+      "icon_url": "http://icons.wxug.com/i/c/k/cloudy.gif",
+      "fctcode": "4",
+      "sky": "97",
+      "wspd": {
+        "english": "9",
+        "metric": "14"
+      },
+      "wdir": {
+        "dir": "WNW",
+        "degrees": "298"
+      },
+      "wx": "Cloudy",
+      "uvi": "2",
+      "humidity": "59",
+      "windchill": {
+        "english": "-9999",
+        "metric": "-9999"
+      },
+      "heatindex": {
+        "english": "-9999",
+        "metric": "-9999"
+      },
+      "feelslike": {
+        "english": "66",
+        "metric": "19"
+      },
+      "qpf": {
+        "english": "0.0",
+        "metric": "0"
+      },
+      "snow": {
+        "english": "0.0",
+        "metric": "0"
+      },
+      "pop": "16",
+      "mslp": {
+        "english": "30.27",
+        "metric": "1025"
+      }
+    },
+    {
+      "FCTTIME": {
+        "hour": "17",
+        "hour_padded": "17",
+        "min": "00",
+        "min_unpadded": "0",
+        "sec": "0",
+        "year": "2016",
+        "mon": "7",
+        "mon_padded": "07",
+        "mon_abbrev": "Jul",
+        "mday": "15",
+        "mday_padded": "15",
+        "yday": "196",
+        "isdst": "1",
+        "epoch": "1468594800",
+        "pretty": "5:00 PM CEST on July 15, 2016",
+        "civil": "5:00 PM",
+        "month_name": "July",
+        "month_name_abbrev": "Jul",
+        "weekday_name": "Friday",
+        "weekday_name_night": "Friday Night",
+        "weekday_name_abbrev": "Fri",
+        "weekday_name_unlang": "Friday",
+        "weekday_name_night_unlang": "Friday Night",
+        "ampm": "PM",
+        "tz": "",
+        "age": "",
+        "UTCDATE": ""
+      },
+      "temp": {
+        "english": "66",
+        "metric": "19"
+      },
+      "dewpoint": {
+        "english": "52",
+        "metric": "11"
+      },
+      "condition": "Overcast",
+      "icon": "cloudy",
+      "icon_url": "http://icons.wxug.com/i/c/k/cloudy.gif",
+      "fctcode": "4",
+      "sky": "95",
+      "wspd": {
+        "english": "9",
+        "metric": "14"
+      },
+      "wdir": {
+        "dir": "WNW",
+        "degrees": "299"
+      },
+      "wx": "Cloudy",
+      "uvi": "2",
+      "humidity": "60",
+      "windchill": {
+        "english": "-9999",
+        "metric": "-9999"
+      },
+      "heatindex": {
+        "english": "-9999",
+        "metric": "-9999"
+      },
+      "feelslike": {
+        "english": "66",
+        "metric": "19"
+      },
+      "qpf": {
+        "english": "0.0",
+        "metric": "0"
+      },
+      "snow": {
+        "english": "0.0",
+        "metric": "0"
+      },
+      "pop": "15",
+      "mslp": {
+        "english": "30.26",
+        "metric": "1025"
+      }
+    },
+    {
+      "FCTTIME": {
+        "hour": "18",
+        "hour_padded": "18",
+        "min": "00",
+        "min_unpadded": "0",
+        "sec": "0",
+        "year": "2016",
+        "mon": "7",
+        "mon_padded": "07",
+        "mon_abbrev": "Jul",
+        "mday": "15",
+        "mday_padded": "15",
+        "yday": "196",
+        "isdst": "1",
+        "epoch": "1468598400",
+        "pretty": "6:00 PM CEST on July 15, 2016",
+        "civil": "6:00 PM",
+        "month_name": "July",
+        "month_name_abbrev": "Jul",
+        "weekday_name": "Friday",
+        "weekday_name_night": "Friday Night",
+        "weekday_name_abbrev": "Fri",
+        "weekday_name_unlang": "Friday",
+        "weekday_name_night_unlang": "Friday Night",
+        "ampm": "PM",
+        "tz": "",
+        "age": "",
+        "UTCDATE": ""
+      },
+      "temp": {
+        "english": "68",
+        "metric": "20"
+      },
+      "dewpoint": {
+        "english": "52",
+        "metric": "11"
+      },
+      "condition": "Overcast",
+      "icon": "cloudy",
+      "icon_url": "http://icons.wxug.com/i/c/k/cloudy.gif",
+      "fctcode": "4",
+      "sky": "86",
+      "wspd": {
+        "english": "8",
+        "metric": "13"
+      },
+      "wdir": {
+        "dir": "WNW",
+        "degrees": "296"
+      },
+      "wx": "Cloudy",
+      "uvi": "1",
+      "humidity": "58",
+      "windchill": {
+        "english": "-9999",
+        "metric": "-9999"
+      },
+      "heatindex": {
+        "english": "-9999",
+        "metric": "-9999"
+      },
+      "feelslike": {
+        "english": "68",
+        "metric": "20"
+      },
+      "qpf": {
+        "english": "0.0",
+        "metric": "0"
+      },
+      "snow": {
+        "english": "0.0",
+        "metric": "0"
+      },
+      "pop": "0",
+      "mslp": {
+        "english": "30.25",
+        "metric": "1024"
+      }
+    },
+    {
+      "FCTTIME": {
+        "hour": "19",
+        "hour_padded": "19",
+        "min": "00",
+        "min_unpadded": "0",
+        "sec": "0",
+        "year": "2016",
+        "mon": "7",
+        "mon_padded": "07",
+        "mon_abbrev": "Jul",
+        "mday": "15",
+        "mday_padded": "15",
+        "yday": "196",
+        "isdst": "1",
+        "epoch": "1468602000",
+        "pretty": "7:00 PM CEST on July 15, 2016",
+        "civil": "7:00 PM",
+        "month_name": "July",
+        "month_name_abbrev": "Jul",
+        "weekday_name": "Friday",
+        "weekday_name_night": "Friday Night",
+        "weekday_name_abbrev": "Fri",
+        "weekday_name_unlang": "Friday",
+        "weekday_name_night_unlang": "Friday Night",
+        "ampm": "PM",
+        "tz": "",
+        "age": "",
+        "UTCDATE": ""
+      },
+      "temp": {
+        "english": "68",
+        "metric": "20"
+      },
+      "dewpoint": {
+        "english": "52",
+        "metric": "11"
+      },
+      "condition": "Mostly Cloudy",
+      "icon": "mostlycloudy",
+      "icon_url": "http://icons.wxug.com/i/c/k/mostlycloudy.gif",
+      "fctcode": "3",
+      "sky": "72",
+      "wspd": {
+        "english": "6",
+        "metric": "10"
+      },
+      "wdir": {
+        "dir": "WNW",
+        "degrees": "304"
+      },
+      "wx": "Mostly Cloudy",
+      "uvi": "1",
+      "humidity": "57",
+      "windchill": {
+        "english": "-9999",
+        "metric": "-9999"
+      },
+      "heatindex": {
+        "english": "-9999",
+        "metric": "-9999"
+      },
+      "feelslike": {
+        "english": "68",
+        "metric": "20"
+      },
+      "qpf": {
+        "english": "0.0",
+        "metric": "0"
+      },
+      "snow": {
+        "english": "0.0",
+        "metric": "0"
+      },
+      "pop": "1",
+      "mslp": {
+        "english": "30.25",
+        "metric": "1024"
+      }
+    },
+    {
+      "FCTTIME": {
+        "hour": "20",
+        "hour_padded": "20",
+        "min": "00",
+        "min_unpadded": "0",
+        "sec": "0",
+        "year": "2016",
+        "mon": "7",
+        "mon_padded": "07",
+        "mon_abbrev": "Jul",
+        "mday": "15",
+        "mday_padded": "15",
+        "yday": "196",
+        "isdst": "1",
+        "epoch": "1468605600",
+        "pretty": "8:00 PM CEST on July 15, 2016",
+        "civil": "8:00 PM",
+        "month_name": "July",
+        "month_name_abbrev": "Jul",
+        "weekday_name": "Friday",
+        "weekday_name_night": "Friday Night",
+        "weekday_name_abbrev": "Fri",
+        "weekday_name_unlang": "Friday",
+        "weekday_name_night_unlang": "Friday Night",
+        "ampm": "PM",
+        "tz": "",
+        "age": "",
+        "UTCDATE": ""
+      },
+      "temp": {
+        "english": "67",
+        "metric": "19"
+      },
+      "dewpoint": {
+        "english": "53",
+        "metric": "12"
+      },
+      "condition": "Partly Cloudy",
+      "icon": "partlycloudy",
+      "icon_url": "http://icons.wxug.com/i/c/k/partlycloudy.gif",
+      "fctcode": "2",
+      "sky": "42",
+      "wspd": {
+        "english": "6",
+        "metric": "10"
+      },
+      "wdir": {
+        "dir": "NW",
+        "degrees": "307"
+      },
+      "wx": "Partly Cloudy",
+      "uvi": "0",
+      "humidity": "60",
+      "windchill": {
+        "english": "-9999",
+        "metric": "-9999"
+      },
+      "heatindex": {
+        "english": "-9999",
+        "metric": "-9999"
+      },
+      "feelslike": {
+        "english": "67",
+        "metric": "19"
+      },
+      "qpf": {
+        "english": "0.0",
+        "metric": "0"
+      },
+      "snow": {
+        "english": "0.0",
+        "metric": "0"
+      },
+      "pop": "0",
+      "mslp": {
+        "english": "30.25",
+        "metric": "1024"
+      }
+    },
+    {
+      "FCTTIME": {
+        "hour": "21",
+        "hour_padded": "21",
+        "min": "00",
+        "min_unpadded": "0",
+        "sec": "0",
+        "year": "2016",
+        "mon": "7",
+        "mon_padded": "07",
+        "mon_abbrev": "Jul",
+        "mday": "15",
+        "mday_padded": "15",
+        "yday": "196",
+        "isdst": "1",
+        "epoch": "1468609200",
+        "pretty": "9:00 PM CEST on July 15, 2016",
+        "civil": "9:00 PM",
+        "month_name": "July",
+        "month_name_abbrev": "Jul",
+        "weekday_name": "Friday",
+        "weekday_name_night": "Friday Night",
+        "weekday_name_abbrev": "Fri",
+        "weekday_name_unlang": "Friday",
+        "weekday_name_night_unlang": "Friday Night",
+        "ampm": "PM",
+        "tz": "",
+        "age": "",
+        "UTCDATE": ""
+      },
+      "temp": {
+        "english": "65",
+        "metric": "18"
+      },
+      "dewpoint": {
+        "english": "53",
+        "metric": "12"
+      },
+      "condition": "Partly Cloudy",
+      "icon": "partlycloudy",
+      "icon_url": "http://icons.wxug.com/i/c/k/partlycloudy.gif",
+      "fctcode": "2",
+      "sky": "30",
+      "wspd": {
+        "english": "4",
+        "metric": "6"
+      },
+      "wdir": {
+        "dir": "WNW",
+        "degrees": "299"
+      },
+      "wx": "Partly Cloudy",
+      "uvi": "0",
+      "humidity": "66",
+      "windchill": {
+        "english": "-9999",
+        "metric": "-9999"
+      },
+      "heatindex": {
+        "english": "-9999",
+        "metric": "-9999"
+      },
+      "feelslike": {
+        "english": "65",
+        "metric": "18"
+      },
+      "qpf": {
+        "english": "0.0",
+        "metric": "0"
+      },
+      "snow": {
+        "english": "0.0",
+        "metric": "0"
+      },
+      "pop": "0",
+      "mslp": {
+        "english": "30.25",
+        "metric": "1024"
+      }
+    },
+    {
+      "FCTTIME": {
+        "hour": "22",
+        "hour_padded": "22",
+        "min": "00",
+        "min_unpadded": "0",
+        "sec": "0",
+        "year": "2016",
+        "mon": "7",
+        "mon_padded": "07",
+        "mon_abbrev": "Jul",
+        "mday": "15",
+        "mday_padded": "15",
+        "yday": "196",
+        "isdst": "1",
+        "epoch": "1468612800",
+        "pretty": "10:00 PM CEST on July 15, 2016",
+        "civil": "10:00 PM",
+        "month_name": "July",
+        "month_name_abbrev": "Jul",
+        "weekday_name": "Friday",
+        "weekday_name_night": "Friday Night",
+        "weekday_name_abbrev": "Fri",
+        "weekday_name_unlang": "Friday",
+        "weekday_name_night_unlang": "Friday Night",
+        "ampm": "PM",
+        "tz": "",
+        "age": "",
+        "UTCDATE": ""
+      },
+      "temp": {
+        "english": "61",
+        "metric": "16"
+      },
+      "dewpoint": {
+        "english": "53",
+        "metric": "12"
+      },
+      "condition": "Clear",
+      "icon": "clear",
+      "icon_url": "http://icons.wxug.com/i/c/k/nt_clear.gif",
+      "fctcode": "1",
+      "sky": "25",
+      "wspd": {
+        "english": "5",
+        "metric": "8"
+      },
+      "wdir": {
+        "dir": "W",
+        "degrees": "280"
+      },
+      "wx": "Mostly Clear",
+      "uvi": "0",
+      "humidity": "74",
+      "windchill": {
+        "english": "-9999",
+        "metric": "-9999"
+      },
+      "heatindex": {
+        "english": "-9999",
+        "metric": "-9999"
+      },
+      "feelslike": {
+        "english": "61",
+        "metric": "16"
+      },
+      "qpf": {
+        "english": "0.0",
+        "metric": "0"
+      },
+      "snow": {
+        "english": "0.0",
+        "metric": "0"
+      },
+      "pop": "0",
+      "mslp": {
+        "english": "30.27",
+        "metric": "1025"
+      }
+    },
+    {
+      "FCTTIME": {
+        "hour": "23",
+        "hour_padded": "23",
+        "min": "00",
+        "min_unpadded": "0",
+        "sec": "0",
+        "year": "2016",
+        "mon": "7",
+        "mon_padded": "07",
+        "mon_abbrev": "Jul",
+        "mday": "15",
+        "mday_padded": "15",
+        "yday": "196",
+        "isdst": "1",
+        "epoch": "1468616400",
+        "pretty": "11:00 PM CEST on July 15, 2016",
+        "civil": "11:00 PM",
+        "month_name": "July",
+        "month_name_abbrev": "Jul",
+        "weekday_name": "Friday",
+        "weekday_name_night": "Friday Night",
+        "weekday_name_abbrev": "Fri",
+        "weekday_name_unlang": "Friday",
+        "weekday_name_night_unlang": "Friday Night",
+        "ampm": "PM",
+        "tz": "",
+        "age": "",
+        "UTCDATE": ""
+      },
+      "temp": {
+        "english": "59",
+        "metric": "15"
+      },
+      "dewpoint": {
+        "english": "53",
+        "metric": "12"
+      },
+      "condition": "Partly Cloudy",
+      "icon": "partlycloudy",
+      "icon_url": "http://icons.wxug.com/i/c/k/nt_partlycloudy.gif",
+      "fctcode": "2",
+      "sky": "32",
+      "wspd": {
+        "english": "5",
+        "metric": "8"
+      },
+      "wdir": {
+        "dir": "W",
+        "degrees": "267"
+      },
+      "wx": "Partly Cloudy",
+      "uvi": "0",
+      "humidity": "80",
+      "windchill": {
+        "english": "-9999",
+        "metric": "-9999"
+      },
+      "heatindex": {
+        "english": "-9999",
+        "metric": "-9999"
+      },
+      "feelslike": {
+        "english": "59",
+        "metric": "15"
+      },
+      "qpf": {
+        "english": "0.0",
+        "metric": "0"
+      },
+      "snow": {
+        "english": "0.0",
+        "metric": "0"
+      },
+      "pop": "1",
+      "mslp": {
+        "english": "30.27",
+        "metric": "1025"
+      }
+    },
+    {
+      "FCTTIME": {
+        "hour": "0",
+        "hour_padded": "00",
+        "min": "00",
+        "min_unpadded": "0",
+        "sec": "0",
+        "year": "2016",
+        "mon": "7",
+        "mon_padded": "07",
+        "mon_abbrev": "Jul",
+        "mday": "16",
+        "mday_padded": "16",
+        "yday": "197",
+        "isdst": "1",
+        "epoch": "1468620000",
+        "pretty": "12:00 AM CEST on July 16, 2016",
+        "civil": "12:00 AM",
+        "month_name": "July",
+        "month_name_abbrev": "Jul",
+        "weekday_name": "Saturday",
+        "weekday_name_night": "Saturday Night",
+        "weekday_name_abbrev": "Sat",
+        "weekday_name_unlang": "Saturday",
+        "weekday_name_night_unlang": "Saturday Night",
+        "ampm": "AM",
+        "tz": "",
+        "age": "",
+        "UTCDATE": ""
+      },
+      "temp": {
+        "english": "57",
+        "metric": "14"
+      },
+      "dewpoint": {
+        "english": "52",
+        "metric": "11"
+      },
+      "condition": "Partly Cloudy",
+      "icon": "partlycloudy",
+      "icon_url": "http://icons.wxug.com/i/c/k/nt_partlycloudy.gif",
+      "fctcode": "2",
+      "sky": "31",
+      "wspd": {
+        "english": "5",
+        "metric": "8"
+      },
+      "wdir": {
+        "dir": "WSW",
+        "degrees": "255"
+      },
+      "wx": "Partly Cloudy",
+      "uvi": "0",
+      "humidity": "85",
+      "windchill": {
+        "english": "-9999",
+        "metric": "-9999"
+      },
+      "heatindex": {
+        "english": "-9999",
+        "metric": "-9999"
+      },
+      "feelslike": {
+        "english": "57",
+        "metric": "14"
+      },
+      "qpf": {
+        "english": "0.0",
+        "metric": "0"
+      },
+      "snow": {
+        "english": "0.0",
+        "metric": "0"
+      },
+      "pop": "1",
+      "mslp": {
+        "english": "30.28",
+        "metric": "1025"
+      }
+    },
+    {
+      "FCTTIME": {
+        "hour": "1",
+        "hour_padded": "01",
+        "min": "00",
+        "min_unpadded": "0",
+        "sec": "0",
+        "year": "2016",
+        "mon": "7",
+        "mon_padded": "07",
+        "mon_abbrev": "Jul",
+        "mday": "16",
+        "mday_padded": "16",
+        "yday": "197",
+        "isdst": "1",
+        "epoch": "1468623600",
+        "pretty": "1:00 AM CEST on July 16, 2016",
+        "civil": "1:00 AM",
+        "month_name": "July",
+        "month_name_abbrev": "Jul",
+        "weekday_name": "Saturday",
+        "weekday_name_night": "Saturday Night",
+        "weekday_name_abbrev": "Sat",
+        "weekday_name_unlang": "Saturday",
+        "weekday_name_night_unlang": "Saturday Night",
+        "ampm": "AM",
+        "tz": "",
+        "age": "",
+        "UTCDATE": ""
+      },
+      "temp": {
+        "english": "55",
+        "metric": "13"
+      },
+      "dewpoint": {
+        "english": "51",
+        "metric": "11"
+      },
+      "condition": "Partly Cloudy",
+      "icon": "partlycloudy",
+      "icon_url": "http://icons.wxug.com/i/c/k/nt_partlycloudy.gif",
+      "fctcode": "2",
+      "sky": "31",
+      "wspd": {
+        "english": "5",
+        "metric": "8"
+      },
+      "wdir": {
+        "dir": "WSW",
+        "degrees": "254"
+      },
+      "wx": "Partly Cloudy",
+      "uvi": "0",
+      "humidity": "87",
+      "windchill": {
+        "english": "-9999",
+        "metric": "-9999"
+      },
+      "heatindex": {
+        "english": "-9999",
+        "metric": "-9999"
+      },
+      "feelslike": {
+        "english": "55",
+        "metric": "13"
+      },
+      "qpf": {
+        "english": "0.0",
+        "metric": "0"
+      },
+      "snow": {
+        "english": "0.0",
+        "metric": "0"
+      },
+      "pop": "1",
+      "mslp": {
+        "english": "30.28",
+        "metric": "1025"
+      }
+    },
+    {
+      "FCTTIME": {
+        "hour": "2",
+        "hour_padded": "02",
+        "min": "00",
+        "min_unpadded": "0",
+        "sec": "0",
+        "year": "2016",
+        "mon": "7",
+        "mon_padded": "07",
+        "mon_abbrev": "Jul",
+        "mday": "16",
+        "mday_padded": "16",
+        "yday": "197",
+        "isdst": "1",
+        "epoch": "1468627200",
+        "pretty": "2:00 AM CEST on July 16, 2016",
+        "civil": "2:00 AM",
+        "month_name": "July",
+        "month_name_abbrev": "Jul",
+        "weekday_name": "Saturday",
+        "weekday_name_night": "Saturday Night",
+        "weekday_name_abbrev": "Sat",
+        "weekday_name_unlang": "Saturday",
+        "weekday_name_night_unlang": "Saturday Night",
+        "ampm": "AM",
+        "tz": "",
+        "age": "",
+        "UTCDATE": ""
+      },
+      "temp": {
+        "english": "54",
+        "metric": "12"
+      },
+      "dewpoint": {
+        "english": "51",
+        "metric": "11"
+      },
+      "condition": "Partly Cloudy",
+      "icon": "partlycloudy",
+      "icon_url": "http://icons.wxug.com/i/c/k/nt_partlycloudy.gif",
+      "fctcode": "2",
+      "sky": "45",
+      "wspd": {
+        "english": "4",
+        "metric": "6"
+      },
+      "wdir": {
+        "dir": "WSW",
+        "degrees": "242"
+      },
+      "wx": "Partly Cloudy",
+      "uvi": "0",
+      "humidity": "89",
+      "windchill": {
+        "english": "-9999",
+        "metric": "-9999"
+      },
+      "heatindex": {
+        "english": "-9999",
+        "metric": "-9999"
+      },
+      "feelslike": {
+        "english": "54",
+        "metric": "12"
+      },
+      "qpf": {
+        "english": "0.0",
+        "metric": "0"
+      },
+      "snow": {
+        "english": "0.0",
+        "metric": "0"
+      },
+      "pop": "1",
+      "mslp": {
+        "english": "30.28",
+        "metric": "1025"
+      }
+    },
+    {
+      "FCTTIME": {
+        "hour": "3",
+        "hour_padded": "03",
+        "min": "00",
+        "min_unpadded": "0",
+        "sec": "0",
+        "year": "2016",
+        "mon": "7",
+        "mon_padded": "07",
+        "mon_abbrev": "Jul",
+        "mday": "16",
+        "mday_padded": "16",
+        "yday": "197",
+        "isdst": "1",
+        "epoch": "1468630800",
+        "pretty": "3:00 AM CEST on July 16, 2016",
+        "civil": "3:00 AM",
+        "month_name": "July",
+        "month_name_abbrev": "Jul",
+        "weekday_name": "Saturday",
+        "weekday_name_night": "Saturday Night",
+        "weekday_name_abbrev": "Sat",
+        "weekday_name_unlang": "Saturday",
+        "weekday_name_night_unlang": "Saturday Night",
+        "ampm": "AM",
+        "tz": "",
+        "age": "",
+        "UTCDATE": ""
+      },
+      "temp": {
+        "english": "54",
+        "metric": "12"
+      },
+      "dewpoint": {
+        "english": "51",
+        "metric": "11"
+      },
+      "condition": "Partly Cloudy",
+      "icon": "partlycloudy",
+      "icon_url": "http://icons.wxug.com/i/c/k/nt_partlycloudy.gif",
+      "fctcode": "2",
+      "sky": "42",
+      "wspd": {
+        "english": "4",
+        "metric": "6"
+      },
+      "wdir": {
+        "dir": "SW",
+        "degrees": "228"
+      },
+      "wx": "Partly Cloudy",
+      "uvi": "0",
+      "humidity": "90",
+      "windchill": {
+        "english": "-9999",
+        "metric": "-9999"
+      },
+      "heatindex": {
+        "english": "-9999",
+        "metric": "-9999"
+      },
+      "feelslike": {
+        "english": "54",
+        "metric": "12"
+      },
+      "qpf": {
+        "english": "0.0",
+        "metric": "0"
+      },
+      "snow": {
+        "english": "0.0",
+        "metric": "0"
+      },
+      "pop": "2",
+      "mslp": {
+        "english": "30.27",
+        "metric": "1025"
+      }
+    },
+    {
+      "FCTTIME": {
+        "hour": "4",
+        "hour_padded": "04",
+        "min": "00",
+        "min_unpadded": "0",
+        "sec": "0",
+        "year": "2016",
+        "mon": "7",
+        "mon_padded": "07",
+        "mon_abbrev": "Jul",
+        "mday": "16",
+        "mday_padded": "16",
+        "yday": "197",
+        "isdst": "1",
+        "epoch": "1468634400",
+        "pretty": "4:00 AM CEST on July 16, 2016",
+        "civil": "4:00 AM",
+        "month_name": "July",
+        "month_name_abbrev": "Jul",
+        "weekday_name": "Saturday",
+        "weekday_name_night": "Saturday Night",
+        "weekday_name_abbrev": "Sat",
+        "weekday_name_unlang": "Saturday",
+        "weekday_name_night_unlang": "Saturday Night",
+        "ampm": "AM",
+        "tz": "",
+        "age": "",
+        "UTCDATE": ""
+      },
+      "temp": {
+        "english": "54",
+        "metric": "12"
+      },
+      "dewpoint": {
+        "english": "52",
+        "metric": "11"
+      },
+      "condition": "Partly Cloudy",
+      "icon": "partlycloudy",
+      "icon_url": "http://icons.wxug.com/i/c/k/nt_partlycloudy.gif",
+      "fctcode": "2",
+      "sky": "45",
+      "wspd": {
+        "english": "5",
+        "metric": "8"
+      },
+      "wdir": {
+        "dir": "SW",
+        "degrees": "216"
+      },
+      "wx": "Partly Cloudy",
+      "uvi": "0",
+      "humidity": "93",
+      "windchill": {
+        "english": "-9999",
+        "metric": "-9999"
+      },
+      "heatindex": {
+        "english": "-9999",
+        "metric": "-9999"
+      },
+      "feelslike": {
+        "english": "54",
+        "metric": "12"
+      },
+      "qpf": {
+        "english": "0.0",
+        "metric": "0"
+      },
+      "snow": {
+        "english": "0.0",
+        "metric": "0"
+      },
+      "pop": "2",
+      "mslp": {
+        "english": "30.28",
+        "metric": "1025"
+      }
+    },
+    {
+      "FCTTIME": {
+        "hour": "5",
+        "hour_padded": "05",
+        "min": "00",
+        "min_unpadded": "0",
+        "sec": "0",
+        "year": "2016",
+        "mon": "7",
+        "mon_padded": "07",
+        "mon_abbrev": "Jul",
+        "mday": "16",
+        "mday_padded": "16",
+        "yday": "197",
+        "isdst": "1",
+        "epoch": "1468638000",
+        "pretty": "5:00 AM CEST on July 16, 2016",
+        "civil": "5:00 AM",
+        "month_name": "July",
+        "month_name_abbrev": "Jul",
+        "weekday_name": "Saturday",
+        "weekday_name_night": "Saturday Night",
+        "weekday_name_abbrev": "Sat",
+        "weekday_name_unlang": "Saturday",
+        "weekday_name_night_unlang": "Saturday Night",
+        "ampm": "AM",
+        "tz": "",
+        "age": "",
+        "UTCDATE": ""
+      },
+      "temp": {
+        "english": "54",
+        "metric": "12"
+      },
+      "dewpoint": {
+        "english": "52",
+        "metric": "11"
+      },
+      "condition": "Partly Cloudy",
+      "icon": "partlycloudy",
+      "icon_url": "http://icons.wxug.com/i/c/k/nt_partlycloudy.gif",
+      "fctcode": "2",
+      "sky": "43",
+      "wspd": {
+        "english": "5",
+        "metric": "8"
+      },
+      "wdir": {
+        "dir": "SSW",
+        "degrees": "201"
+      },
+      "wx": "Partly Cloudy",
+      "uvi": "0",
+      "humidity": "93",
+      "windchill": {
+        "english": "-9999",
+        "metric": "-9999"
+      },
+      "heatindex": {
+        "english": "-9999",
+        "metric": "-9999"
+      },
+      "feelslike": {
+        "english": "54",
+        "metric": "12"
+      },
+      "qpf": {
+        "english": "0.0",
+        "metric": "0"
+      },
+      "snow": {
+        "english": "0.0",
+        "metric": "0"
+      },
+      "pop": "2",
+      "mslp": {
+        "english": "30.27",
+        "metric": "1025"
+      }
+    },
+    {
+      "FCTTIME": {
+        "hour": "6",
+        "hour_padded": "06",
+        "min": "00",
+        "min_unpadded": "0",
+        "sec": "0",
+        "year": "2016",
+        "mon": "7",
+        "mon_padded": "07",
+        "mon_abbrev": "Jul",
+        "mday": "16",
+        "mday_padded": "16",
+        "yday": "197",
+        "isdst": "1",
+        "epoch": "1468641600",
+        "pretty": "6:00 AM CEST on July 16, 2016",
+        "civil": "6:00 AM",
+        "month_name": "July",
+        "month_name_abbrev": "Jul",
+        "weekday_name": "Saturday",
+        "weekday_name_night": "Saturday Night",
+        "weekday_name_abbrev": "Sat",
+        "weekday_name_unlang": "Saturday",
+        "weekday_name_night_unlang": "Saturday Night",
+        "ampm": "AM",
+        "tz": "",
+        "age": "",
+        "UTCDATE": ""
+      },
+      "temp": {
+        "english": "55",
+        "metric": "13"
+      },
+      "dewpoint": {
+        "english": "52",
+        "metric": "11"
+      },
+      "condition": "Partly Cloudy",
+      "icon": "partlycloudy",
+      "icon_url": "http://icons.wxug.com/i/c/k/partlycloudy.gif",
+      "fctcode": "2",
+      "sky": "54",
+      "wspd": {
+        "english": "6",
+        "metric": "10"
+      },
+      "wdir": {
+        "dir": "SSW",
+        "degrees": "200"
+      },
+      "wx": "Partly Cloudy",
+      "uvi": "0",
+      "humidity": "89",
+      "windchill": {
+        "english": "-9999",
+        "metric": "-9999"
+      },
+      "heatindex": {
+        "english": "-9999",
+        "metric": "-9999"
+      },
+      "feelslike": {
+        "english": "55",
+        "metric": "13"
+      },
+      "qpf": {
+        "english": "0.0",
+        "metric": "0"
+      },
+      "snow": {
+        "english": "0.0",
+        "metric": "0"
+      },
+      "pop": "2",
+      "mslp": {
+        "english": "30.27",
+        "metric": "1025"
+      }
+    },
+    {
+      "FCTTIME": {
+        "hour": "7",
+        "hour_padded": "07",
+        "min": "00",
+        "min_unpadded": "0",
+        "sec": "0",
+        "year": "2016",
+        "mon": "7",
+        "mon_padded": "07",
+        "mon_abbrev": "Jul",
+        "mday": "16",
+        "mday_padded": "16",
+        "yday": "197",
+        "isdst": "1",
+        "epoch": "1468645200",
+        "pretty": "7:00 AM CEST on July 16, 2016",
+        "civil": "7:00 AM",
+        "month_name": "July",
+        "month_name_abbrev": "Jul",
+        "weekday_name": "Saturday",
+        "weekday_name_night": "Saturday Night",
+        "weekday_name_abbrev": "Sat",
+        "weekday_name_unlang": "Saturday",
+        "weekday_name_night_unlang": "Saturday Night",
+        "ampm": "AM",
+        "tz": "",
+        "age": "",
+        "UTCDATE": ""
+      },
+      "temp": {
+        "english": "57",
+        "metric": "14"
+      },
+      "dewpoint": {
+        "english": "52",
+        "metric": "11"
+      },
+      "condition": "Partly Cloudy",
+      "icon": "partlycloudy",
+      "icon_url": "http://icons.wxug.com/i/c/k/partlycloudy.gif",
+      "fctcode": "2",
+      "sky": "58",
+      "wspd": {
+        "english": "7",
+        "metric": "11"
+      },
+      "wdir": {
+        "dir": "SSW",
+        "degrees": "201"
+      },
+      "wx": "Partly Cloudy",
+      "uvi": "0",
+      "humidity": "84",
+      "windchill": {
+        "english": "-9999",
+        "metric": "-9999"
+      },
+      "heatindex": {
+        "english": "-9999",
+        "metric": "-9999"
+      },
+      "feelslike": {
+        "english": "57",
+        "metric": "14"
+      },
+      "qpf": {
+        "english": "0.0",
+        "metric": "0"
+      },
+      "snow": {
+        "english": "0.0",
+        "metric": "0"
+      },
+      "pop": "2",
+      "mslp": {
+        "english": "30.27",
+        "metric": "1025"
+      }
+    },
+    {
+      "FCTTIME": {
+        "hour": "8",
+        "hour_padded": "08",
+        "min": "00",
+        "min_unpadded": "0",
+        "sec": "0",
+        "year": "2016",
+        "mon": "7",
+        "mon_padded": "07",
+        "mon_abbrev": "Jul",
+        "mday": "16",
+        "mday_padded": "16",
+        "yday": "197",
+        "isdst": "1",
+        "epoch": "1468648800",
+        "pretty": "8:00 AM CEST on July 16, 2016",
+        "civil": "8:00 AM",
+        "month_name": "July",
+        "month_name_abbrev": "Jul",
+        "weekday_name": "Saturday",
+        "weekday_name_night": "Saturday Night",
+        "weekday_name_abbrev": "Sat",
+        "weekday_name_unlang": "Saturday",
+        "weekday_name_night_unlang": "Saturday Night",
+        "ampm": "AM",
+        "tz": "",
+        "age": "",
+        "UTCDATE": ""
+      },
+      "temp": {
+        "english": "60",
+        "metric": "16"
+      },
+      "dewpoint": {
+        "english": "53",
+        "metric": "12"
+      },
+      "condition": "Mostly Cloudy",
+      "icon": "mostlycloudy",
+      "icon_url": "http://icons.wxug.com/i/c/k/mostlycloudy.gif",
+      "fctcode": "3",
+      "sky": "61",
+      "wspd": {
+        "english": "7",
+        "metric": "11"
+      },
+      "wdir": {
+        "dir": "SSW",
+        "degrees": "208"
+      },
+      "wx": "Mostly Cloudy",
+      "uvi": "1",
+      "humidity": "77",
+      "windchill": {
+        "english": "-9999",
+        "metric": "-9999"
+      },
+      "heatindex": {
+        "english": "-9999",
+        "metric": "-9999"
+      },
+      "feelslike": {
+        "english": "60",
+        "metric": "16"
+      },
+      "qpf": {
+        "english": "0.0",
+        "metric": "0"
+      },
+      "snow": {
+        "english": "0.0",
+        "metric": "0"
+      },
+      "pop": "8",
+      "mslp": {
+        "english": "30.28",
+        "metric": "1025"
+      }
+    },
+    {
+      "FCTTIME": {
+        "hour": "9",
+        "hour_padded": "09",
+        "min": "00",
+        "min_unpadded": "0",
+        "sec": "0",
+        "year": "2016",
+        "mon": "7",
+        "mon_padded": "07",
+        "mon_abbrev": "Jul",
+        "mday": "16",
+        "mday_padded": "16",
+        "yday": "197",
+        "isdst": "1",
+        "epoch": "1468652400",
+        "pretty": "9:00 AM CEST on July 16, 2016",
+        "civil": "9:00 AM",
+        "month_name": "July",
+        "month_name_abbrev": "Jul",
+        "weekday_name": "Saturday",
+        "weekday_name_night": "Saturday Night",
+        "weekday_name_abbrev": "Sat",
+        "weekday_name_unlang": "Saturday",
+        "weekday_name_night_unlang": "Saturday Night",
+        "ampm": "AM",
+        "tz": "",
+        "age": "",
+        "UTCDATE": ""
+      },
+      "temp": {
+        "english": "62",
+        "metric": "17"
+      },
+      "dewpoint": {
+        "english": "53",
+        "metric": "12"
+      },
+      "condition": "Mostly Cloudy",
+      "icon": "mostlycloudy",
+      "icon_url": "http://icons.wxug.com/i/c/k/mostlycloudy.gif",
+      "fctcode": "3",
+      "sky": "60",
+      "wspd": {
+        "english": "8",
+        "metric": "13"
+      },
+      "wdir": {
+        "dir": "SW",
+        "degrees": "217"
+      },
+      "wx": "Mostly Cloudy",
+      "uvi": "2",
+      "humidity": "72",
+      "windchill": {
+        "english": "-9999",
+        "metric": "-9999"
+      },
+      "heatindex": {
+        "english": "-9999",
+        "metric": "-9999"
+      },
+      "feelslike": {
+        "english": "62",
+        "metric": "17"
+      },
+      "qpf": {
+        "english": "0.0",
+        "metric": "0"
+      },
+      "snow": {
+        "english": "0.0",
+        "metric": "0"
+      },
+      "pop": "17",
+      "mslp": {
+        "english": "30.28",
+        "metric": "1025"
+      }
+    },
+    {
+      "FCTTIME": {
+        "hour": "10",
+        "hour_padded": "10",
+        "min": "00",
+        "min_unpadded": "0",
+        "sec": "0",
+        "year": "2016",
+        "mon": "7",
+        "mon_padded": "07",
+        "mon_abbrev": "Jul",
+        "mday": "16",
+        "mday_padded": "16",
+        "yday": "197",
+        "isdst": "1",
+        "epoch": "1468656000",
+        "pretty": "10:00 AM CEST on July 16, 2016",
+        "civil": "10:00 AM",
+        "month_name": "July",
+        "month_name_abbrev": "Jul",
+        "weekday_name": "Saturday",
+        "weekday_name_night": "Saturday Night",
+        "weekday_name_abbrev": "Sat",
+        "weekday_name_unlang": "Saturday",
+        "weekday_name_night_unlang": "Saturday Night",
+        "ampm": "AM",
+        "tz": "",
+        "age": "",
+        "UTCDATE": ""
+      },
+      "temp": {
+        "english": "63",
+        "metric": "17"
+      },
+      "dewpoint": {
+        "english": "53",
+        "metric": "12"
+      },
+      "condition": "Overcast",
+      "icon": "cloudy",
+      "icon_url": "http://icons.wxug.com/i/c/k/cloudy.gif",
+      "fctcode": "4",
+      "sky": "82",
+      "wspd": {
+        "english": "8",
+        "metric": "13"
+      },
+      "wdir": {
+        "dir": "SW",
+        "degrees": "223"
+      },
+      "wx": "Cloudy",
+      "uvi": "2",
+      "humidity": "70",
+      "windchill": {
+        "english": "-9999",
+        "metric": "-9999"
+      },
+      "heatindex": {
+        "english": "-9999",
+        "metric": "-9999"
+      },
+      "feelslike": {
+        "english": "63",
+        "metric": "17"
+      },
+      "qpf": {
+        "english": "0.0",
+        "metric": "0"
+      },
+      "snow": {
+        "english": "0.0",
+        "metric": "0"
+      },
+      "pop": "13",
+      "mslp": {
+        "english": "30.29",
+        "metric": "1026"
+      }
+    },
+    {
+      "FCTTIME": {
+        "hour": "11",
+        "hour_padded": "11",
+        "min": "00",
+        "min_unpadded": "0",
+        "sec": "0",
+        "year": "2016",
+        "mon": "7",
+        "mon_padded": "07",
+        "mon_abbrev": "Jul",
+        "mday": "16",
+        "mday_padded": "16",
+        "yday": "197",
+        "isdst": "1",
+        "epoch": "1468659600",
+        "pretty": "11:00 AM CEST on July 16, 2016",
+        "civil": "11:00 AM",
+        "month_name": "July",
+        "month_name_abbrev": "Jul",
+        "weekday_name": "Saturday",
+        "weekday_name_night": "Saturday Night",
+        "weekday_name_abbrev": "Sat",
+        "weekday_name_unlang": "Saturday",
+        "weekday_name_night_unlang": "Saturday Night",
+        "ampm": "AM",
+        "tz": "",
+        "age": "",
+        "UTCDATE": ""
+      },
+      "temp": {
+        "english": "64",
+        "metric": "18"
+      },
+      "dewpoint": {
+        "english": "54",
+        "metric": "12"
+      },
+      "condition": "Overcast",
+      "icon": "cloudy",
+      "icon_url": "http://icons.wxug.com/i/c/k/cloudy.gif",
+      "fctcode": "4",
+      "sky": "95",
+      "wspd": {
+        "english": "9",
+        "metric": "14"
+      },
+      "wdir": {
+        "dir": "SW",
+        "degrees": "230"
+      },
+      "wx": "Cloudy",
+      "uvi": "2",
+      "humidity": "68",
+      "windchill": {
+        "english": "-9999",
+        "metric": "-9999"
+      },
+      "heatindex": {
+        "english": "-9999",
+        "metric": "-9999"
+      },
+      "feelslike": {
+        "english": "64",
+        "metric": "18"
+      },
+      "qpf": {
+        "english": "0.0",
+        "metric": "0"
+      },
+      "snow": {
+        "english": "0.0",
+        "metric": "0"
+      },
+      "pop": "3",
+      "mslp": {
+        "english": "30.29",
+        "metric": "1026"
+      }
+    },
+    {
+      "FCTTIME": {
+        "hour": "12",
+        "hour_padded": "12",
+        "min": "00",
+        "min_unpadded": "0",
+        "sec": "0",
+        "year": "2016",
+        "mon": "7",
+        "mon_padded": "07",
+        "mon_abbrev": "Jul",
+        "mday": "16",
+        "mday_padded": "16",
+        "yday": "197",
+        "isdst": "1",
+        "epoch": "1468663200",
+        "pretty": "12:00 PM CEST on July 16, 2016",
+        "civil": "12:00 PM",
+        "month_name": "July",
+        "month_name_abbrev": "Jul",
+        "weekday_name": "Saturday",
+        "weekday_name_night": "Saturday Night",
+        "weekday_name_abbrev": "Sat",
+        "weekday_name_unlang": "Saturday",
+        "weekday_name_night_unlang": "Saturday Night",
+        "ampm": "PM",
+        "tz": "",
+        "age": "",
+        "UTCDATE": ""
+      },
+      "temp": {
+        "english": "66",
+        "metric": "19"
+      },
+      "dewpoint": {
+        "english": "55",
+        "metric": "13"
+      },
+      "condition": "Overcast",
+      "icon": "cloudy",
+      "icon_url": "http://icons.wxug.com/i/c/k/cloudy.gif",
+      "fctcode": "4",
+      "sky": "94",
+      "wspd": {
+        "english": "9",
+        "metric": "14"
+      },
+      "wdir": {
+        "dir": "WSW",
+        "degrees": "238"
+      },
+      "wx": "Cloudy",
+      "uvi": "3",
+      "humidity": "69",
+      "windchill": {
+        "english": "-9999",
+        "metric": "-9999"
+      },
+      "heatindex": {
+        "english": "-9999",
+        "metric": "-9999"
+      },
+      "feelslike": {
+        "english": "66",
+        "metric": "19"
+      },
+      "qpf": {
+        "english": "0.0",
+        "metric": "0"
+      },
+      "snow": {
+        "english": "0.0",
+        "metric": "0"
+      },
+      "pop": "3",
+      "mslp": {
+        "english": "30.29",
+        "metric": "1026"
+      }
+    },
+    {
+      "FCTTIME": {
+        "hour": "13",
+        "hour_padded": "13",
+        "min": "00",
+        "min_unpadded": "0",
+        "sec": "0",
+        "year": "2016",
+        "mon": "7",
+        "mon_padded": "07",
+        "mon_abbrev": "Jul",
+        "mday": "16",
+        "mday_padded": "16",
+        "yday": "197",
+        "isdst": "1",
+        "epoch": "1468666800",
+        "pretty": "1:00 PM CEST on July 16, 2016",
+        "civil": "1:00 PM",
+        "month_name": "July",
+        "month_name_abbrev": "Jul",
+        "weekday_name": "Saturday",
+        "weekday_name_night": "Saturday Night",
+        "weekday_name_abbrev": "Sat",
+        "weekday_name_unlang": "Saturday",
+        "weekday_name_night_unlang": "Saturday Night",
+        "ampm": "PM",
+        "tz": "",
+        "age": "",
+        "UTCDATE": ""
+      },
+      "temp": {
+        "english": "68",
+        "metric": "20"
+      },
+      "dewpoint": {
+        "english": "57",
+        "metric": "14"
+      },
+      "condition": "Overcast",
+      "icon": "cloudy",
+      "icon_url": "http://icons.wxug.com/i/c/k/cloudy.gif",
+      "fctcode": "4",
+      "sky": "94",
+      "wspd": {
+        "english": "9",
+        "metric": "14"
+      },
+      "wdir": {
+        "dir": "WSW",
+        "degrees": "245"
+      },
+      "wx": "Cloudy",
+      "uvi": "3",
+      "humidity": "68",
+      "windchill": {
+        "english": "-9999",
+        "metric": "-9999"
+      },
+      "heatindex": {
+        "english": "-9999",
+        "metric": "-9999"
+      },
+      "feelslike": {
+        "english": "68",
+        "metric": "20"
+      },
+      "qpf": {
+        "english": "0.0",
+        "metric": "0"
+      },
+      "snow": {
+        "english": "0.0",
+        "metric": "0"
+      },
+      "pop": "3",
+      "mslp": {
+        "english": "30.28",
+        "metric": "1025"
+      }
+    },
+    {
+      "FCTTIME": {
+        "hour": "14",
+        "hour_padded": "14",
+        "min": "00",
+        "min_unpadded": "0",
+        "sec": "0",
+        "year": "2016",
+        "mon": "7",
+        "mon_padded": "07",
+        "mon_abbrev": "Jul",
+        "mday": "16",
+        "mday_padded": "16",
+        "yday": "197",
+        "isdst": "1",
+        "epoch": "1468670400",
+        "pretty": "2:00 PM CEST on July 16, 2016",
+        "civil": "2:00 PM",
+        "month_name": "July",
+        "month_name_abbrev": "Jul",
+        "weekday_name": "Saturday",
+        "weekday_name_night": "Saturday Night",
+        "weekday_name_abbrev": "Sat",
+        "weekday_name_unlang": "Saturday",
+        "weekday_name_night_unlang": "Saturday Night",
+        "ampm": "PM",
+        "tz": "",
+        "age": "",
+        "UTCDATE": ""
+      },
+      "temp": {
+        "english": "70",
+        "metric": "21"
+      },
+      "dewpoint": {
+        "english": "58",
+        "metric": "14"
+      },
+      "condition": "Overcast",
+      "icon": "cloudy",
+      "icon_url": "http://icons.wxug.com/i/c/k/cloudy.gif",
+      "fctcode": "4",
+      "sky": "97",
+      "wspd": {
+        "english": "9",
+        "metric": "14"
+      },
+      "wdir": {
+        "dir": "WSW",
+        "degrees": "249"
+      },
+      "wx": "Cloudy",
+      "uvi": "3",
+      "humidity": "67",
+      "windchill": {
+        "english": "-9999",
+        "metric": "-9999"
+      },
+      "heatindex": {
+        "english": "-9999",
+        "metric": "-9999"
+      },
+      "feelslike": {
+        "english": "70",
+        "metric": "21"
+      },
+      "qpf": {
+        "english": "0.0",
+        "metric": "0"
+      },
+      "snow": {
+        "english": "0.0",
+        "metric": "0"
+      },
+      "pop": "7",
+      "mslp": {
+        "english": "30.27",
+        "metric": "1025"
+      }
+    },
+    {
+      "FCTTIME": {
+        "hour": "15",
+        "hour_padded": "15",
+        "min": "00",
+        "min_unpadded": "0",
+        "sec": "0",
+        "year": "2016",
+        "mon": "7",
+        "mon_padded": "07",
+        "mon_abbrev": "Jul",
+        "mday": "16",
+        "mday_padded": "16",
+        "yday": "197",
+        "isdst": "1",
+        "epoch": "1468674000",
+        "pretty": "3:00 PM CEST on July 16, 2016",
+        "civil": "3:00 PM",
+        "month_name": "July",
+        "month_name_abbrev": "Jul",
+        "weekday_name": "Saturday",
+        "weekday_name_night": "Saturday Night",
+        "weekday_name_abbrev": "Sat",
+        "weekday_name_unlang": "Saturday",
+        "weekday_name_night_unlang": "Saturday Night",
+        "ampm": "PM",
+        "tz": "",
+        "age": "",
+        "UTCDATE": ""
+      },
+      "temp": {
+        "english": "71",
+        "metric": "22"
+      },
+      "dewpoint": {
+        "english": "59",
+        "metric": "15"
+      },
+      "condition": "Overcast",
+      "icon": "cloudy",
+      "icon_url": "http://icons.wxug.com/i/c/k/cloudy.gif",
+      "fctcode": "4",
+      "sky": "95",
+      "wspd": {
+        "english": "9",
+        "metric": "14"
+      },
+      "wdir": {
+        "dir": "WSW",
+        "degrees": "248"
+      },
+      "wx": "Cloudy",
+      "uvi": "3",
+      "humidity": "66",
+      "windchill": {
+        "english": "-9999",
+        "metric": "-9999"
+      },
+      "heatindex": {
+        "english": "-9999",
+        "metric": "-9999"
+      },
+      "feelslike": {
+        "english": "71",
+        "metric": "22"
+      },
+      "qpf": {
+        "english": "0.0",
+        "metric": "0"
+      },
+      "snow": {
+        "english": "0.0",
+        "metric": "0"
+      },
+      "pop": "24",
+      "mslp": {
+        "english": "30.27",
+        "metric": "1025"
+      }
+    },
+    {
+      "FCTTIME": {
+        "hour": "16",
+        "hour_padded": "16",
+        "min": "00",
+        "min_unpadded": "0",
+        "sec": "0",
+        "year": "2016",
+        "mon": "7",
+        "mon_padded": "07",
+        "mon_abbrev": "Jul",
+        "mday": "16",
+        "mday_padded": "16",
+        "yday": "197",
+        "isdst": "1",
+        "epoch": "1468677600",
+        "pretty": "4:00 PM CEST on July 16, 2016",
+        "civil": "4:00 PM",
+        "month_name": "July",
+        "month_name_abbrev": "Jul",
+        "weekday_name": "Saturday",
+        "weekday_name_night": "Saturday Night",
+        "weekday_name_abbrev": "Sat",
+        "weekday_name_unlang": "Saturday",
+        "weekday_name_night_unlang": "Saturday Night",
+        "ampm": "PM",
+        "tz": "",
+        "age": "",
+        "UTCDATE": ""
+      },
+      "temp": {
+        "english": "72",
+        "metric": "22"
+      },
+      "dewpoint": {
+        "english": "60",
+        "metric": "16"
+      },
+      "condition": "Overcast",
+      "icon": "cloudy",
+      "icon_url": "http://icons.wxug.com/i/c/k/cloudy.gif",
+      "fctcode": "4",
+      "sky": "93",
+      "wspd": {
+        "english": "10",
+        "metric": "16"
+      },
+      "wdir": {
+        "dir": "WSW",
+        "degrees": "248"
+      },
+      "wx": "Cloudy",
+      "uvi": "2",
+      "humidity": "65",
+      "windchill": {
+        "english": "-9999",
+        "metric": "-9999"
+      },
+      "heatindex": {
+        "english": "-9999",
+        "metric": "-9999"
+      },
+      "feelslike": {
+        "english": "72",
+        "metric": "22"
+      },
+      "qpf": {
+        "english": "0.0",
+        "metric": "0"
+      },
+      "snow": {
+        "english": "0.0",
+        "metric": "0"
+      },
+      "pop": "21",
+      "mslp": {
+        "english": "30.26",
+        "metric": "1025"
+      }
+    },
+    {
+      "FCTTIME": {
+        "hour": "17",
+        "hour_padded": "17",
+        "min": "00",
+        "min_unpadded": "0",
+        "sec": "0",
+        "year": "2016",
+        "mon": "7",
+        "mon_padded": "07",
+        "mon_abbrev": "Jul",
+        "mday": "16",
+        "mday_padded": "16",
+        "yday": "197",
+        "isdst": "1",
+        "epoch": "1468681200",
+        "pretty": "5:00 PM CEST on July 16, 2016",
+        "civil": "5:00 PM",
+        "month_name": "July",
+        "month_name_abbrev": "Jul",
+        "weekday_name": "Saturday",
+        "weekday_name_night": "Saturday Night",
+        "weekday_name_abbrev": "Sat",
+        "weekday_name_unlang": "Saturday",
+        "weekday_name_night_unlang": "Saturday Night",
+        "ampm": "PM",
+        "tz": "",
+        "age": "",
+        "UTCDATE": ""
+      },
+      "temp": {
+        "english": "72",
+        "metric": "22"
+      },
+      "dewpoint": {
+        "english": "61",
+        "metric": "16"
+      },
+      "condition": "Overcast",
+      "icon": "cloudy",
+      "icon_url": "http://icons.wxug.com/i/c/k/cloudy.gif",
+      "fctcode": "4",
+      "sky": "91",
+      "wspd": {
+        "english": "9",
+        "metric": "14"
+      },
+      "wdir": {
+        "dir": "WSW",
+        "degrees": "250"
+      },
+      "wx": "Cloudy",
+      "uvi": "1",
+      "humidity": "68",
+      "windchill": {
+        "english": "-9999",
+        "metric": "-9999"
+      },
+      "heatindex": {
+        "english": "-9999",
+        "metric": "-9999"
+      },
+      "feelslike": {
+        "english": "72",
+        "metric": "22"
+      },
+      "qpf": {
+        "english": "0.0",
+        "metric": "0"
+      },
+      "snow": {
+        "english": "0.0",
+        "metric": "0"
+      },
+      "pop": "19",
+      "mslp": {
+        "english": "30.24",
+        "metric": "1024"
+      }
+    },
+    {
+      "FCTTIME": {
+        "hour": "18",
+        "hour_padded": "18",
+        "min": "00",
+        "min_unpadded": "0",
+        "sec": "0",
+        "year": "2016",
+        "mon": "7",
+        "mon_padded": "07",
+        "mon_abbrev": "Jul",
+        "mday": "16",
+        "mday_padded": "16",
+        "yday": "197",
+        "isdst": "1",
+        "epoch": "1468684800",
+        "pretty": "6:00 PM CEST on July 16, 2016",
+        "civil": "6:00 PM",
+        "month_name": "July",
+        "month_name_abbrev": "Jul",
+        "weekday_name": "Saturday",
+        "weekday_name_night": "Saturday Night",
+        "weekday_name_abbrev": "Sat",
+        "weekday_name_unlang": "Saturday",
+        "weekday_name_night_unlang": "Saturday Night",
+        "ampm": "PM",
+        "tz": "",
+        "age": "",
+        "UTCDATE": ""
+      },
+      "temp": {
+        "english": "73",
+        "metric": "23"
+      },
+      "dewpoint": {
+        "english": "60",
+        "metric": "16"
+      },
+      "condition": "Overcast",
+      "icon": "cloudy",
+      "icon_url": "http://icons.wxug.com/i/c/k/cloudy.gif",
+      "fctcode": "4",
+      "sky": "87",
+      "wspd": {
+        "english": "8",
+        "metric": "13"
+      },
+      "wdir": {
+        "dir": "WSW",
+        "degrees": "250"
+      },
+      "wx": "Cloudy",
+      "uvi": "1",
+      "humidity": "65",
+      "windchill": {
+        "english": "-9999",
+        "metric": "-9999"
+      },
+      "heatindex": {
+        "english": "-9999",
+        "metric": "-9999"
+      },
+      "feelslike": {
+        "english": "73",
+        "metric": "23"
+      },
+      "qpf": {
+        "english": "0.0",
+        "metric": "0"
+      },
+      "snow": {
+        "english": "0.0",
+        "metric": "0"
+      },
+      "pop": "10",
+      "mslp": {
+        "english": "30.24",
+        "metric": "1024"
+      }
+    },
+    {
+      "FCTTIME": {
+        "hour": "19",
+        "hour_padded": "19",
+        "min": "00",
+        "min_unpadded": "0",
+        "sec": "0",
+        "year": "2016",
+        "mon": "7",
+        "mon_padded": "07",
+        "mon_abbrev": "Jul",
+        "mday": "16",
+        "mday_padded": "16",
+        "yday": "197",
+        "isdst": "1",
+        "epoch": "1468688400",
+        "pretty": "7:00 PM CEST on July 16, 2016",
+        "civil": "7:00 PM",
+        "month_name": "July",
+        "month_name_abbrev": "Jul",
+        "weekday_name": "Saturday",
+        "weekday_name_night": "Saturday Night",
+        "weekday_name_abbrev": "Sat",
+        "weekday_name_unlang": "Saturday",
+        "weekday_name_night_unlang": "Saturday Night",
+        "ampm": "PM",
+        "tz": "",
+        "age": "",
+        "UTCDATE": ""
+      },
+      "temp": {
+        "english": "73",
+        "metric": "23"
+      },
+      "dewpoint": {
+        "english": "60",
+        "metric": "16"
+      },
+      "condition": "Overcast",
+      "icon": "cloudy",
+      "icon_url": "http://icons.wxug.com/i/c/k/cloudy.gif",
+      "fctcode": "4",
+      "sky": "87",
+      "wspd": {
+        "english": "8",
+        "metric": "13"
+      },
+      "wdir": {
+        "dir": "WSW",
+        "degrees": "248"
+      },
+      "wx": "Cloudy",
+      "uvi": "1",
+      "humidity": "64",
+      "windchill": {
+        "english": "-9999",
+        "metric": "-9999"
+      },
+      "heatindex": {
+        "english": "-9999",
+        "metric": "-9999"
+      },
+      "feelslike": {
+        "english": "73",
+        "metric": "23"
+      },
+      "qpf": {
+        "english": "0.0",
+        "metric": "0"
+      },
+      "snow": {
+        "english": "0.0",
+        "metric": "0"
+      },
+      "pop": "11",
+      "mslp": {
+        "english": "30.23",
+        "metric": "1024"
+      }
+    },
+    {
+      "FCTTIME": {
+        "hour": "20",
+        "hour_padded": "20",
+        "min": "00",
+        "min_unpadded": "0",
+        "sec": "0",
+        "year": "2016",
+        "mon": "7",
+        "mon_padded": "07",
+        "mon_abbrev": "Jul",
+        "mday": "16",
+        "mday_padded": "16",
+        "yday": "197",
+        "isdst": "1",
+        "epoch": "1468692000",
+        "pretty": "8:00 PM CEST on July 16, 2016",
+        "civil": "8:00 PM",
+        "month_name": "July",
+        "month_name_abbrev": "Jul",
+        "weekday_name": "Saturday",
+        "weekday_name_night": "Saturday Night",
+        "weekday_name_abbrev": "Sat",
+        "weekday_name_unlang": "Saturday",
+        "weekday_name_night_unlang": "Saturday Night",
+        "ampm": "PM",
+        "tz": "",
+        "age": "",
+        "UTCDATE": ""
+      },
+      "temp": {
+        "english": "71",
+        "metric": "22"
+      },
+      "dewpoint": {
+        "english": "60",
+        "metric": "16"
+      },
+      "condition": "Overcast",
+      "icon": "cloudy",
+      "icon_url": "http://icons.wxug.com/i/c/k/cloudy.gif",
+      "fctcode": "4",
+      "sky": "85",
+      "wspd": {
+        "english": "8",
+        "metric": "13"
+      },
+      "wdir": {
+        "dir": "WSW",
+        "degrees": "256"
+      },
+      "wx": "Cloudy",
+      "uvi": "0",
+      "humidity": "69",
+      "windchill": {
+        "english": "-9999",
+        "metric": "-9999"
+      },
+      "heatindex": {
+        "english": "-9999",
+        "metric": "-9999"
+      },
+      "feelslike": {
+        "english": "71",
+        "metric": "22"
+      },
+      "qpf": {
+        "english": "0.0",
+        "metric": "0"
+      },
+      "snow": {
+        "english": "0.0",
+        "metric": "0"
+      },
+      "pop": "11",
+      "mslp": {
+        "english": "30.22",
+        "metric": "1023"
+      }
+    },
+    {
+      "FCTTIME": {
+        "hour": "21",
+        "hour_padded": "21",
+        "min": "00",
+        "min_unpadded": "0",
+        "sec": "0",
+        "year": "2016",
+        "mon": "7",
+        "mon_padded": "07",
+        "mon_abbrev": "Jul",
+        "mday": "16",
+        "mday_padded": "16",
+        "yday": "197",
+        "isdst": "1",
+        "epoch": "1468695600",
+        "pretty": "9:00 PM CEST on July 16, 2016",
+        "civil": "9:00 PM",
+        "month_name": "July",
+        "month_name_abbrev": "Jul",
+        "weekday_name": "Saturday",
+        "weekday_name_night": "Saturday Night",
+        "weekday_name_abbrev": "Sat",
+        "weekday_name_unlang": "Saturday",
+        "weekday_name_night_unlang": "Saturday Night",
+        "ampm": "PM",
+        "tz": "",
+        "age": "",
+        "UTCDATE": ""
+      },
+      "temp": {
+        "english": "70",
+        "metric": "21"
+      },
+      "dewpoint": {
+        "english": "61",
+        "metric": "16"
+      },
+      "condition": "Overcast",
+      "icon": "cloudy",
+      "icon_url": "http://icons.wxug.com/i/c/k/cloudy.gif",
+      "fctcode": "4",
+      "sky": "81",
+      "wspd": {
+        "english": "5",
+        "metric": "8"
+      },
+      "wdir": {
+        "dir": "WSW",
+        "degrees": "244"
+      },
+      "wx": "Cloudy",
+      "uvi": "0",
+      "humidity": "74",
+      "windchill": {
+        "english": "-9999",
+        "metric": "-9999"
+      },
+      "heatindex": {
+        "english": "-9999",
+        "metric": "-9999"
+      },
+      "feelslike": {
+        "english": "70",
+        "metric": "21"
+      },
+      "qpf": {
+        "english": "0.0",
+        "metric": "0"
+      },
+      "snow": {
+        "english": "0.0",
+        "metric": "0"
+      },
+      "pop": "12",
+      "mslp": {
+        "english": "30.22",
+        "metric": "1023"
+      }
+    },
+    {
+      "FCTTIME": {
+        "hour": "22",
+        "hour_padded": "22",
+        "min": "00",
+        "min_unpadded": "0",
+        "sec": "0",
+        "year": "2016",
+        "mon": "7",
+        "mon_padded": "07",
+        "mon_abbrev": "Jul",
+        "mday": "16",
+        "mday_padded": "16",
+        "yday": "197",
+        "isdst": "1",
+        "epoch": "1468699200",
+        "pretty": "10:00 PM CEST on July 16, 2016",
+        "civil": "10:00 PM",
+        "month_name": "July",
+        "month_name_abbrev": "Jul",
+        "weekday_name": "Saturday",
+        "weekday_name_night": "Saturday Night",
+        "weekday_name_abbrev": "Sat",
+        "weekday_name_unlang": "Saturday",
+        "weekday_name_night_unlang": "Saturday Night",
+        "ampm": "PM",
+        "tz": "",
+        "age": "",
+        "UTCDATE": ""
+      },
+      "temp": {
+        "english": "68",
+        "metric": "20"
+      },
+      "dewpoint": {
+        "english": "61",
+        "metric": "16"
+      },
+      "condition": "Mostly Cloudy",
+      "icon": "mostlycloudy",
+      "icon_url": "http://icons.wxug.com/i/c/k/nt_mostlycloudy.gif",
+      "fctcode": "3",
+      "sky": "71",
+      "wspd": {
+        "english": "5",
+        "metric": "8"
+      },
+      "wdir": {
+        "dir": "SW",
+        "degrees": "236"
+      },
+      "wx": "Mostly Cloudy",
+      "uvi": "0",
+      "humidity": "79",
+      "windchill": {
+        "english": "-9999",
+        "metric": "-9999"
+      },
+      "heatindex": {
+        "english": "-9999",
+        "metric": "-9999"
+      },
+      "feelslike": {
+        "english": "68",
+        "metric": "20"
+      },
+      "qpf": {
+        "english": "0.0",
+        "metric": "0"
+      },
+      "snow": {
+        "english": "0.0",
+        "metric": "0"
+      },
+      "pop": "13",
+      "mslp": {
+        "english": "30.23",
+        "metric": "1024"
+      }
+    },
+    {
+      "FCTTIME": {
+        "hour": "23",
+        "hour_padded": "23",
+        "min": "00",
+        "min_unpadded": "0",
+        "sec": "0",
+        "year": "2016",
+        "mon": "7",
+        "mon_padded": "07",
+        "mon_abbrev": "Jul",
+        "mday": "16",
+        "mday_padded": "16",
+        "yday": "197",
+        "isdst": "1",
+        "epoch": "1468702800",
+        "pretty": "11:00 PM CEST on July 16, 2016",
+        "civil": "11:00 PM",
+        "month_name": "July",
+        "month_name_abbrev": "Jul",
+        "weekday_name": "Saturday",
+        "weekday_name_night": "Saturday Night",
+        "weekday_name_abbrev": "Sat",
+        "weekday_name_unlang": "Saturday",
+        "weekday_name_night_unlang": "Saturday Night",
+        "ampm": "PM",
+        "tz": "",
+        "age": "",
+        "UTCDATE": ""
+      },
+      "temp": {
+        "english": "67",
+        "metric": "19"
+      },
+      "dewpoint": {
+        "english": "61",
+        "metric": "16"
+      },
+      "condition": "Mostly Cloudy",
+      "icon": "mostlycloudy",
+      "icon_url": "http://icons.wxug.com/i/c/k/nt_mostlycloudy.gif",
+      "fctcode": "3",
+      "sky": "67",
+      "wspd": {
+        "english": "4",
+        "metric": "6"
+      },
+      "wdir": {
+        "dir": "SW",
+        "degrees": "232"
+      },
+      "wx": "Mostly Cloudy",
+      "uvi": "0",
+      "humidity": "82",
+      "windchill": {
+        "english": "-9999",
+        "metric": "-9999"
+      },
+      "heatindex": {
+        "english": "-9999",
+        "metric": "-9999"
+      },
+      "feelslike": {
+        "english": "67",
+        "metric": "19"
+      },
+      "qpf": {
+        "english": "0.0",
+        "metric": "0"
+      },
+      "snow": {
+        "english": "0.0",
+        "metric": "0"
+      },
+      "pop": "14",
+      "mslp": {
+        "english": "30.23",
+        "metric": "1024"
+      }
+    }
+  ]
+}

@@ -1,0 +1,311 @@
+{
+  "response": {
+    "version": "0.1",
+    "termsofService": "http://www.wunderground.com/weather/api/d/terms.html",
+    "features": {
+      "geolookup": 1
+    }
+  },
+  "location": {
+    "type": "INTLCITY",
+    "country": "DL",
+    "country_iso3166": "DE",
+    "country_name": "Germany",
+    "state": "",
+    "city": "Duesseldorf",
+    "tz_short": "CEST",
+    "tz_long": "Europe/Berlin",
+    "lat": "51.27999878",
+    "lon": "6.78000021",
+    "zip": "00000",
+    "magic": "1",
+    "wmo": "10400",
+    "l": "/q/zmw:00000.1.10400",
+    "requesturl": "global/stations/10400.html",
+    "wuiurl": "https://www.wunderground.com/global/stations/10400.html",
+    "nearby_weather_stations": {
+      "airport": {
+        "station": [
+          {
+            "city": "",
+            "state": "",
+            "country": "",
+            "icao": "",
+            "lat": "",
+            "lon": ""
+          },
+          {
+            "city": "Duesseldorf",
+            "state": "",
+            "country": "DL",
+            "icao": "EDDL",
+            "lat": "51.29595947",
+            "lon": "6.76865005"
+          },
+          {
+            "city": "Monchengladbach",
+            "state": "",
+            "country": "DL",
+            "icao": "EDLN",
+            "lat": "51.23027802",
+            "lon": "6.50444412"
+          },
+          {
+            "city": "Noervenich",
+            "state": "",
+            "country": "DL",
+            "icao": "ETNN",
+            "lat": "50.82888794",
+            "lon": "6.65944386"
+          }
+        ]
+      },
+      "pws": {
+        "station": [
+          {
+            "neighborhood": "Hiddenseestraße",
+            "city": "Düsseldorf",
+            "state": "",
+            "country": "DE",
+            "id": "IDSSELDO226",
+            "lat": 51.274536,
+            "lon": 6.779394,
+            "distance_km": 0,
+            "distance_mi": 0
+          },
+          {
+            "neighborhood": "Cloppenburger Weg",
+            "city": "Düsseldorf",
+            "state": "",
+            "country": "DE",
+            "id": "IDSSELDO100",
+            "lat": 51.271179,
+            "lon": 6.783049,
+            "distance_km": 1,
+            "distance_mi": 0
+          },
+          {
+            "neighborhood": "Mettlacher Straße",
+            "city": "Düsseldorf",
+            "state": "",
+            "country": "DE",
+            "id": "IDSSELDO503",
+            "lat": 51.271893,
+            "lon": 6.771807,
+            "distance_km": 1,
+            "distance_mi": 0
+          },
+          {
+            "neighborhood": "Mettlacher Straße",
+            "city": "Düsseldorf",
+            "state": "",
+            "country": "DE",
+            "id": "IDSSELDO439",
+            "lat": 51.270607,
+            "lon": 6.772614,
+            "distance_km": 1,
+            "distance_mi": 0
+          },
+          {
+            "neighborhood": "Röhrenstraße",
+            "city": "Düsseldorf",
+            "state": "",
+            "country": "DL",
+            "id": "IDSSELDO135",
+            "lat": 51.265244,
+            "lon": 6.806167,
+            "distance_km": 2,
+            "distance_mi": 1
+          },
+          {
+            "neighborhood": "Zeppenheimer Dorfstraße",
+            "city": "Düsseldorf",
+            "state": "",
+            "country": "DE",
+            "id": "IDSSELDO124",
+            "lat": 51.298161,
+            "lon": 6.758999,
+            "distance_km": 2,
+            "distance_mi": 1
+          },
+          {
+            "neighborhood": "Kaiserswerther Straße",
+            "city": "Düsseldorf",
+            "state": "",
+            "country": "DE",
+            "id": "IDSSELDO198",
+            "lat": 51.263687,
+            "lon": 6.753551,
+            "distance_km": 2,
+            "distance_mi": 1
+          },
+          {
+            "neighborhood": "Meineckestraße",
+            "city": "Düsseldorf",
+            "state": "",
+            "country": "DE",
+            "id": "IDSSELDO350",
+            "lat": 51.255657,
+            "lon": 6.763845,
+            "distance_km": 2,
+            "distance_mi": 1
+          },
+          {
+            "neighborhood": "Münsterstraße",
+            "city": "Düsseldorf",
+            "state": "",
+            "country": "DE",
+            "id": "IDSSELDO304",
+            "lat": 51.260487,
+            "lon": 6.809007,
+            "distance_km": 2,
+            "distance_mi": 1
+          },
+          {
+            "neighborhood": "Johannstraße",
+            "city": "Düsseldorf",
+            "state": "",
+            "country": "DE",
+            "id": "IDSSELDO58",
+            "lat": 51.252804,
+            "lon": 6.775186,
+            "distance_km": 3,
+            "distance_mi": 1
+          },
+          {
+            "neighborhood": "Zur alten Exerzierhalle",
+            "city": "Düsseldorf",
+            "state": "",
+            "country": "DE",
+            "id": "IDSSELDO608",
+            "lat": 51.252453,
+            "lon": 6.778200,
+            "distance_km": 3,
+            "distance_mi": 1
+          },
+          {
+            "neighborhood": "Niederrheinstraße",
+            "city": "Düsseldorf",
+            "state": "",
+            "country": "DE",
+            "id": "IDSSELDO399",
+            "lat": 51.288399,
+            "lon": 6.737440,
+            "distance_km": 3,
+            "distance_mi": 1
+          },
+          {
+            "neighborhood": "Rilkestraße",
+            "city": "Düsseldorf",
+            "state": "",
+            "country": "DE",
+            "id": "IDSSELDO457",
+            "lat": 51.264950,
+            "lon": 6.740542,
+            "distance_km": 3,
+            "distance_mi": 1
+          },
+          {
+            "neighborhood": "Frankenstraße",
+            "city": "Düsseldorf",
+            "state": "",
+            "country": "DE",
+            "id": "IDSSELDO65",
+            "lat": 51.250149,
+            "lon": 6.781413,
+            "distance_km": 3,
+            "distance_mi": 1
+          },
+          {
+            "neighborhood": "Professor-Neyses-Platz",
+            "city": "Düsseldorf",
+            "state": "",
+            "country": "DE",
+            "id": "IDSSELDO483",
+            "lat": 51.249966,
+            "lon": 6.789620,
+            "distance_km": 3,
+            "distance_mi": 2
+          },
+          {
+            "neighborhood": "Dorf",
+            "city": "Düsseldorf",
+            "state": "",
+            "country": "DE",
+            "id": "IDSSELDO598",
+            "lat": 51.251518,
+            "lon": 6.761731,
+            "distance_km": 3,
+            "distance_mi": 2
+          },
+          {
+            "neighborhood": "Kreuzbergstraße",
+            "city": "Düsseldorf",
+            "state": "",
+            "country": "DL",
+            "id": "IDSSELDO634",
+            "lat": 51.302402,
+            "lon": 6.746419,
+            "distance_km": 3,
+            "distance_mi": 2
+          },
+          {
+            "neighborhood": "Orsoyer Straße",
+            "city": "Düsseldorf",
+            "state": "",
+            "country": "DE",
+            "id": "IDSSELDO72",
+            "lat": 51.251511,
+            "lon": 6.760669,
+            "distance_km": 3,
+            "distance_mi": 2
+          },
+          {
+            "neighborhood": "Theodor-Andresen-Straße",
+            "city": "Düsseldorf",
+            "state": "",
+            "country": "DL",
+            "id": "IDSSELDO118",
+            "lat": 51.252621,
+            "lon": 6.756001,
+            "distance_km": 3,
+            "distance_mi": 2
+          },
+          {
+            "neighborhood": "Nagelsweg",
+            "city": "Meerbusch",
+            "state": "",
+            "country": "DE",
+            "id": "IMEERBUS25",
+            "lat": 51.277527,
+            "lon": 6.729929,
+            "distance_km": 3,
+            "distance_mi": 2
+          },
+          {
+            "neighborhood": "Rheinberger Straße",
+            "city": "Düsseldorf",
+            "state": "",
+            "country": "DE",
+            "id": "IDSSELDO202",
+            "lat": 51.250954,
+            "lon": 6.760676,
+            "distance_km": 3,
+            "distance_mi": 2
+          },
+          {
+            "neighborhood": "Unterdorfstraße",
+            "city": "Düsseldorf",
+            "state": "",
+            "country": "DE",
+            "id": "IDSSELDO52",
+            "lat": 51.309296,
+            "lon": 6.759602,
+            "distance_km": 3,
+            "distance_mi": 2
+          }
+        ]
+      }
+    }
+  }
+}
