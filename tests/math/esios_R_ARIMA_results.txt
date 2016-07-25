@@ -1,0 +1,35 @@
+Call:
+arima(x = log(data["lambdaD"]), order = c(2, 0, 1), seasonal = list(order = c(1,
+    1, 1), period = 24))
+
+Coefficients:
+         ar1      ar2      ma1    sar1     sma1
+      1.2739  -0.3157  -0.0249  0.1253  -0.9312
+s.e.  0.0304   0.0295   0.0315  0.0118   0.0046
+
+sigma^2 estimated as 0.008024:  log likelihood = 8675.53,  aic = -17339.06
+
+Call:
+arima(x = data["MAvsMD"], order = c(1, 0, 11), seasonal = list(order = c(1,
+    0, 1), period = 24))
+
+Coefficients:
+         ar1      ma1      ma2      ma3      ma4      ma5      ma6     ma7
+      0.9315  -0.2847  -0.1164  -0.0663  -0.0653  -0.0471  -0.0116  0.0008
+s.e.  0.0154   0.0187   0.0148   0.0135   0.0128   0.0123   0.0118  0.0121
+          ma8     ma9     ma10    ma11    sar1     sma1  intercept
+      -0.0207  0.0072  -0.0072  0.0049  0.9962  -0.9894    -0.3992
+s.e.   0.0120  0.0117   0.0116  0.0115  0.0029   0.0051     0.2013
+
+sigma^2 estimated as 2.624:  log likelihood = -16690.66,  aic = 33413.31
+
+Call:
+arima(x = data["imbalance"], order = c(2, 0, 1), seasonal = list(order = c(1,
+    0, 1), period = 24))
+
+Coefficients:
+         ar1      ar2      ma1     sar1    sma1  intercept
+      0.9006  -0.1127  -0.3477  -0.1478  0.1878     0.9501
+s.e.  0.0866   0.0563   0.0848   0.2651  0.2634     0.0095
+
+sigma^2 estimated as 0.07859:  log likelihood = -1292.33,  aic = 2598.67

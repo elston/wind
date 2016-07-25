@@ -1,0 +1,260 @@
+ This problem is unconstrained.
+RUNNING THE L-BFGS-B CODE
+
+           * * *
+
+Machine precision = 2.220D-16
+ N =            6     M =           10
+
+At X0         0 variables are exactly at the bounds
+
+At iterate    0    f= -7.86959D-01    |proj g|=  8.17565D-01
+
+At iterate    5    f= -8.59133D-01    |proj g|=  2.57741D-01
+
+At iterate   10    f= -9.07225D-01    |proj g|=  1.08885D+00
+
+At iterate   15    f= -9.86534D-01    |proj g|=  2.48678D-02
+
+At iterate   20    f= -9.87886D-01    |proj g|=  6.35677D-03
+
+At iterate   25    f= -9.87939D-01    |proj g|=  4.94674D-02
+
+At iterate   30    f= -9.88086D-01    |proj g|=  4.41668D-02
+
+At iterate   35    f= -9.88433D-01    |proj g|=  2.88921D-03
+
+At iterate   40    f= -9.88439D-01    |proj g|=  4.85551D-04
+
+           * * *
+
+Tit   = total number of iterations
+Tnf   = total number of function evaluations
+Tnint = total number of segments explored during Cauchy searches
+Skip  = number of BFGS updates skipped
+Nact  = number of active bounds at final generalized Cauchy point
+Projg = norm of the final projected gradient
+F     = final function value
+
+           * * *
+
+   N    Tit     Tnf  Tnint  Skip  Nact     Projg        F
+    6     43     50      1     0     0   4.908D-04  -9.884D-01
+  F = -0.98843886368210654
+
+CONVERGENCE: REL_REDUCTION_OF_F_<=_FACTR*EPSMCH
+
+ Cauchy                time 0.000E+00 seconds.
+ Subspace minimization time 0.000E+00 seconds.
+ Line search           time 0.000E+00 seconds.
+
+ Total User time 0.000E+00 seconds.
+
+                                 Statespace Model Results
+==========================================================================================
+Dep. Variable:                            lambdaD   No. Observations:                 8777
+Model:             SARIMAX(2, 0, 1)x(1, 1, 1, 24)   Log Likelihood                8675.528
+Date:                            Mon, 25 Jul 2016   AIC                         -17339.056
+Time:                                    16:00:13   BIC                         -17296.576
+Sample:                                07-24-2015   HQIC                        -17324.583
+                                     - 07-24-2016
+Covariance Type:                              opg
+==============================================================================
+                 coef    std err          z      P>|z|      [0.025      0.975]
+------------------------------------------------------------------------------
+ar.L1          1.2749      0.020     64.165      0.000       1.236       1.314
+ar.L2         -0.3167      0.019    -16.362      0.000      -0.355      -0.279
+ma.L1         -0.0258      0.020     -1.295      0.195      -0.065       0.013
+ar.S.L24       0.1252      0.006     21.010      0.000       0.114       0.137
+ma.S.L24      -0.9312      0.003   -313.625      0.000      -0.937      -0.925
+sigma2         0.0080   3.95e-05    203.164      0.000       0.008       0.008
+===================================================================================
+Ljung-Box (Q):                      556.90   Jarque-Bera (JB):            130722.51
+Prob(Q):                              0.00   Prob(JB):                         0.00
+Heteroskedasticity (H):               2.75   Skew:                             0.06
+Prob(H) (two-sided):                  0.00   Kurtosis:                        21.93
+===================================================================================
+
+Warnings:
+[1] Covariance matrix calculated using the outer product of gradients (complex-step).
+RUNNING THE L-BFGS-B CODE
+
+           * * *
+
+Machine precision = 2.220D-16
+ N =           15     M =           10
+
+At X0         0 variables are exactly at the bounds
+ This problem is unconstrained.
+
+At iterate    0    f=  1.90679D+00    |proj g|=  6.62996D-02
+
+At iterate    5    f=  1.90460D+00    |proj g|=  1.18356D-03
+
+At iterate   10    f=  1.90459D+00    |proj g|=  5.06515D-04
+
+At iterate   15    f=  1.90458D+00    |proj g|=  3.38664D-03
+
+At iterate   20    f=  1.90410D+00    |proj g|=  1.19925D-02
+
+At iterate   25    f=  1.90375D+00    |proj g|=  2.07116D-03
+
+At iterate   30    f=  1.90367D+00    |proj g|=  1.55846D-03
+
+At iterate   35    f=  1.90350D+00    |proj g|=  1.85614D-02
+
+At iterate   40    f=  1.90228D+00    |proj g|=  2.03762D-02
+
+At iterate   45    f=  1.90196D+00    |proj g|=  6.70245D-03
+
+At iterate   50    f=  1.90187D+00    |proj g|=  1.81367D-03
+
+At iterate   55    f=  1.90187D+00    |proj g|=  1.37753D-04
+
+At iterate   60    f=  1.90186D+00    |proj g|=  1.43502D-03
+
+At iterate   65    f=  1.90184D+00    |proj g|=  1.07371D-03
+
+At iterate   70    f=  1.90182D+00    |proj g|=  6.11215D-04
+
+At iterate   75    f=  1.90182D+00    |proj g|=  3.30228D-04
+
+           * * *
+
+Tit   = total number of iterations
+Tnf   = total number of function evaluations
+Tnint = total number of segments explored during Cauchy searches
+Skip  = number of BFGS updates skipped
+Nact  = number of active bounds at final generalized Cauchy point
+Projg = norm of the final projected gradient
+F     = final function value
+
+           * * *
+
+   N    Tit     Tnf  Tnint  Skip  Nact     Projg        F
+   15     75     86      1     0     0   3.302D-04   1.902D+00
+  F =   1.9018187367164479
+
+CONVERGENCE: REL_REDUCTION_OF_F_<=_FACTR*EPSMCH
+
+ Cauchy                time 0.000E+00 seconds.
+ Subspace minimization time 0.000E+00 seconds.
+ Line search           time 0.000E+00 seconds.
+
+ Total User time 0.000E+00 seconds.
+
+                                  Statespace Model Results
+===========================================================================================
+Dep. Variable:                              MAvsMD   No. Observations:                 8777
+Model:             SARIMAX(1, 0, 11)x(1, 0, 1, 24)   Log Likelihood              -16692.263
+Date:                             Mon, 25 Jul 2016   AIC                          33414.526
+Time:                                     16:07:02   BIC                          33520.724
+Sample:                                 07-24-2015   HQIC                         33450.708
+                                      - 07-24-2016
+Covariance Type:                               opg
+==============================================================================
+                 coef    std err          z      P>|z|      [0.025      0.975]
+------------------------------------------------------------------------------
+ar.L1          0.9346      0.012     74.897      0.000       0.910       0.959
+ma.L1         -0.2876      0.014    -20.511      0.000      -0.315      -0.260
+ma.L2         -0.1180      0.011    -10.774      0.000      -0.139      -0.097
+ma.L3         -0.0674      0.011     -5.968      0.000      -0.090      -0.045
+ma.L4         -0.0662      0.011     -5.992      0.000      -0.088      -0.045
+ma.L5         -0.0477      0.010     -4.749      0.000      -0.067      -0.028
+ma.L6         -0.0121      0.010     -1.201      0.230      -0.032       0.008
+ma.L7          0.0002      0.010      0.020      0.984      -0.019       0.020
+ma.L8         -0.0214      0.010     -2.037      0.042      -0.042      -0.001
+ma.L9          0.0067      0.010      0.642      0.521      -0.014       0.027
+ma.L10        -0.0078      0.011     -0.724      0.469      -0.029       0.013
+ma.L11         0.0043      0.012      0.373      0.709      -0.018       0.027
+ar.S.L24       0.9971      0.002    535.271      0.000       0.993       1.001
+ma.S.L24      -0.9904      0.004   -277.587      0.000      -0.997      -0.983
+sigma2         2.6241      0.018    149.674      0.000       2.590       2.658
+===================================================================================
+Ljung-Box (Q):                       43.14   Jarque-Bera (JB):             33720.47
+Prob(Q):                              0.34   Prob(JB):                         0.00
+Heteroskedasticity (H):               0.79   Skew:                            -0.23
+Prob(H) (two-sided):                  0.00   Kurtosis:                        12.59
+===================================================================================
+
+Warnings:
+[1] Covariance matrix calculated using the outer product of gradients (complex-step).
+RUNNING THE L-BFGS-B CODE
+
+           * * *
+
+Machine precision = 2.220D-16
+ N =            6     M =           10
+
+At X0         0 variables are exactly at the bounds
+ This problem is unconstrained.
+
+At iterate    0    f=  2.00407D-01    |proj g|=  6.23447D-01
+
+At iterate    5    f=  1.85349D-01    |proj g|=  1.04108D-01
+
+At iterate   10    f=  1.79024D-01    |proj g|=  8.30918D-02
+
+At iterate   15    f=  1.76153D-01    |proj g|=  3.91823D-02
+
+At iterate   20    f=  1.56149D-01    |proj g|=  6.07257D-01
+
+At iterate   25    f=  1.52089D-01    |proj g|=  3.88601D-02
+
+At iterate   30    f=  1.51982D-01    |proj g|=  5.59601D-03
+
+At iterate   35    f=  1.51982D-01    |proj g|=  3.67211D-03
+
+At iterate   40    f=  1.51982D-01    |proj g|=  1.56438D-03
+
+           * * *
+
+Tit   = total number of iterations
+Tnf   = total number of function evaluations
+Tnint = total number of segments explored during Cauchy searches
+Skip  = number of BFGS updates skipped
+Nact  = number of active bounds at final generalized Cauchy point
+Projg = norm of the final projected gradient
+F     = final function value
+
+           * * *
+
+   N    Tit     Tnf  Tnint  Skip  Nact     Projg        F
+    6     40     48      1     0     0   1.564D-03   1.520D-01
+  F =  0.15198193335386836
+
+CONVERGENCE: REL_REDUCTION_OF_F_<=_FACTR*EPSMCH
+
+ Cauchy                time 0.000E+00 seconds.
+ Subspace minimization time 0.000E+00 seconds.
+ Line search           time 0.000E+00 seconds.
+
+ Total User time 0.000E+00 seconds.
+
+                                 Statespace Model Results
+==========================================================================================
+Dep. Variable:                          imbalance   No. Observations:                 8777
+Model:             SARIMAX(2, 0, 1)x(1, 0, 1, 24)   Log Likelihood               -1333.945
+Date:                            Mon, 25 Jul 2016   AIC                           2679.891
+Time:                                    16:07:47   BIC                           2722.370
+Sample:                                07-24-2015   HQIC                          2694.364
+                                     - 07-24-2016
+Covariance Type:                              opg
+==============================================================================
+                 coef    std err          z      P>|z|      [0.025      0.975]
+------------------------------------------------------------------------------
+ar.L1          1.4116      0.017     82.226      0.000       1.378       1.445
+ar.L2         -0.4526      0.012    -37.291      0.000      -0.476      -0.429
+ma.L1         -0.8432      0.016    -51.133      0.000      -0.876      -0.811
+ar.S.L24       0.9998      0.000   4108.771      0.000       0.999       1.000
+ma.S.L24      -0.9820      0.002   -557.877      0.000      -0.985      -0.979
+sigma2         0.0787      0.000    161.495      0.000       0.078       0.080
+===================================================================================
+Ljung-Box (Q):                      139.04   Jarque-Bera (JB):            142380.54
+Prob(Q):                              0.00   Prob(JB):                         0.00
+Heteroskedasticity (H):               3.44   Skew:                             0.35
+Prob(H) (two-sided):                  0.00   Kurtosis:                        22.75
+===================================================================================
+
+Warnings:
+[1] Covariance matrix calculated using the outer product of gradients (complex-step).
