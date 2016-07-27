@@ -241,3 +241,56 @@ class HourlyForecast(db.Model):
     wdird = db.Column(db.Integer())  # Wind direction in degrees
 
     forecast = relationship('Forecast', back_populates='hourly_forecasts')
+
+
+class Market(db.Model):
+    __tablename__ = 'markets'
+
+    id = db.Column(db.Integer(), primary_key=True)
+    name = db.Column(db.String(255))
+    user_id = db.Column(db.Integer(), db.ForeignKey('user.id'), index=True)
+
+    prices = relationship('Prices', back_populates='market', order_by='Prices.time',
+                          cascade='all, delete-orphan')
+
+    @classmethod
+    def from_excess_args(cls, **kwargs):
+        d = {}
+        for c in cls.__table__.columns:
+            d[c.name] = kwargs.get(c.name)
+        item = Market(**d)
+        return item
+
+    def to_dict(self):
+        d = {}
+        for c in self.__table__.columns:
+            d[c.name] = getattr(self, c.name)
+        return d
+
+    def add_prices(self, df):
+        for ts in df.index:
+            prices = db.session.query(Prices).filter_by(market_id=self.id, time=ts).first()
+            if prices is None:
+                prices = Prices(market_id=self.id, time=ts)
+                db.session.add(prices)
+            for name in df.columns.values:
+                setattr(prices, name, df[name][ts])
+        db.session.commit()
+
+
+class Prices(db.Model):
+    __tablename__ = 'historical_prices'
+
+    id = db.Column(db.Integer(), primary_key=True)
+    market_id = db.Column(db.Integer(), db.ForeignKey('markets.id'), index=True)
+    time = db.Column(db.DateTime(), index=True)  # UTC time
+    lambdaD = db.Column(db.Float())  # DA price
+    lambdaA = db.Column(db.Float())  # AM price
+    MAvsMD = db.Column(db.Float())  # AM - DA price
+    lambdaPlus = db.Column(db.Float())  #
+    lambdaMinus = db.Column(db.Float())  #
+    r_pos = db.Column(db.Float())  # lambda+ / lambdaD
+    r_neg = db.Column(db.Float())  # lambda- / lambdaD
+    sqrt_r = db.Column(db.Float())  # sqrt(r+ + r- -1)
+
+    market = relationship('Market', back_populates='prices')

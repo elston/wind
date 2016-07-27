@@ -34,6 +34,7 @@
 <script src="{{ url_for('.static', filename='bower_components/spin.js/spin.js') }}"></script>
 <script src="{{ url_for('.static', filename='bower_components/angular-spinner/angular-spinner.min.js') }}"></script>
 <script src="{{ url_for('.static', filename='bower_components/angular-loading-spinner/angular-loading-spinner.js') }}"></script>
+<script src="{{ url_for('.static', filename='bower_components/ng-file-upload/ng-file-upload.min.js') }}"></script>
 <script src="{{ url_for('.static', filename='editablegrid/editablegrid.js') }}"></script>
 <script src="{{ url_for('.static', filename='editablegrid/editablegrid_renderers.js') }}"></script>
 <script src="{{ url_for('.static', filename='editablegrid/editablegrid_editors.js') }}"></script>
@@ -42,6 +43,9 @@
 <script src="{{ url_for('.static', filename='js/app.js') }}"></script>
 <script src="{{ url_for('.static', filename='js/controllers/locationCtrl.js') }}"></script>
 <script src="{{ url_for('.static', filename='js/controllers/newLocationCtrl.js') }}"></script>
+<script src="{{ url_for('.static', filename='js/controllers/marketCtrl.js') }}"></script>
+<script src="{{ url_for('.static', filename='js/controllers/newMarketCtrl.js') }}"></script>
+<script src="{{ url_for('.static', filename='js/controllers/uploadPricesCtrl.js') }}"></script>
 <script src="{{ url_for('.static', filename='js/controllers/weatherPlotCtrl.js') }}"></script>
 <script src="{{ url_for('.static', filename='js/controllers/wspdDistributionCtrl.js') }}"></script>
 {% if current_user.has_role('admin') %}
@@ -62,6 +66,8 @@
     <ul class="nav nav-tabs" role="tablist">
         <li role="presentation" class="active"><a href="#locations" aria-controls="symbols" role="tab" data-toggle="tab">Locations</a>
         </li>
+        <li role="presentation"><a href="#markets" aria-controls="symbols" role="tab" data-toggle="tab">Markets</a>
+        </li>
         {% if current_user.has_role('admin') %}
         <li role="presentation"><a href="#admin" aria-controls="admin" role="tab" data-toggle="tab">Admin</a></li>
         {% endif %}
@@ -69,6 +75,7 @@
     <!-- Tab panes -->
     <div class="tab-content">
         <div role="tabpanel" class="tab-pane active" id="locations">{% include "locations.jinja" %}</div>
+        <div role="tabpanel" class="tab-pane" id="markets">{% include "markets.jinja" %}</div>
         {% if current_user.has_role('admin') %}
         <div role="tabpanel" class="tab-pane" id="admin">{% include "admin.jinja" %}</div>
         {% endif %}

@@ -50,6 +50,6 @@ td.editablegrid-action button.btn, a.btn {
     vertical-align: middle;
 }
 
-#locations-grid button.btn-xs {
+.ui-grid-cell button.btn-xs {
     margin: 4px
 }

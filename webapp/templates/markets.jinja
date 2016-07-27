@@ -1,0 +1,53 @@
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <h1>Markets</h1>
+
+            <div ng-controller="MarketsCtrl">
+                <div id="markets-grid" ui-grid="gridOptions" ui-grid-selection class="grid" ui-grid-auto-resize></div>
+                <div ng-if='noMarkets'>
+                    <h3 align="center">No data. Use "hamburger" menu at top right corner to add market.</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal -->
+{% raw %}  <!-- Angular templating -->
+<div class="modal fade" id="new-market-dialog" tabindex="-1" role="dialog"
+     aria-labelledby="new-market-dialog-label" ng-controller="NewMarketCtrl">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="new-market-dialog-label">Add new market</h4>
+            </div>
+
+            <div class="modal-body">
+                <div class="container-fluid">
+                    <form class="form-horizontal" id="new-market-form">
+                        <input type="hidden" id="market-id" name="market-id">
+
+                        <div class="form-group">
+                            <label for="market-name" class="col-xs-3 control-label">Name: </label>
+
+                            <div class="col-xs-9">
+                                <input type="text" ng-model="name" id="market-name" name="market-name"
+                                       class="form-control"/>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" id="new-market" class="btn btn-primary"
+                        ng-disabled="name.length==0" ng-click="addMarket()">Add
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endraw %}
