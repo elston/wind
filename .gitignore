@@ -1,6 +1,8 @@
 /webapp/data/db.sqlite
 *_api_key
 
+/tests/math/.Rhistory
+/tests/math/.RData
 /angular-flask
 # Created by .ignore support plugin (hsz.mobi)
 ### VirtualEnv template

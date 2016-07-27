@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 
-from sarima_fit import PriceModel
+from sarima_fit_r import PriceModel
 
 
 def test():
@@ -9,25 +9,30 @@ def test():
     plot_esios_data(test_data.data)
     test_data.fit_models()
 
-
     import matplotlib
     matplotlib.use('TkAgg')
     import matplotlib.pyplot as plt
-    predict_lambdaD = test_data.lambdaD_model.predict(start=100, end=200, dynamic=True)
-    plt.plot(test_data.data.index[:200], test_data.data['lambdaD'][:200])
-    plt.plot(predict_lambdaD.index, np.exp(predict_lambdaD), '--')
-    plt.title('e.sios $\lambda^D$ prediction')
+    predict_lambdaD = test_data.lambdaD_model.predict(n_ahead=100)
+    plt.plot(test_data.lambdaD_model._data.index[-300:], np.exp(test_data.lambdaD_model._data[-300:]))
+    plt.plot(predict_lambdaD.index, np.exp(predict_lambdaD['pred']), '--')
+    plt.fill_between(predict_lambdaD.index, np.exp(predict_lambdaD['pred'] + predict_lambdaD['se']),
+                     np.exp(predict_lambdaD['pred'] - predict_lambdaD['se']), facecolor='lightgrey')
+    plt.title('e.sios $\lambda^D$ prediction ' + test_data.lambdaD_model.description)
     plt.show()
 
-    predict_MAvsMD = test_data.MAvsMD_model.predict(start=100, end=200, dynamic=True)
-    plt.plot(test_data.data.index[:200], test_data.data['MAvsMD'][:200])
-    plt.plot(predict_MAvsMD.index, predict_MAvsMD, '--')
+    predict_MAvsMD = test_data.MAvsMD_model.predict(n_ahead=100)
+    plt.plot(test_data.MAvsMD_model._data.index[-300:], test_data.MAvsMD_model._data[-300:])
+    plt.plot(predict_MAvsMD.index, predict_MAvsMD['pred'], '--')
+    plt.fill_between(predict_MAvsMD.index, predict_MAvsMD['pred'] + predict_MAvsMD['se'],
+                     predict_MAvsMD['pred'] - predict_MAvsMD['se'], facecolor='lightgrey')
     plt.title('e.sios $\Delta\lambda$ prediction')
     plt.show()
 
-    predict_imbalance = test_data.imbalance_model.predict(start=100, end=200, dynamic=True)
-    plt.plot(test_data.data.index[:200], test_data.data['imbalance'][:200])
-    plt.plot(predict_imbalance.index, predict_imbalance, '--')
+    predict_imbalance = test_data.imbalance_model.predict(n_ahead=100)
+    plt.plot(test_data.imbalance_model._data.index[-300:], test_data.imbalance_model._data[-300:])
+    plt.plot(predict_imbalance.index, predict_imbalance['pred'], '--')
+    plt.fill_between(predict_imbalance.index, predict_imbalance['pred'] + predict_imbalance['se'],
+                     predict_imbalance['pred'] - predict_imbalance['se'], facecolor='lightgrey')
     plt.title('e.sios $\sqrt{r}$ prediction')
     plt.show()
 
