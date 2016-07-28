@@ -38,7 +38,7 @@ app.controller('MarketsCtrl', ['$scope', '$http', '$log', '$uibModal',
                     cellTemplate: '<button type="button" class="btn btn-default btn-xs" ng-click="$emit(\'uploadPrices\')" ' +
                     'tooltip-append-to-body="true" uib-tooltip="Upload prices">' +
                     '<span class="glyphicon glyphicon-upload" aria-hidden="true"></span></button>' +
-                    '<button type="button" class="btn btn-default btn-xs" ' +
+                    '<button type="button" class="btn btn-default btn-xs" ng-click="$emit(\'viewData\')" ' +
                     'tooltip-append-to-body="true" uib-tooltip="View data">' +
                     '<span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span></button>',
                     width: 200
@@ -51,6 +51,21 @@ app.controller('MarketsCtrl', ['$scope', '$http', '$log', '$uibModal',
                 animation: false,
                 templateUrl: 'static/partials/upload-prices-modal.html',
                 controller: 'UploadPricesCtrl',
+                size: 'lg',
+                resolve: {
+                    entity: function () {
+                        return $event.targetScope.row.entity;
+                    }
+                }
+            });
+
+        });
+
+        $scope.$on('viewData', function ($event) {
+            var modalInstance = $uibModal.open({
+                animation: false,
+                templateUrl: 'static/partials/market-data-modal.html',
+                controller: 'MarketDataCtrl',
                 size: 'lg',
                 resolve: {
                     entity: function () {

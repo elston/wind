@@ -53,3 +53,9 @@ td.editablegrid-action button.btn, a.btn {
 .ui-grid-cell button.btn-xs {
     margin: 4px
 }
+
+span.data-label {
+    font-weight: bold;
+    text-align: right;
+    margin-right: 20px
+}

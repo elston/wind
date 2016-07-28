@@ -197,7 +197,6 @@ class MarketsTestCase(unittest.TestCase):
                          datetime(year=2015, month=7, day=25, tzinfo=pytz.timezone('Etc/GMT-2')))
         self.assertAlmostEqual(test_market.prices[-1].lambdaA, 44.39, 2)
 
-
     def test_preview_esios_balancing_prices(self):
         test_market = Market(user_id=user_id, name=test_name)
         self.session.add(test_market)
@@ -247,6 +246,63 @@ class MarketsTestCase(unittest.TestCase):
         self.assertAlmostEqual(test_market.prices[-1].lambdaPlus, 66.22, 2)
         self.assertAlmostEqual(test_market.prices[0].lambdaMinus, 72.33, 2)
         self.assertAlmostEqual(test_market.prices[-1].lambdaMinus, 66.22, 2)
+
+    def test_summary(self):
+        test_market = Market(user_id=user_id, name=test_name)
+        self.session.add(test_market)
+        self.session.commit()
+        market_id = test_market.id
+
+        with open('tests/data/custom_test.csv') as csvfile:
+            rv = self.app.post('/api/markets/prices',
+                               data={'format': 'custom',
+                                     'file': (csvfile, 'test.csv'),
+                                     'mkt_id': market_id})
+        result = json.loads(rv.data)
+        self.assertIn('data', result)
+        self.assertNotIn('error', result)
+        data = result['data']
+        print data
+
+        summary = test_market.get_summary()
+        print summary
+        self.assertEqual(summary['start'], datetime(year=2015, month=7, day=25, tzinfo=pytz.utc))
+        self.assertEqual(summary['end'], datetime(year=2015, month=7, day=25, hour=8, tzinfo=pytz.utc))
+        self.assertEqual(summary['n_prices'], 9)
+        self.assertAlmostEqual(summary['lambdaD']['max'], 32.79, 2)
+        self.assertAlmostEqual(summary['lambdaD']['min'], 24.40, 2)
+        self.assertAlmostEqual(summary['MAvsMD']['max'], 2.66, 2)
+        self.assertAlmostEqual(summary['MAvsMD']['min'], -4.65, 2)
+        self.assertAlmostEqual(summary['sqrt_r']['max'], 1.810, 4)
+        self.assertAlmostEqual(summary['sqrt_r']['min'], 0.003, 4)
+
+    def test_get_values(self):
+        test_market = Market(user_id=user_id, name=test_name)
+        self.session.add(test_market)
+        self.session.commit()
+        market_id = test_market.id
+
+        with open('tests/data/custom_test.csv') as csvfile:
+            rv = self.app.post('/api/markets/prices',
+                               data={'format': 'custom',
+                                     'file': (csvfile, 'test.csv'),
+                                     'mkt_id': market_id})
+        result = json.loads(rv.data)
+        self.assertIn('data', result)
+        self.assertNotIn('error', result)
+        data = result['data']
+        print data
+
+        rv = self.app.get('/api/markets/prices/%d/lambdaD' % market_id)
+        result = json.loads(rv.data)
+        self.assertIn('data', result)
+        self.assertNotIn('error', result)
+        data = result['data']
+        print data
+
+        self.assertAlmostEqual(data[0][1], 27.87, 2)
+        self.assertEqual(datetime.utcfromtimestamp(data[0][0] / 1000).replace(tzinfo=pytz.utc),
+                         datetime(year=2015, month=7, day=25, tzinfo=pytz.utc))
 
 
 if __name__ == '__main__':

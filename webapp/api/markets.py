@@ -5,7 +5,7 @@ from flask import jsonify, request
 from flask_login import current_user
 import pandas as pd
 from webapp import app, db
-from webapp.models import Market
+from webapp.models import Market, Prices
 
 logger = logging.getLogger(__name__)
 
@@ -164,6 +164,42 @@ def upload_prices():
         market.add_prices(df)
 
         js = jsonify({'data': 'OK'})
+        return js
+    except Exception, e:
+        logger.exception(e)
+        js = jsonify({'error': repr(e)})
+        return js
+
+
+@app.route('/api/markets/summary/<mkt_id>')
+def get_summary(mkt_id):
+    if not current_user.is_authenticated:
+        return jsonify({'error': 'User unauthorized'})
+    try:
+        market = db.session.query(Market).filter_by(id=mkt_id).first()
+        data = market.get_summary()
+
+        js = jsonify({'data': data})
+        return js
+    except Exception, e:
+        logger.exception(e)
+        js = jsonify({'error': repr(e)})
+        return js
+
+
+@app.route('/api/markets/prices/<mkt_id>/<value_name>')
+def get_values(mkt_id, value_name):
+    if not current_user.is_authenticated:
+        return jsonify({'error': 'User unauthorized'})
+    try:
+        values = db.session.query(Prices.time, getattr(Prices, value_name)) \
+            .filter_by(market_id=mkt_id) \
+            .order_by(Prices.time) \
+            .all()
+
+        values = [[calendar.timegm(x[0].utctimetuple()) * 1000, x[1]] for x in values]
+
+        js = jsonify({'data': values})
         return js
     except Exception, e:
         logger.exception(e)
