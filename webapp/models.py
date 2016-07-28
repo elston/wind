@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+import logging
 
 from scipy import signal
 import numpy as np
@@ -64,19 +65,21 @@ class Location(db.Model):
         data = wuclient.history(date, self.l)
         observations = data['history']['observations']
         for obs_data in observations:
-            utcdate = obs_data['utcdate']
-            timestamp = datetime(year=int(utcdate['year']), month=int(utcdate['mon']), day=int(utcdate['mday']),
-                                 hour=int(utcdate['hour']), minute=int(utcdate['min']))
-            tempm = float(obs_data.get('tempm'))
-            wspdm = float(obs_data.get('wspdm'))
-            wdird_s = obs_data.get('wdird')
-            if wdird_s == '':
-                wdird = 0
-            else:
-                wdird = int(wdird_s)
-            obs = Observation(location_id=self.id, time=timestamp, tempm=tempm, wspdm_raw=wspdm, wdird=wdird)
-            db.session.add(obs)
-            # self.observations.append(obs)
+            try:
+                utcdate = obs_data['utcdate']
+                timestamp = datetime(year=int(utcdate['year']), month=int(utcdate['mon']), day=int(utcdate['mday']),
+                                     hour=int(utcdate['hour']), minute=int(utcdate['min']))
+                tempm = float(obs_data.get('tempm'))
+                wspdm = float(obs_data.get('wspdm'))
+                wdird_s = obs_data.get('wdird')
+                if wdird_s == '':
+                    wdird = 0
+                else:
+                    wdird = int(wdird_s)
+                obs = Observation(location_id=self.id, time=timestamp, tempm=tempm, wspdm_raw=wspdm, wdird=wdird)
+                db.session.add(obs)
+            except Exception, e:
+                logging.warn('Could not parse observation %r: %r', obs_data, e)
         if dls is None:
             dls = HistoryDownloadStatus(date=date, partial=True, full=not today)
             self.history_downloads.append(dls)
@@ -101,14 +104,17 @@ class Location(db.Model):
         db.session.flush()
         db.session.refresh(forecast)
         for hourly_data in data['hourly_forecast']:
-            ts = int(hourly_data['FCTTIME']['epoch'])
-            time = datetime.utcfromtimestamp(ts)
-            tempm = float(hourly_data['temp']['metric'])
-            wspdm = float(hourly_data['wspd']['metric'])
-            wdird = int(hourly_data['wdir']['degrees'])
-            hourly_forecast = HourlyForecast(forecast_id=forecast.id, time=time, tempm=tempm,
-                                             wspdm=wspdm, wdird=wdird)
-            forecast.hourly_forecasts.append(hourly_forecast)
+            try:
+                ts = int(hourly_data['FCTTIME']['epoch'])
+                time = datetime.utcfromtimestamp(ts)
+                tempm = float(hourly_data['temp']['metric'])
+                wspdm = float(hourly_data['wspd']['metric'])
+                wdird = int(hourly_data['wdir']['degrees'])
+                hourly_forecast = HourlyForecast(forecast_id=forecast.id, time=time, tempm=tempm,
+                                                 wspdm=wspdm, wdird=wdird)
+                forecast.hourly_forecasts.append(hourly_forecast)
+            except Exception, e:
+                logging.warn('Could not parse forecast %r: %r', hourly_data, e)
         db.session.commit()
 
     def filter_history(self):
