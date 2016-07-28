@@ -54,7 +54,8 @@ def delete_locations(loc_id):
     if not current_user.is_authenticated:
         return jsonify({'error': 'User unauthorized'})
     try:
-        db.session.query(Location).filter_by(user_id=current_user.id, id=loc_id).delete()
+        location = db.session.query(Location).filter_by(user_id=current_user.id, id=loc_id).first()
+        db.session.delete(location)
         db.session.commit()
         js = jsonify({'data': 'OK'})
         return js

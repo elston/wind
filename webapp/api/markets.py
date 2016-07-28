@@ -51,7 +51,8 @@ def delete_markets(mkt_id):
     if not current_user.is_authenticated:
         return jsonify({'error': 'User unauthorized'})
     try:
-        db.session.query(Market).filter_by(user_id=current_user.id, id=mkt_id).delete()
+        market = db.session.query(Market).filter_by(user_id=current_user.id, id=mkt_id).first()
+        db.session.delete(market)
         db.session.commit()
         js = jsonify({'data': 'OK'})
         return js
