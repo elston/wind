@@ -16,6 +16,7 @@ env.from_yaml('config.yml')
 
 # Create database connection object
 db = SQLAlchemy(app)
+# logging.getLogger('sqlalchemy.engine').setLevel(logging.INFO)
 
 from webapp.wu_client import WuClient
 
