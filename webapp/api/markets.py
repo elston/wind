@@ -65,12 +65,13 @@ def parse_custom_prices(csvfile):
     df = pd.read_csv(csvfile,
                      header=0,
                      index_col=0,
-                     names=['time', 'lambdaD', 'MAvsMD', 'imbalance'],
+                     names=['time', 'lambdaD', 'MAvsMD', 'sqrt_r'],
                      parse_dates=True, infer_datetime_format=True)
+    df.index = df.index.tz_localize('UTC')
     return df
 
 
-def parse_esios_prices(csvfile, subformat):
+def parse_esios_prices(csvfile, subformat):  # TODO: check esios ids for foolproof
     if subformat == 'da':
         df = pd.read_csv(csvfile,
                          delimiter=';',
@@ -110,6 +111,7 @@ def parse_esios_prices(csvfile, subformat):
     else:
         raise Exception('Unknown file subformat %s', subformat)
 
+    df.index = df.index.tz_localize('UTC')
     return df
 
 
