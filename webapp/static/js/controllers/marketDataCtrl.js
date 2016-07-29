@@ -88,9 +88,23 @@ app.controller('MarketDataCtrl', ['$scope', '$http', '$q', '$uibModalInstance', 
                     function (error) {
                         alertify.error(error.statusText);
                     });
-
-
         };
+
+        $scope.fitModel = function () {
+            $http.post($SCRIPT_ROOT + '/markets/prices/fit_model/' + entity.id)
+                .then(function (response) {
+                        if ('error' in response.data) {
+                            alertify.error(response.data.error);
+                        } else {
+                            alertify.success('OK');
+                            $scope.update();
+                        }
+                    },
+                    function (error) {
+                        alertify.error(error.statusText);
+                    });
+        };
+
     }
 
 ]);

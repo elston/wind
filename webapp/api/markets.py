@@ -222,3 +222,20 @@ def calculate_missing(mkt_id):
         logger.exception(e)
         js = jsonify({'error': repr(e)})
         return js
+
+
+@app.route('/api/markets/prices/fit_model/<mkt_id>', methods=['POST', ])
+def fit_model(mkt_id):
+    if not current_user.is_authenticated:
+        return jsonify({'error': 'User unauthorized'})
+    try:
+        market = db.session.query(Market).filter_by(id=mkt_id).first()
+        market.fit_price_model()
+        db.session.commit()
+
+        js = jsonify({'data': 'OK'})
+        return js
+    except Exception, e:
+        logger.exception(e)
+        js = jsonify({'error': repr(e)})
+        return js

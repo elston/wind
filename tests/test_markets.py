@@ -339,6 +339,67 @@ class MarketsTestCase(unittest.TestCase):
         self.assertAlmostEqual(test_market.prices[0].r_neg, 4.5, 2)
         self.assertAlmostEqual(test_market.prices[0].sqrt_r, 2.10, 2)
 
+    def test_fit_models(self):
+        test_market = Market(user_id=user_id, name=test_name)
+        self.session.add(test_market)
+        self.session.commit()
+        market_id = test_market.id
+
+        with open('tests/data/custom_test_100.csv') as csvfile:
+            rv = self.app.post('/api/markets/prices',
+                               data={'format': 'custom',
+                                     'file': (csvfile, 'test.csv'),
+                                     'mkt_id': market_id})
+        result = json.loads(rv.data)
+        self.assertIn('data', result)
+        self.assertNotIn('error', result)
+        data = result['data']
+        print data
+
+        test_market.fit_price_model()
+        print test_market.lambdaD_model.to_dict()
+        print test_market.MAvsMD_model.to_dict()
+        print test_market.sqrt_r_model.to_dict()
+        self.assertIsNotNone(test_market.lambdaD_model._model)
+        self.assertIsNotNone(test_market.MAvsMD_model._model)
+        self.assertIsNotNone(test_market.sqrt_r_model._model)
+
+    def test_fit_models_api(self):
+        test_market = Market(user_id=user_id, name=test_name)
+        self.session.add(test_market)
+        self.session.commit()
+        market_id = test_market.id
+
+        with open('tests/data/custom_test_100.csv') as csvfile:
+            rv = self.app.post('/api/markets/prices',
+                               data={'format': 'custom',
+                                     'file': (csvfile, 'test.csv'),
+                                     'mkt_id': market_id})
+        result = json.loads(rv.data)
+        self.assertIn('data', result)
+        self.assertNotIn('error', result)
+        data = result['data']
+        print data
+
+        rv = self.app.post('/api/markets/prices/fit_model/%d' % market_id)
+        result = json.loads(rv.data)
+        self.assertIn('data', result)
+        self.assertNotIn('error', result)
+
+        self.session.refresh(test_market)
+        self.assertIsNotNone(test_market.lambdaD_model)
+        self.assertIsNotNone(test_market.MAvsMD_model)
+        self.assertIsNotNone(test_market.sqrt_r_model)
+        print test_market.lambdaD_model.to_dict()
+        print test_market.MAvsMD_model.to_dict()
+        print test_market.sqrt_r_model.to_dict()
+
+        summary = test_market.get_summary()
+        print summary
+
+        self.assertIsInstance(summary['lambdaD_model'], dict)
+        self.assertIsInstance(summary['MAvsMD_model'], dict)
+        self.assertIsInstance(summary['sqrt_r_model'], dict)
 
 if __name__ == '__main__':
     unittest.main()
