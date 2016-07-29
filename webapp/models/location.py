@@ -1,13 +1,15 @@
 from datetime import datetime, timedelta
 import logging
 
-import pytz
 from scipy import signal
 import numpy as np
 from scipy import stats
 from sqlalchemy.orm import relationship
 from webapp import db, wuclient, app
-
+from .observation import Observation
+from .history_download_status import HistoryDownloadStatus
+from .forecast import Forecast
+from .hourly_forecast import HourlyForecast
 
 class Location(db.Model):
     __tablename__ = 'locations'
@@ -179,146 +181,3 @@ class Location(db.Model):
         bin_centers = 0.5 * (bin_edges[1:] + bin_edges[:-1])
         pdf = stats.weibull_min.pdf(bin_centers, shape, location, scale)
         return shape, scale, zip(bin_centers, hist / float(sum(hist)) / bin_width), zip(bin_centers, pdf)
-
-
-class HistoryDownloadStatus(db.Model):
-    __tablename__ = 'history_download_status'
-
-    id = db.Column(db.Integer(), primary_key=True)
-    location_id = db.Column(db.Integer(), db.ForeignKey('locations.id'), index=True)
-    date = db.Column(db.Date(), index=True)  # UTC date
-    partial = db.Column(db.Boolean())
-    full = db.Column(db.Boolean())
-
-    location = relationship('Location', back_populates='history_downloads')
-
-
-class Observation(db.Model):
-    __tablename__ = 'observations'
-
-    id = db.Column(db.Integer(), primary_key=True)
-    location_id = db.Column(db.Integer(), db.ForeignKey('locations.id'), index=True)
-    time = db.Column(db.DateTime(), index=True)  # UTC time
-    tempm = db.Column(db.Float())  # Temp in C
-    wspdm_raw = db.Column(db.Float())  # WindSpeed kph
-    wspdm = db.Column(db.Float())  # WindSpeed kph with outliers filtered
-    wdird = db.Column(db.Integer())  # Wind direction in degrees
-
-    location = relationship('Location', back_populates='observations')
-
-    def __str__(self):
-        return '<Observation id=%s %s temp=%f wspdm=%f wdird=%f>' % (self.id, self.time, self.tempm, self.wspdm,
-                                                                     self.wdird)
-
-    @classmethod
-    def from_excess_args(cls, **kwargs):
-        d = {}
-        for c in cls.__table__.columns:
-            d[c.name] = kwargs.get(c.name)
-        item = Observation(**d)
-        return item
-
-    def to_dict(self):
-        d = {}
-        for c in self.__table__.columns:
-            d[c.name] = getattr(self, c.name)
-        return d
-
-
-class Forecast(db.Model):
-    __tablename__ = 'forecasts'
-
-    id = db.Column(db.Integer(), primary_key=True)
-    location_id = db.Column(db.Integer(), db.ForeignKey('locations.id'), index=True)
-    time = db.Column(db.DateTime(), index=True)  # UTC time
-
-    location = relationship('Location', back_populates='forecasts')
-    hourly_forecasts = relationship('HourlyForecast', back_populates='forecast', order_by='HourlyForecast.time',
-                                    cascade='all, delete-orphan')
-
-
-class HourlyForecast(db.Model):
-    __tablename__ = 'hourly_forecasts'
-
-    id = db.Column(db.Integer(), primary_key=True)
-    forecast_id = db.Column(db.Integer(), db.ForeignKey('forecasts.id'), index=True)
-    time = db.Column(db.DateTime(), index=True)  # UTC time
-    tempm = db.Column(db.Float())  # Temp in C
-    wspdm = db.Column(db.Float())  # WindSpeed kph
-    wdird = db.Column(db.Integer())  # Wind direction in degrees
-
-    forecast = relationship('Forecast', back_populates='hourly_forecasts')
-
-
-class Market(db.Model):
-    __tablename__ = 'markets'
-
-    id = db.Column(db.Integer(), primary_key=True)
-    name = db.Column(db.String(255))
-    user_id = db.Column(db.Integer(), db.ForeignKey('user.id'), index=True)
-
-    prices = relationship('Prices', back_populates='market', order_by='Prices.time',
-                          cascade='all, delete-orphan')
-
-    @classmethod
-    def from_excess_args(cls, **kwargs):
-        d = {}
-        for c in cls.__table__.columns:
-            d[c.name] = kwargs.get(c.name)
-        item = Market(**d)
-        return item
-
-    def to_dict(self):
-        d = {}
-        for c in self.__table__.columns:
-            d[c.name] = getattr(self, c.name)
-        return d
-
-    def add_prices(self, df):
-        for ts in df.index:
-            prices = db.session.query(Prices).filter_by(market_id=self.id, time=ts).first()
-            if prices is None:
-                prices = Prices(market_id=self.id, time=ts)
-                db.session.add(prices)
-            for name in df.columns.values:
-                setattr(prices, name, df[name][ts])
-        db.session.commit()
-
-    def get_summary(self):
-        n_prices = len(self.prices)
-        start = self.prices[0].time.replace(tzinfo=pytz.utc)
-        end = self.prices[-1].time.replace(tzinfo=pytz.utc)
-        result = {'n_prices': n_prices, 'start': start, 'end': end}
-        for name in ('lambdaD', 'lambdaA', 'MAvsMD', 'lambdaPlus', 'lambdaMinus', 'r_pos', 'r_neg', 'sqrt_r'):
-            values = []
-            for price in self.prices:
-                values.append(getattr(price, name))
-            values = np.array(values, dtype=np.float)
-            values = values[np.isfinite(values)]
-            value_max = np.max(values) if values.size > 0 else None
-            value_min = np.min(values) if values.size > 0 else None
-            value_mean = np.mean(values) if values.size > 0 else None
-            value_std = np.std(values) if values.size > 0 else None
-            result[name] = {'max': value_max,
-                            'min': value_min,
-                            'mean': value_mean,
-                            'std': value_std}
-        return result
-
-
-class Prices(db.Model):
-    __tablename__ = 'historical_prices'
-
-    id = db.Column(db.Integer(), primary_key=True)
-    market_id = db.Column(db.Integer(), db.ForeignKey('markets.id'), index=True)
-    time = db.Column(db.DateTime(), index=True)  # UTC time
-    lambdaD = db.Column(db.Float())  # DA price
-    lambdaA = db.Column(db.Float())  # AM price
-    MAvsMD = db.Column(db.Float())  # AM - DA price
-    lambdaPlus = db.Column(db.Float())  #
-    lambdaMinus = db.Column(db.Float())  #
-    r_pos = db.Column(db.Float())  # lambda+ / lambdaD
-    r_neg = db.Column(db.Float())  # lambda- / lambdaD
-    sqrt_r = db.Column(db.Float())  # sqrt(r+ + r- -1)
-
-    market = relationship('Market', back_populates='prices')
