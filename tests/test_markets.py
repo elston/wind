@@ -7,7 +7,7 @@ from flask import json
 import pytz
 import webapp
 import re
-from webapp.models import Market
+from webapp.models import Market, Prices
 
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
@@ -303,6 +303,41 @@ class MarketsTestCase(unittest.TestCase):
         self.assertAlmostEqual(data[0][1], 27.87, 2)
         self.assertEqual(datetime.utcfromtimestamp(data[0][0] / 1000).replace(tzinfo=pytz.utc),
                          datetime(year=2015, month=7, day=25, tzinfo=pytz.utc))
+
+    def test_calculate_missing_values_int(self):
+        test_market = Market(user_id=user_id, name=test_name)
+        self.session.add(test_market)
+        self.session.commit()
+        market_id = test_market.id
+
+        prices = Prices(lambdaD=1.2, lambdaA=3.2, lambdaPlus=1.1, lambdaMinus=5.4)
+        test_market.prices.append(prices)
+
+        test_market.calculate_missing_values()
+        self.assertAlmostEqual(test_market.prices[0].MAvsMD, 2.0, 2)
+        self.assertAlmostEqual(test_market.prices[0].r_pos, 0.92, 2)
+        self.assertAlmostEqual(test_market.prices[0].r_neg, 4.5, 2)
+        self.assertAlmostEqual(test_market.prices[0].sqrt_r, 2.10, 2)
+
+    def test_calculate_missing_values_api(self):
+        test_market = Market(user_id=user_id, name=test_name)
+        self.session.add(test_market)
+        self.session.commit()
+        market_id = test_market.id
+
+        prices = Prices(lambdaD=1.2, lambdaA=3.2, lambdaPlus=1.1, lambdaMinus=5.4)
+        test_market.prices.append(prices)
+        self.session.commit()
+
+        rv = self.app.post('/api/markets/prices/calculate_missing/%d' % market_id)
+        result = json.loads(rv.data)
+        self.assertIn('data', result)
+        self.assertNotIn('error', result)
+
+        self.assertAlmostEqual(test_market.prices[0].MAvsMD, 2.0, 2)
+        self.assertAlmostEqual(test_market.prices[0].r_pos, 0.92, 2)
+        self.assertAlmostEqual(test_market.prices[0].r_neg, 4.5, 2)
+        self.assertAlmostEqual(test_market.prices[0].sqrt_r, 2.10, 2)
 
 
 if __name__ == '__main__':

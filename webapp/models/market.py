@@ -1,3 +1,5 @@
+import math
+
 import pytz
 import numpy as np
 from sqlalchemy.orm import relationship
@@ -59,3 +61,14 @@ class Market(db.Model):
                             'mean': value_mean,
                             'std': value_std}
         return result
+
+    def calculate_missing_values(self):
+        for price in self.prices:
+            if price.lambdaD is not None and price.lambdaA is not None and price.MAvsMD is None:
+                price.MAvsMD = price.lambdaA - price.lambdaD
+            if price.lambdaD is not None and price.lambdaPlus is not None and price.r_pos is None:
+                price.r_pos = price.lambdaPlus / price.lambdaD
+            if price.lambdaD is not None and price.lambdaMinus is not None and price.r_neg is None:
+                price.r_neg = price.lambdaMinus / price.lambdaD
+            if price.r_pos is not None and price.r_neg is not None and price.sqrt_r is None:
+                price.sqrt_r = math.sqrt(price.r_pos + price.r_neg - 1)

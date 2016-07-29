@@ -17,18 +17,21 @@ app.controller('MarketDataCtrl', ['$scope', '$http', '$q', '$uibModalInstance', 
             ['sqrt_r', 'sqrt(r)']
         ];
 
-        $http.get($SCRIPT_ROOT + '/markets/summary/' + entity.id)
-            .then(function (response) {
-                    if ('error' in response.data) {
-                        alertify.error(response.data.error);
-                    } else {
-                        $scope.summary = response.data.data;
-                    }
-                },
-                function (error) {
-                    alertify.error(error.statusText);
-                });
+        $scope.update = function () {
+            $http.get($SCRIPT_ROOT + '/markets/summary/' + entity.id)
+                .then(function (response) {
+                        if ('error' in response.data) {
+                            alertify.error(response.data.error);
+                        } else {
+                            $scope.summary = response.data.data;
+                        }
+                    },
+                    function (error) {
+                        alertify.error(error.statusText);
+                    });
+        };
 
+        $scope.update();
 
         $scope.close = function () {
             $uibModalInstance.close();
@@ -71,6 +74,23 @@ app.controller('MarketDataCtrl', ['$scope', '$http', '$q', '$uibModalInstance', 
         $scope.cleanPlot = function (value) {
             $('plot-value-' + value[0]).empty();
         }
+
+        $scope.calculateMissing = function () {
+            $http.post($SCRIPT_ROOT + '/markets/prices/calculate_missing/' + entity.id)
+                .then(function (response) {
+                        if ('error' in response.data) {
+                            alertify.error(response.data.error);
+                        } else {
+                            alertify.success('OK');
+                            $scope.update();
+                        }
+                    },
+                    function (error) {
+                        alertify.error(error.statusText);
+                    });
+
+
+        };
     }
 
 ]);

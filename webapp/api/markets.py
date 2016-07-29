@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 
 
 @app.route('/api/markets')
-def get_markets():
+def list_markets():
     if not current_user.is_authenticated:
         return jsonify({'error': 'User unauthorized'})
     try:
@@ -29,7 +29,7 @@ def get_markets():
 
 
 @app.route('/api/markets', methods=['POST', ])
-def add_markets():
+def add_market():
     if not current_user.is_authenticated:
         return jsonify({'error': 'User unauthorized'})
     try:
@@ -47,7 +47,7 @@ def add_markets():
 
 
 @app.route('/api/markets/<mkt_id>', methods=['DELETE', ])
-def delete_markets(mkt_id):
+def delete_market(mkt_id):
     if not current_user.is_authenticated:
         return jsonify({'error': 'User unauthorized'})
     try:
@@ -200,6 +200,23 @@ def get_values(mkt_id, value_name):
         values = [[calendar.timegm(x[0].utctimetuple()) * 1000, x[1]] for x in values]
 
         js = jsonify({'data': values})
+        return js
+    except Exception, e:
+        logger.exception(e)
+        js = jsonify({'error': repr(e)})
+        return js
+
+
+@app.route('/api/markets/prices/calculate_missing/<mkt_id>', methods=['POST', ])
+def calculate_missing(mkt_id):
+    if not current_user.is_authenticated:
+        return jsonify({'error': 'User unauthorized'})
+    try:
+        market = db.session.query(Market).filter_by(id=mkt_id).first()
+        market.calculate_missing_values()
+        db.session.commit()
+
+        js = jsonify({'data': 'OK'})
         return js
     except Exception, e:
         logger.exception(e)
