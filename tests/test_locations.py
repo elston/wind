@@ -154,7 +154,7 @@ class LocationsTestCase(unittest.TestCase):
 
         test_location_1 = self.session.query(Location).filter_by(id=test_location.id).first()
         forecast_1 = test_location_1.forecasts[0]
-        self.assertEqual(len(forecast_1), 240)
+        self.assertEqual(len(forecast_1.hourly_forecasts), 240)
         hourly_forecast_1 = forecast_1.hourly_forecasts[0]
         self.assertIsInstance(hourly_forecast_1, HourlyForecast)
 

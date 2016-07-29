@@ -16,13 +16,13 @@ class WuClientTestCase(unittest.TestCase):
         pass
 
     def test_throttle(self):
-        WuClient.min_interval_sec = 0.21
+        self.wu_client.min_interval_sec = 0.21
         start1 = time.time()
         self.wu_client.check_limits()
         time.sleep(0.15)
         self.wu_client.check_limits()
         end = time.time()
-        self.assertAlmostEqual(end - start1, 0.21, 2)
+        self.assertAlmostEqual(end - start1, 0.21, 1)
 
     def test_geolookup_single(self):
         data = self.wu_client.geolookup(u'Lithuania/Vilnius')
