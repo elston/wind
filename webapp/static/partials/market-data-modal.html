@@ -72,72 +72,50 @@
     <div class="panel panel-default" ng-if="summary.lambdaD_model">
         <div class="panel-heading"><h4 class="panel-title">Price model</h4></div>
         <div class="panel-body">
-            <h4>Day ahead price</h4>
-
-            <div class="container-fluid">
-                <div class="row">
-                    <div class="col-xs-1">
-                        <br><br>s.e.
+            <div ng-repeat="item in modelsMetadata">
+                <h4><span>{{ item[1] }}</span>
+                    <button class='btn btn-info btn-xs pull-right' disabled>Q-Q plot</button>
+                    <button class='btn btn-info btn-xs pull-right'
+                            ng-click="summary.showResiduals[item[0]] = !summary.showResiduals[item[0]]">Residuals plot
+                    </button>
+                    <button class='btn btn-info btn-xs pull-right'
+                            ng-click="summary.showPrediction[item[0]] = !summary.showPrediction[item[0]]">Prediction
+                        plot
+                    </button>
+                </h4>
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-xs-1">
+                            <br><br>s.e.
+                        </div>
+                        <div class="col-xs-1" ng-repeat="(key, value) in summary[item[0] + '_model'].coef">
+                            <b>{{ key }}</b><br>
+                            {{ value | number: 4 }}<br>
+                            {{ summary[item[0] + '_model'].s_e[key] | number:4 }}
+                        </div>
                     </div>
-                    <div class="col-xs-1" ng-repeat="(key, value) in summary.lambdaD_model.coef">
-                        <b>{{ key }}</b><br>
-                        {{ value | number: 4 }}<br>
-                        {{ summary.lambdaD_model.s_e[key] | number:4 }}
+                    <dl class="dl-horizontal">
+                        <dt>sigma<sup>2</sup></dt>
+                        <dd>{{ summary[item[0] + '_model'].sigma2 | number:4 }}</dd>
+                        <dt>log likelihood</dt>
+                        <dd>{{ summary[item[0] + '_model'].loglik | number:4 }}</dd>
+                        <dt>AIC</dt>
+                        <dd>{{ summary[item[0] + '_model'].aic | number:4 }}</dd>
+                    </dl>
+                </div>
+                <div uib-collapse="!summary.showPrediction[item[0]]" expanded="plotPrediction(item)"
+                     collapsed="cleanPrediction(item)">
+                    <div class="well well-lg">
+                        <div id="plot-{{ item[0] }}-pred" style="width:100%; height:400px;"></div>
                     </div>
                 </div>
-                <dl class="dl-horizontal">
-                    <dt>sigma<sup>2</sup></dt>
-                    <dd>{{ summary.lambdaD_model.sigma2 | number:4 }}</dd>
-                    <dt>log likelihood</dt>
-                    <dd>{{ summary.lambdaD_model.loglik | number:4 }}</dd>
-                    <dt>AIC</dt>
-                    <dd>{{ summary.lambdaD_model.aic | number:4 }}</dd>
-                </dl>
-            </div>
-            <h4>Difference between AM and DA markets</h4>
-
-            <div class="container-fluid">
-                <div class="row">
-                    <div class="col-xs-1">
-                        <br><br>s.e.
-                    </div>
-                    <div class="col-xs-1" ng-repeat="(key, value) in summary.MAvsMD_model.coef">
-                        <b>{{ key }}</b><br>
-                        {{ value | number: 4 }}<br>
-                        {{ summary.MAvsMD_model.s_e[key] | number:4 }}
-                    </div>
-                </div>
-                <dl class="dl-horizontal">
-                    <dt>sigma<sup>2</sup></dt>
-                    <dd>{{ summary.MAvsMD_model.sigma2 | number:4 }}</dd>
-                    <dt>log likelihood</dt>
-                    <dd>{{ summary.MAvsMD_model.loglik | number:4 }}</dd>
-                    <dt>AIC</dt>
-                    <dd>{{ summary.MAvsMD_model.aic | number:4 }}</dd>
-                </dl>
-            </div>
-            <h4>Imbalance</h4>
-
-            <div class="container-fluid">
-                <div class="row">
-                    <div class="col-xs-1">
-                        <br><br>s.e.
-                    </div>
-                    <div class="col-xs-1" ng-repeat="(key, value) in summary.sqrt_r_model.coef">
-                        <b>{{ key }}</b><br>
-                        {{ value | number: 4 }}<br>
-                        {{ summary.sqrt_r_model.s_e[key] | number:4 }}
+                <div uib-collapse="!summary.showResiduals[item[0]]" expanded="plotResiduals(item)"
+                     collapsed="cleanResiduals(item)">
+                    <div class="well well-lg">
+                        <div id="plot-{{ item[0] }}-residuals" style="width:100%; height:400px;"></div>
                     </div>
                 </div>
             </div>
-            <dl class="dl-horizontal">
-                <dt>sigma<sup>2</sup></dt>
-                <dd>{{ summary.sqrt_r_model.sigma2 | number:4 }}</dd>
-                <dt>log likelihood</dt>
-                <dd>{{ summary.sqrt_r_model.loglik | number:4 }}</dd>
-                <dt>AIC</dt>
-                <dd>{{ summary.sqrt_r_model.aic | number:4 }}</dd>
-            </dl>
         </div>
     </div>
 

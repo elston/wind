@@ -17,6 +17,12 @@ app.controller('MarketDataCtrl', ['$scope', '$http', '$q', '$uibModalInstance', 
             ['sqrt_r', 'sqrt(r)']
         ];
 
+        $scope.modelsMetadata = [
+            ['lambdaD', 'Day ahead prices'],
+            ['MAvsMD', 'Difference between DA and AM prices'],
+            ['sqrt_r', 'sqrt(r)']
+        ];
+
         $scope.update = function () {
             $http.get($SCRIPT_ROOT + '/markets/summary/' + entity.id)
                 .then(function (response) {
@@ -43,7 +49,7 @@ app.controller('MarketDataCtrl', ['$scope', '$http', '$q', '$uibModalInstance', 
                         if ('error' in response.data) {
                             alertify.error(response.data.error);
                         } else {
-                            $scope.chart = new Highcharts.Chart({
+                            $scope.chart = new Highcharts.StockChart({
                                 chart: {
                                     renderTo: 'plot-value-' + value[0],
                                     animation: false
@@ -73,7 +79,7 @@ app.controller('MarketDataCtrl', ['$scope', '$http', '$q', '$uibModalInstance', 
 
         $scope.cleanPlot = function (value) {
             $('plot-value-' + value[0]).empty();
-        }
+        };
 
         $scope.calculateMissing = function () {
             $http.post($SCRIPT_ROOT + '/markets/prices/calculate_missing/' + entity.id)
@@ -103,6 +109,60 @@ app.controller('MarketDataCtrl', ['$scope', '$http', '$q', '$uibModalInstance', 
                     function (error) {
                         alertify.error(error.statusText);
                     });
+        };
+
+        $scope.plotPrediction = function (value) {
+            $scope.chart = new Highcharts.StockChart({
+                chart: {
+                    renderTo: 'plot-' + value[0] + '-pred',
+                    animation: false
+                },
+                title: {
+                    text: value[1] + ' prediction'
+                },
+                credits: {
+                    enabled: false
+                },
+                yAxis: [{
+                    title: {
+                        text: value[1]
+                    }
+                }],
+                series: [{
+                    data: $scope.summary[value[0] + '_model'].pred,
+                    animation: false
+                },
+                    {
+                        data: $scope.summary[value[0] + '_model'].pred_se,
+                        animation: false
+                    }]
+            });
+
+        };
+
+        $scope.plotResiduals = function (value) {
+            $scope.chart = new Highcharts.StockChart({
+                chart: {
+                    renderTo: 'plot-' + value[0] + '-residuals',
+                    animation: false
+                },
+                title: {
+                    text: value[1] + ' residuals'
+                },
+                credits: {
+                    enabled: false
+                },
+                yAxis: [{
+                    title: {
+                        text: value[1]
+                    }
+                }],
+                series: [{
+                    data: $scope.summary[value[0] + '_model'].residuals,
+                    animation: false
+                }]
+            });
+
         };
 
     }

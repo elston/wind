@@ -59,3 +59,8 @@ span.data-label {
     text-align: right;
     margin-right: 20px
 }
+
+h4 button.pull-right {
+    margin-top: -2px;
+    margin-left: 5px;
+}
