@@ -72,6 +72,7 @@ class ArimaPriceModel(TypeDecorator):
             self.coef = dict(zip(coef.names, list(coef)))
             var_coef = np.array(self._model.rx2('var.coef'))
             s_e_coef = np.sqrt(np.diag(var_coef))
+            s_e_coef = [x if np.isfinite(x) else None for x in s_e_coef]
             self.s_e = dict(zip(coef.names, s_e_coef))
             self.sigma2 = self._model.rx2('sigma2')[0]
             self.aic = self._model.rx2('aic')[0]
