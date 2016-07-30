@@ -14,6 +14,9 @@
     set_fact: apps_user=nobody
     when: ansible_os_family == "RedHat"
 
+  - name: add R repository for fresh packages
+    apt_repository: repo='deb https://cloud.r-project.org/bin/linux/ubuntu trusty/' state=present
+
   - name: install packages
     apt: name={{ item }} state=installed update_cache=yes
     with_items:
@@ -26,6 +29,8 @@
       - libblas-dev
       - liblapack-dev
       - tk-dev
+      - r-base
+      - r-base-dev
     when: ansible_os_family == "Debian"
 
   - name: install packages
@@ -116,5 +121,5 @@
     command: env/bin/pip install -r requirements.txt
     args:
         chdir: "{{ tools_dir }}"
-        creates: env/lib/python2.7/site-packages/flask
+#        creates: env/lib/python2.7/site-packages/flask
 
