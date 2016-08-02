@@ -72,25 +72,31 @@ def parse_custom_prices(csvfile):
     return df
 
 
-def parse_esios_prices(csvfile, subformat):  # TODO: check esios ids for foolproof
+def parse_esios_prices(csvfile, subformat):
     if subformat == 'da':
         df = pd.read_csv(csvfile,
                          delimiter=';',
                          header=0,
-                         index_col=1,  # 5th actually
-                         names=['lambdaD', 'time'],
-                         usecols=[4, 5],
+                         index_col=2,  # 5th actually
+                         names=['id', 'lambdaD', 'time'],
+                         usecols=[0, 4, 5],
                          parse_dates=True,
                          infer_datetime_format=True)
+        if not (df.id == 600).all():
+            raise Exception("This file doesn't look like e.sios day ahead prices")
+        df.drop(['id'], inplace=True, axis=1)
     elif subformat == 'am':
         df = pd.read_csv(csvfile,
                          delimiter=';',
                          header=0,
-                         index_col=1,  # 5th actually
-                         names=['lambdaA', 'time'],
-                         usecols=[4, 5],
+                         index_col=2,  # 5th actually
+                         names=['id', 'lambdaA', 'time'],
+                         usecols=[0, 4, 5],
                          parse_dates=True,
                          infer_datetime_format=True)
+        if not (df.id == 612).all():
+            raise Exception("This file doesn't look like e.sios intraday prices")
+        df.drop(['id'], inplace=True, axis=1)
     elif subformat == 'bal':
         mixed_data = pd.read_csv(csvfile,
                                  delimiter=';',
@@ -107,6 +113,9 @@ def parse_esios_prices(csvfile, subformat):  # TODO: check esios ids for foolpro
         downward_prices.rename(columns={'data': 'lambdaMinus'}, inplace=True)
 
         df = upward_prices.join(downward_prices, how='inner', rsuffix='_down', sort=True)
+
+        if df.size == 0:
+            raise Exception("This file doesn't look like e.sios balancing prices")
 
         df.drop(['id', 'id_down'], inplace=True, axis=1)
     else:
