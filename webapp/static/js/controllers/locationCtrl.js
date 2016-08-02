@@ -89,7 +89,7 @@ app.controller('LocationsCtrl', ['$scope', '$http', '$log', '$uibModal', functio
 
         var modalInstance = $uibModal.open({
             animation: false,
-            templateUrl: 'static/partials/weather-plot-modal.html',
+            templateUrl: 'weather-plot-modal.html',
             controller: 'WeatherPlotCtrl',
             size: 'lg',
             resolve: {
@@ -107,7 +107,7 @@ app.controller('LocationsCtrl', ['$scope', '$http', '$log', '$uibModal', functio
 
         var modalInstance = $uibModal.open({
             animation: false,
-            templateUrl: 'static/partials/wspd-distribution-modal.html',
+            templateUrl: 'wspd-distribution-modal.html',
             controller: 'WspdDistributionCtrl',
             size: 'lg',
             resolve: {

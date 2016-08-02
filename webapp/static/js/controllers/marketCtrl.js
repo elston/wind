@@ -49,7 +49,7 @@ app.controller('MarketsCtrl', ['$scope', '$http', '$log', '$uibModal',
         $scope.$on('uploadPrices', function ($event) {
             var modalInstance = $uibModal.open({
                 animation: false,
-                templateUrl: 'static/partials/upload-prices-modal.html',
+                templateUrl: 'upload-prices-modal.html',
                 controller: 'UploadPricesCtrl',
                 size: 'lg',
                 resolve: {
@@ -64,7 +64,7 @@ app.controller('MarketsCtrl', ['$scope', '$http', '$log', '$uibModal',
         $scope.$on('viewData', function ($event) {
             var modalInstance = $uibModal.open({
                 animation: false,
-                templateUrl: 'static/partials/market-data-modal.html',
+                templateUrl: 'market-data-modal.html',
                 controller: 'MarketDataCtrl',
                 size: 'lg',
                 resolve: {

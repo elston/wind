@@ -59,13 +59,13 @@
                                         <button class="btn btn-primary" type="button" ng-click="search()">Search
                                         </button>
                                       </span>
-<!--
-                                    <i ng-show="loadingLocations" class="glyphicon glyphicon-refresh"></i>
+                                    <!--
+                                                                        <i ng-show="loadingLocations" class="glyphicon glyphicon-refresh"></i>
 
-                                    <div ng-show="noResults">
-                                        <i class="glyphicon glyphicon-remove"></i> No Results Found
-                                    </div>
--->
+                                                                        <div ng-show="noResults">
+                                                                            <i class="glyphicon glyphicon-remove"></i> No Results Found
+                                                                        </div>
+                                    -->
                                 </div>
                                 <div ng-if='manyLocations'>
                                     <div id="select-location-grid" ui-grid="gridOptions" ui-grid-selection
@@ -128,4 +128,43 @@
         </div>
     </div>
 </div>
+
+<script type="text/ng-template" id="weather-plot-modal.html">
+    <div class="modal-header">
+        <!-- <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button> -->
+        <h4 class="modal-title" id="weather-plot-modal-label">Weather plot for location "{{ locationName }}"</h4>
+    </div>
+    <div class="modal-body">
+        <div style="text-align: center">
+            <div class="btn-group">
+                <label class="btn btn-default btn-xs active">
+                    <input type="checkbox" name="tempm" data-toggle="button" ng-model="tempmEnabled"
+                           ng-change="updateSeriesSet()"> Temperature</label>
+                <label class="btn btn-default btn-xs active">
+                    <input type="checkbox" name="wspdm" data-toggle="button" ng-model="wspdmEnabled"
+                           ng-change="updateSeriesSet()"> Wind speed</label>
+                <label class="btn btn-default btn-xs">
+                    <input type="checkbox" name="wdird" data-toggle="button" ng-model="wdirdEnabled"
+                           ng-change="updateSeriesSet()"> Wind direction</label>
+            </div>
+        </div>
+        <div id="weather-chart-container" style="width:100%; height:450px;"></div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-default" ng-click="close()">Close</button>
+    </div>
+</script>
+
+<script type="text/ng-template" id="wspd-distribution-modal.html">
+    <div class="modal-header">
+        <h4 class="modal-title" id="wspd-plot-modal-label">Wind speed distribution and model for location "{{
+            locationName }}"</h4>
+    </div>
+    <div class="modal-body">
+        <div id="wspd-distr-container" style="width:100%; height:450px;"></div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-default" ng-click="close()">Close</button>
+    </div>
+</script>
 {% endraw %}
