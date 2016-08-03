@@ -6,3 +6,4 @@ from .market import Market
 from .observation import Observation
 from .prices import Prices
 from .windpark import Windpark
+from .generation import Generation

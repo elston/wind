@@ -5,7 +5,7 @@ from flask import jsonify, request
 from flask_login import current_user
 import pandas as pd
 from webapp import app, db
-from webapp.models import Windpark, Prices
+from webapp.models import Windpark, Prices, Generation
 
 logger = logging.getLogger(__name__)
 
@@ -66,61 +66,22 @@ def parse_custom_generation(csvfile):
     df = pd.read_csv(csvfile,
                      header=0,
                      index_col=0,
-                     names=['time', 'lambdaD', 'MAvsMD', 'sqrt_r'],
+                     names=['time', 'power'],
                      parse_dates=True, infer_datetime_format=True)
     df.index = df.index.tz_localize('UTC')
     return df
 
 
-def parse_esios_generation(csvfile, subformat):
-    if subformat == 'da':
-        df = pd.read_csv(csvfile,
-                         delimiter=';',
-                         header=0,
-                         index_col=2,  # 5th actually
-                         names=['id', 'lambdaD', 'time'],
-                         usecols=[0, 4, 5],
-                         parse_dates=True,
-                         infer_datetime_format=True)
-        if not (df.id == 600).all():
-            raise Exception("This file doesn't look like e.sios day ahead generation")
-        df.drop(['id'], inplace=True, axis=1)
-    elif subformat == 'am':
-        df = pd.read_csv(csvfile,
-                         delimiter=';',
-                         header=0,
-                         index_col=2,  # 5th actually
-                         names=['id', 'lambdaA', 'time'],
-                         usecols=[0, 4, 5],
-                         parse_dates=True,
-                         infer_datetime_format=True)
-        if not (df.id == 612).all():
-            raise Exception("This file doesn't look like e.sios intraday generation")
-        df.drop(['id'], inplace=True, axis=1)
-    elif subformat == 'bal':
-        mixed_data = pd.read_csv(csvfile,
-                                 delimiter=';',
-                                 header=0,
-                                 index_col=2,  # 5th actually
-                                 names=['id', 'data', 'time'],
-                                 usecols=[0, 4, 5],
-                                 parse_dates=True,
-                                 infer_datetime_format=True)
-
-        upward_generation = mixed_data[mixed_data.id == 686]  # e.sios specific code
-        upward_generation.rename(columns={'data': 'lambdaPlus'}, inplace=True)
-        downward_generation = mixed_data[mixed_data.id == 687]  # e.sios specific code
-        downward_generation.rename(columns={'data': 'lambdaMinus'}, inplace=True)
-
-        df = upward_generation.join(downward_generation, how='inner', rsuffix='_down', sort=True)
-
-        if df.size == 0:
-            raise Exception("This file doesn't look like e.sios balancing generation")
-
-        df.drop(['id', 'id_down'], inplace=True, axis=1)
-    else:
-        raise Exception('Unknown file subformat %s', subformat)
-
+def parse_sotavento_generation(csvfile):
+    dateparse = lambda x: pd.datetime.strptime(x, '%d/%m/%Y %H:%M:%S')
+    df = pd.read_csv(csvfile,
+                     header=0,
+                     index_col=0,
+                     names=['time', 'power'],
+                     usecols=[0, 3],
+                     parse_dates=['time'],
+                     date_parser=dateparse)
+    df.power /= 1000.0
     df.index = df.index.tz_localize('UTC')
     return df
 
@@ -134,8 +95,8 @@ def preview_generation():
         file = request.files['file']
         if file_format == 'custom':
             df = parse_custom_generation(file)
-        elif file_format.startswith('esios'):
-            df = parse_esios_generation(file, file_format.split('-')[1])
+        elif file_format == 'sotavento':
+            df = parse_sotavento_generation(file)
         else:
             raise Exception('Unknown file format %s', file_format)
 
@@ -164,8 +125,8 @@ def upload_generation():
         file = request.files['file']
         if file_format == 'custom':
             df = parse_custom_generation(file)
-        elif file_format.startswith('esios'):
-            df = parse_esios_generation(file, file_format.split('-')[1])
+        elif file_format == 'sotavento':
+            df = parse_sotavento_generation(file)
         else:
             raise Exception('Unknown file format %s', file_format)
 
@@ -196,14 +157,14 @@ def wpark_summary(wpark_id):
         return js
 
 
-@app.route('/api/windparks/generation/<wpark_id>/<value_name>')
-def get_wpark_values(wpark_id, value_name):
+@app.route('/api/windparks/generation/<wpark_id>')
+def get_wpark_values(wpark_id):
     if not current_user.is_authenticated:
         return jsonify({'error': 'User unauthorized'})
     try:
-        values = db.session.query(Prices.time, getattr(Prices, value_name)) \
+        values = db.session.query(Generation.time, Generation.power) \
             .filter_by(windpark_id=wpark_id) \
-            .order_by(Prices.time) \
+            .order_by(Generation.time) \
             .all()
 
         values = [[calendar.timegm(x[0].utctimetuple()) * 1000, x[1]] for x in values]
