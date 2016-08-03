@@ -20,6 +20,7 @@ class Market(db.Model):
 
     prices = relationship('Prices', back_populates='market', order_by='Prices.time',
                           cascade='all, delete-orphan')
+    windparks = relationship('Windpark', back_populates='market', cascade='all')
 
     @classmethod
     def from_excess_args(cls, **kwargs):

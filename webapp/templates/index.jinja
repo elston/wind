@@ -6,9 +6,14 @@
 
 {% block styles %}
 {{ super() }}
-<link type="text/css" href="{{ url_for('.static', filename='bower_components/alertify-js/build/css/alertify.min.css') }}" rel='stylesheet'/>
-<link type="text/css" href="{{ url_for('.static', filename='bower_components/alertify-js/build/css/themes/bootstrap.min.css') }}" rel='stylesheet'/>
-<link type="text/css" href="{{ url_for('.static', filename='bower_components/angular-ui-grid/ui-grid.min.css') }}" rel='stylesheet'/>
+<link type="text/css"
+      href="{{ url_for('.static', filename='bower_components/alertify-js/build/css/alertify.min.css') }}"
+      rel='stylesheet'/>
+<link type="text/css"
+      href="{{ url_for('.static', filename='bower_components/alertify-js/build/css/themes/bootstrap.min.css') }}"
+      rel='stylesheet'/>
+<link type="text/css" href="{{ url_for('.static', filename='bower_components/angular-ui-grid/ui-grid.min.css') }}"
+      rel='stylesheet'/>
 <link type="text/css" href="{{ url_for('.static', filename='editablegrid/editablegrid.css') }}" rel='stylesheet'/>
 <link type="text/css" href="{{ url_for('.static', filename='css/style.css') }}" rel='stylesheet'/>
 <link href="{{ url_for('static', filename='img/favicon.png') }}" rel="shortcut icon"/>
@@ -49,6 +54,11 @@
 <script src="{{ url_for('.static', filename='js/controllers/uploadPricesCtrl.js') }}"></script>
 <script src="{{ url_for('.static', filename='js/controllers/weatherPlotCtrl.js') }}"></script>
 <script src="{{ url_for('.static', filename='js/controllers/wspdDistributionCtrl.js') }}"></script>
+<script src="{{ url_for('.static', filename='js/controllers/statusCtrl.js') }}"></script>
+<script src="{{ url_for('.static', filename='js/controllers/windParksCtrl.js') }}"></script>
+<script src="{{ url_for('.static', filename='js/controllers/newWindParkCtrl.js') }}"></script>
+<script src="{{ url_for('.static', filename='js/controllers/uploadGenerationCtrl.js') }}"></script>
+<script src="{{ url_for('.static', filename='js/controllers/windParkDataCtrl.js') }}"></script>
 {% if current_user.has_role('admin') %}
 <script src="{{ url_for('.static', filename='js/admin.js') }}"></script>
 {% endif %}
@@ -65,7 +75,10 @@
     </ul>
     <!-- Nav tabs -->
     <ul class="nav nav-tabs" role="tablist">
-        <li role="presentation" class="active"><a href="#locations" aria-controls="symbols" role="tab" data-toggle="tab">Locations</a>
+        <li role="presentation" class="active"><a href="#dashboard" aria-controls="symbols" role="tab"
+                                                  data-toggle="tab">Dashboard</a>
+        </li>
+        <li role="presentation"><a href="#locations" aria-controls="symbols" role="tab" data-toggle="tab">Locations</a>
         </li>
         <li role="presentation"><a href="#markets" aria-controls="symbols" role="tab" data-toggle="tab">Markets</a>
         </li>
@@ -75,7 +88,8 @@
     </ul>
     <!-- Tab panes -->
     <div class="tab-content">
-        <div role="tabpanel" class="tab-pane active" id="locations">{% include "locations.jinja" %}</div>
+        <div role="tabpanel" class="tab-pane active" id="dashboard">{% include "dashboard.jinja" %}</div>
+        <div role="tabpanel" class="tab-pane" id="locations">{% include "locations.jinja" %}</div>
         <div role="tabpanel" class="tab-pane" id="markets">{% include "markets.jinja" %}</div>
         {% if current_user.has_role('admin') %}
         <div role="tabpanel" class="tab-pane" id="admin">{% include "admin.jinja" %}</div>

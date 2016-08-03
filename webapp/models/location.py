@@ -36,6 +36,7 @@ class Location(db.Model):
                                      cascade='all, delete-orphan')
     forecasts = relationship('Forecast', back_populates='location', order_by='Forecast.time',
                              cascade='all, delete-orphan')
+    windparks = relationship('Windpark', back_populates='location', cascade='all')
 
     def __str__(self):
         return '<Location id=%s user=%s name=%s city=%s>' % (self.id, self.user_id, self.name, self.city)

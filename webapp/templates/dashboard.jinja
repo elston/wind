@@ -1,0 +1,135 @@
+<div class="container">
+    <div class="row">
+        <div class="col-md-8">
+            <h3>Wind parks</h3>
+
+            <div ng-controller="WindParksCtrl">
+                <div id="windparks-grid" ui-grid="gridOptions" ui-grid-selection class="grid" ui-grid-auto-resize></div>
+                <div ng-if='noWindParks' class="ng-cloak">
+                    <h3 align="center">No data. Use "hamburger" menu at top right corner to add wind park.</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <h3>Status</h3>
+
+            <div ng-controller="StatusCtrl">
+                <h5>No background processes</h5>
+            </div>
+        </div>
+    </div>
+</div>
+{% raw %}  <!-- Angular templating -->
+<script type="text/ng-template" id="new-windpark.html">
+    <div class="modal-header">
+        <h4 class="modal-title" id="new-windpark-dialog-label">Add new wind park</h4>
+    </div>
+
+    <div class="modal-body">
+        <div class="container-fluid">
+            <form class="form-horizontal" name="newWindparkForm">
+
+                <div class="form-group">
+                    <label for="windpark-name" class="col-xs-3 control-label">Name: </label>
+
+                    <div class="col-xs-9">
+                        <input type="text" ng-model="name" id="windpark-name" name="windpark-name"
+                               class="form-control" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="windpark-location" class="col-xs-3 control-label">Location: </label>
+
+                    <div class="col-xs-9">
+                        <select id="windpark-location" class="form-control" ng-model="location" required>
+                            <option ng-repeat="location in locations" value="{{ location.id }}">{{ location.name }}
+                            </option>
+                        </select>
+
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="windpark-market" class="col-xs-3 control-label">Market: </label>
+
+                    <div class="col-xs-9">
+                        <select id="windpark-market" class="form-control" ng-model="market" required>
+                            <option ng-repeat="market in markets" value="{{ market.id }}">{{ market.name }}
+                            </option>
+                        </select>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="modal-footer">
+        <button type="button" class="btn btn-default" ng-click="close()">Close</button>
+        <button type="button" id="new-windpark" class="btn btn-primary"
+                ng-disabled="!newWindparkForm.$valid" ng-click="addWindPark()">Add
+        </button>
+    </div>
+</script>
+
+<script type="text/ng-template" id="upload-generation-modal.html">
+    <div class="modal-header">
+        <h4 class="modal-title" id="generation-upload-modal-label">Generation upload for wind park "{{ windParkName
+            }}"</h4>
+    </div>
+    <div class="modal-body">
+        <div class="container-fluid">
+            <form class="form-horizontal" name="generationUploadForm">
+                <div class="form-group">
+                    <label for="format" class="col-xs-2 control-label">File format: </label>
+
+                    <div class="input-group col-xs-10">
+                        <select id="format" class="form-control" ng-model="fileFormat" required>
+                            <option value="custom">Sotavento public data CSV</option>
+                            <option value="esios-da">2 columns, date and power (MW)</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="upload-generation" class="col-xs-2 control-label">File</label>
+
+                    <div class="input-group col-xs-10" id="upload-generation">
+                        <label class="input-group-btn">
+                    <span class="btn btn-primary">
+                        Browse&hellip; <input ngf-select ng-model="generationFile" type="file" style="display: none;"
+                                              required>
+                    </span>
+                        </label>
+                        <input ng-model="generationFile.name" type="text" class="form-control" readonly>
+                    <span class="input-group-btn"><button class="btn btn-info"
+                                                          ng-click="previewFile(generationFile)"
+                                                          ng-disabled="!generationUploadForm.$valid">
+                        Preview
+                    </button></span>
+                    <span class="input-group-btn"><button class="btn btn-primary"
+                                                          ng-click="uploadGeneration()"
+                                                          ng-disabled="!generationUploadForm.$valid">
+                        Upload
+                    </button></span>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <div id="generation-upload-chart-container" style="width:100%; height:400px;"></div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-default" ng-click="close()">Close</button>
+    </div>
+</script>
+
+<script type="text/ng-template" id="windpark-data-modal.html">
+    <div class="modal-header">
+        <h4 class="modal-title" id="windpark-data-modal-label">Wind park "{{ windParkName }}"</h4>
+    </div>
+    <div class="modal-body">
+
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-default" ng-click="close()">Close</button>
+    </div>
+</script>
+{% endraw %}
