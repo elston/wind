@@ -1,4 +1,7 @@
-app.controller('LocationsCtrl', ['$scope', '$http', '$log', '$uibModal', function ($scope, $http, $log, $uibModal) {
+/*global app,$SCRIPT_ROOT,alertify,google*/
+
+app.controller('LocationsCtrl', ['$scope', '$http', '$log', '$uibModal', '$timeout', function ($scope, $http, $log, $uibModal, $timeout) {
+    'use strict';
 
     $scope.gridOptions = {
         enableSorting: false,
@@ -133,6 +136,39 @@ app.controller('LocationsCtrl', ['$scope', '$http', '$log', '$uibModal', functio
                 });
     };
 
+    $scope.updateMap = function () {
+        var mapOptions = {
+            //zoom: 7,
+            //center: new google.maps.LatLng($scope.location.lat, $scope.location.lon),
+            mapTypeId: google.maps.MapTypeId.ROADMAP
+        };
+        // ROADMAP, SATELLITE, HYBRID, TERRAIN
+        //$timeout(function () {
+            var map = new google.maps.Map(document.getElementById('locations_map'), mapOptions);
+            var markers = [];
+
+            var bounds = new google.maps.LatLngBounds();
+
+            $scope.gridOptions.data.forEach(function (location) {
+                var marker = new google.maps.Marker({
+                    map: map,
+                    position: new google.maps.LatLng(location.lat, location.lon)
+                });
+                bounds.extend(marker.getPosition());
+                var infoWindow = new google.maps.InfoWindow({
+                    content: location.name
+                });
+                google.maps.event.addListener(marker, 'click', function () {
+                        infoWindow.open(map, marker);
+                    }
+                );
+                infoWindow.open(map, marker);
+            });
+
+            map.fitBounds(bounds);
+        //}, 1000);
+    };
+
     $scope.update = function () {
         $http.get($SCRIPT_ROOT + '/locations')
             .then(function (data) {
@@ -141,6 +177,7 @@ app.controller('LocationsCtrl', ['$scope', '$http', '$log', '$uibModal', functio
                     } else {
                         $scope.gridOptions.data = data.data.data;
                         $scope.noLocations = data.data.data.length === 0;
+                        $scope.updateMap();
                     }
                 },
                 function (error) {
@@ -151,4 +188,6 @@ app.controller('LocationsCtrl', ['$scope', '$http', '$log', '$uibModal', functio
     $scope.update();
 
     $scope.$on('updateLocations', $scope.update);
+    $scope.$on('updateMap', $scope.updateMap);
+
 }]);

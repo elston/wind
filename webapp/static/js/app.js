@@ -1,10 +1,17 @@
 (function () {
     'use strict';
 
-    // store the currently selected tab in the hash value
     $("ul.nav-tabs > li > a").on("shown.bs.tab", function (e) {
-        window.location.hash = $(e.target).attr("href").substr(1);
-    });
+            var tabName = $(e.target).attr("href").substr(1);
+            // store the currently selected tab in the hash value
+            window.location.hash = tabName;
+            if (tabName === 'locations') {  // update Google map
+                var tabBody = document.querySelector('[ng-controller=LocationsCtrl]');
+                var tabScope = angular.element(tabBody).scope();
+                tabScope.updateMap();
+            }
+        }
+    );
 
     // on load of the page: switch to the currently selected tab
     var hash = window.location.hash;
