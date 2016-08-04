@@ -35,6 +35,7 @@ app.controller('MarketsCtrl', ['$scope', '$http', '$log', '$uibModal',
                 {
                     field: 'action',
                     headerCellTemplate: ' ',
+                    enableHiding: false,
                     cellTemplate: '<button type="button" class="btn btn-default btn-xs" ng-click="$emit(\'uploadPrices\')" ' +
                     'tooltip-append-to-body="true" uib-tooltip="Upload prices">' +
                     '<span class="glyphicon glyphicon-upload" aria-hidden="true"></span></button>' +

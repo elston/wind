@@ -45,6 +45,7 @@ app.controller('LocationsCtrl', ['$scope', '$http', '$log', '$uibModal', '$timeo
             {
                 field: 'action',
                 headerCellTemplate: ' ',
+                enableHiding: false,
                 cellTemplate: '<button type="button" class="btn btn-default btn-xs" ng-click="$emit(\'updateWeather\')" ' +
                 'tooltip-append-to-body="true" uib-tooltip="Reload">' +
                 '<span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></button>' +
