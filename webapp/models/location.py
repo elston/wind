@@ -11,6 +11,7 @@ from .history_download_status import HistoryDownloadStatus
 from .forecast import Forecast
 from .hourly_forecast import HourlyForecast
 
+
 class Location(db.Model):
     __tablename__ = 'locations'
 
@@ -25,7 +26,10 @@ class Location(db.Model):
     lat = db.Column(db.Float())  # 52.20000076
     lon = db.Column(db.Float())  # 7.98333311
     l = db.Column(db.String(255))  # /q/zmw:00000.14.10317
+    time_range = db.Column(db.String(10))
     lookback = db.Column(db.Integer())
+    history_start = db.Column(db.DateTime())  # naive UTC
+    history_end = db.Column(db.DateTime())  # naive UTC
     lookforward = db.Column(db.Integer())
     wspd_shape = db.Column(db.Float())  # shape parameter of wind speed Weibull model
     wspd_scale = db.Column(db.Float())  # scale parameter of wind speed Weibull model
@@ -55,11 +59,28 @@ class Location(db.Model):
             d[c.name] = getattr(self, c.name)
         return d
 
+    def update_from_dict(self, d):
+        for c in self.__table__.columns:
+            if c.name in d:
+                setattr(self, c.name, d[c.name])
+
     def update_history(self):
+        if self.time_range == 'rolling':
+            self.update_rolling_history()
+        elif self.time_range == 'fixed':
+            self.update_fixed_history()
+
+    def update_rolling_history(self):
         now = datetime.utcnow().date()
         self.download(now, today=True)
         for delta in xrange(1, self.lookback):
             self.download(now - timedelta(days=delta), today=False)
+        self.filter_history()
+
+    def update_fixed_history(self):
+        day_count = int((self.history_end - self.history_start).days) + 1
+        for single_date in (self.history_start + timedelta(n) for n in range(day_count)):
+            self.download(single_date, today=False)
         self.filter_history()
 
     def download(self, date, today):

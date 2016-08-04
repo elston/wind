@@ -31,15 +31,6 @@
                     <form class="form-horizontal" id="new-location-form">
                         <input type="hidden" id="location-id" name="location-id">
 
-                        <div class="form-group">
-                            <label for="location-name" class="col-xs-3 control-label">Name: </label>
-
-                            <div class="col-xs-9">
-                                <input type="text" ng-model="name" id="location-name" name="location-name"
-                                       class="form-control"/>
-                            </div>
-                        </div>
-
                         <div class="panel panel-default">
                             <div class="panel-heading">Search</div>
                             <div class="panel-body">
@@ -100,11 +91,39 @@
                         </div>
 
                         <div class="form-group">
+                            <label for="location-name" class="col-xs-2 control-label">Name: </label>
+
+                            <div class="col-xs-10">
+                                <input type="text" ng-model="name" id="location-name" name="location-name"
+                                       class="form-control"/>
+                            </div>
+                        </div>
+
+
+                        <div class="form-group">
+                            <label class="col-xs-2 control-label">Time range: </label>
+
+                            <div class="col-xs-10">
+                                <label class="radio-inline">
+                                    <input type="radio" name="location-time-range" ng-model="timeRange.type"
+                                           value="fixed"
+                                           selected>
+                                    Fixed
+                                </label>
+                                <label class="radio-inline">
+                                    <input type="radio" name="location-time-range" ng-model="timeRange.type"
+                                           value="rolling">
+                                    Rolling
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="form-group" ng-if="timeRange.type == 'rolling'">
                             <label for="location-lookback" class="col-xs-2 control-label">Look back: </label>
 
                             <div class="col-xs-4">
                                 <input type="number" id="location-lookback" name="location-lookback"
-                                       ng-model="lookback"
+                                       ng-model="timeRange.lookback"
                                        class="form-control"/>
                             </div>
                             <!--
@@ -116,6 +135,23 @@
                                                                    class="form-control"/>
                                                         </div>
                             -->
+                        </div>
+
+                        <div class="form-group" ng-if="timeRange.type == 'fixed'">
+                            <label for="location-history-start" class="col-xs-2 control-label">Start: </label>
+
+                            <div class="col-xs-4">
+                                <input type="date" id="location-history-start" name="location-history-start"
+                                       ng-model="timeRange.start" ng-model-options="{ timezone: 'UTC' }"
+                                       class="form-control"/>
+                            </div>
+                            <label for="location-history-end" class="col-xs-2 control-label">End (incl.): </label>
+
+                            <div class="col-xs-4">
+                                <input type="date" id="location-history-end" name="location-history-end"
+                                       ng-model="timeRange.end" ng-model-options="{ timezone: 'UTC' }"
+                                       class="form-control"/>
+                            </div>
                         </div>
                     </form>
                 </div>
@@ -164,6 +200,83 @@
     </div>
     <div class="modal-body">
         <div id="wspd-distr-container" style="width:100%; height:450px;"></div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-default" ng-click="close()">Close</button>
+    </div>
+</script>
+
+<script type="text/ng-template" id="location-data-modal.html">
+    <div class="modal-header">
+        <h4 class="modal-title">Location "{{ name }}"</h4>
+    </div>
+    <div class="modal-body">
+        <div class="container-fluid">
+            <form class="form-horizontal" id="location-data-form">
+                <div class="form-group">
+                    <label for="location-name" class="col-xs-2 control-label">Name: </label>
+
+                    <div class="col-xs-10">
+                        <input type="text" ng-model="name" id="location-data-name" name="location-name"
+                               class="form-control"/>
+                    </div>
+                </div>
+
+
+                <div class="form-group">
+                    <label class="col-xs-2 control-label">Time range: </label>
+
+                    <div class="col-xs-10">
+                        <label class="radio-inline">
+                            <input type="radio" name="location-time-range" ng-model="timeRange.type" value="fixed"
+                                   selected>
+                            Fixed
+                        </label>
+                        <label class="radio-inline">
+                            <input type="radio" name="location-time-range" ng-model="timeRange.type" value="rolling">
+                            Rolling
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group" ng-if="timeRange.type == 'rolling'">
+                    <label for="location-data-lookback" class="col-xs-2 control-label">Look back: </label>
+
+                    <div class="col-xs-4">
+                        <input type="number" id="location-data-lookback" name="location-lookback"
+                               ng-model="timeRange.lookback"
+                               class="form-control"/>
+                    </div>
+                    <!--
+                                                <label for="location-lookforward" class="col-xs-2 control-label">Forecast: </label>
+
+                                                <div class="col-xs-4">
+                                                    <input type="number" id="location-lookforward" name="location-lookforward"
+                                                           ng-model="lookforward"
+                                                           class="form-control"/>
+                                                </div>
+                    -->
+                </div>
+
+                <div class="form-group" ng-if="timeRange.type == 'fixed'">
+                    <label for="location-history-start" class="col-xs-2 control-label">Start: </label>
+
+                    <div class="col-xs-4">
+                        <input type="date" id="location-data-history-start" name="location-data-history-start"
+                               ng-model="timeRange.start" ng-model-options="{ timezone: 'UTC' }"
+                               class="form-control"/>
+                    </div>
+                    <label for="location-history-end" class="col-xs-2 control-label">End (incl.): </label>
+
+                    <div class="col-xs-4">
+                        <input type="date" id="location-data-history-end" name="location-data-history-end"
+                               ng-model="timeRange.end" ng-model-options="{ timezone: 'UTC' }"
+                               class="form-control"/>{{historyStart}}
+                    </div>
+                </div>
+                <button type="button" class="btn btn-primary pull-right" ng-click="update()">Update</button>
+            </form>
+        </div>
     </div>
     <div class="modal-footer">
         <button type="button" class="btn btn-default" ng-click="close()">Close</button>

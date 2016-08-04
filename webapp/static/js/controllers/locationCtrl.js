@@ -49,6 +49,9 @@ app.controller('LocationsCtrl', ['$scope', '$http', '$log', '$uibModal', '$timeo
                 cellTemplate: '<button type="button" class="btn btn-default btn-xs" ng-click="$emit(\'updateWeather\')" ' +
                 'tooltip-append-to-body="true" uib-tooltip="Reload">' +
                 '<span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></button>' +
+                '<button type="button" class="btn btn-default btn-xs" ng-click="$emit(\'viewData\')" ' +
+                'tooltip-append-to-body="true" uib-tooltip="View data">' +
+                '<span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span></button>' +
                 '<button type="button" class="btn btn-default btn-xs" ng-click="$emit(\'viewWeather\')" ' +
                 'tooltip-append-to-body="true" uib-tooltip="View chart">' +
                 '<span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>' +
@@ -123,6 +126,22 @@ app.controller('LocationsCtrl', ['$scope', '$http', '$log', '$uibModal', '$timeo
 
     });
 
+    $scope.$on('viewData', function ($event) {
+        var modalInstance = $uibModal.open({
+            animation: false,
+            templateUrl: 'location-data-modal.html',
+            controller: 'LocationDataCtrl',
+            size: 'lg',
+            resolve: {
+                entity: function () {
+                    return $event.targetScope.row.entity;
+                }
+            }
+        });
+
+    });
+
+
     $scope.deleteLocation = function (row) {
         $http.delete($SCRIPT_ROOT + '/locations/' + row.entity.id)
             .then(function (data) {
@@ -145,28 +164,28 @@ app.controller('LocationsCtrl', ['$scope', '$http', '$log', '$uibModal', '$timeo
         };
         // ROADMAP, SATELLITE, HYBRID, TERRAIN
         //$timeout(function () {
-            var map = new google.maps.Map(document.getElementById('locations_map'), mapOptions);
-            var markers = [];
+        var map = new google.maps.Map(document.getElementById('locations_map'), mapOptions);
+        var markers = [];
 
-            var bounds = new google.maps.LatLngBounds();
+        var bounds = new google.maps.LatLngBounds();
 
-            $scope.gridOptions.data.forEach(function (location) {
-                var marker = new google.maps.Marker({
-                    map: map,
-                    position: new google.maps.LatLng(location.lat, location.lon)
-                });
-                bounds.extend(marker.getPosition());
-                var infoWindow = new google.maps.InfoWindow({
-                    content: location.name
-                });
-                google.maps.event.addListener(marker, 'click', function () {
-                        infoWindow.open(map, marker);
-                    }
-                );
-                infoWindow.open(map, marker);
+        $scope.gridOptions.data.forEach(function (location) {
+            var marker = new google.maps.Marker({
+                map: map,
+                position: new google.maps.LatLng(location.lat, location.lon)
             });
+            bounds.extend(marker.getPosition());
+            var infoWindow = new google.maps.InfoWindow({
+                content: location.name
+            });
+            google.maps.event.addListener(marker, 'click', function () {
+                    infoWindow.open(map, marker);
+                }
+            );
+            infoWindow.open(map, marker);
+        });
 
-            map.fitBounds(bounds);
+        map.fitBounds(bounds);
         //}, 1000);
     };
 

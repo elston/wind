@@ -1,6 +1,16 @@
+/*global app,$SCRIPT_ROOT,alertify,Highcharts,google*/
+
 app.controller('NewLocationCtrl', ['$scope', '$rootScope', '$http', '$log', '$timeout',
     function ($scope, $rootScope, $http, $log, $timeout) {
-        $scope.lookback = 10;
+        'use strict';
+
+        var now = new Date();
+        $scope.timeRange = {
+            type: 'rolling',
+            end: now,
+            start: new Date(now - 10 * 24 * 3600 * 1000),
+            lookback: 10
+        };
 //    $scope.lookforward = 10;
 
         $scope.gridOptions = {
@@ -33,7 +43,7 @@ app.controller('NewLocationCtrl', ['$scope', '$rootScope', '$http', '$log', '$ti
         $scope.typeaheadSelected = function ($item, $model, $label, $event) {
             $scope.query = $item.name;
             $scope.search('zmw:' + $item.zmw);
-        }
+        };
 
         $scope.search = function (query) {
             var query1 = query ? query : $scope.query;
@@ -46,7 +56,6 @@ app.controller('NewLocationCtrl', ['$scope', '$rootScope', '$http', '$log', '$ti
                         if ('error' in data.data) {
                             alertify.error(data.data.error);
                         } else {
-                            console.log(data.data.data);
                             var result = data.data.data;
                             $scope.manyLocations = 'results' in result.response;
                             $scope.oneLocation = 'location' in result;
@@ -61,8 +70,8 @@ app.controller('NewLocationCtrl', ['$scope', '$rootScope', '$http', '$log', '$ti
                                 };
                                 // ROADMAP, SATELLITE, HYBRID, TERRAIN
                                 $timeout(function () {
-                                    map = new google.maps.Map(document.getElementById('gmap_canvas'), mapOptions);
-                                    marker = new google.maps.Marker({
+                                    var map = new google.maps.Map(document.getElementById('gmap_canvas'), mapOptions);
+                                    var marker = new google.maps.Marker({
                                         map: map,
                                         position: new google.maps.LatLng($scope.location.lat, $scope.location.lon)
                                     });
@@ -107,8 +116,8 @@ app.controller('NewLocationCtrl', ['$scope', '$rootScope', '$http', '$log', '$ti
                                         };
                                         // ROADMAP, SATELLITE, HYBRID, TERRAIN
                                         $timeout(function () {
-                                            map = new google.maps.Map(document.getElementById('gmap_canvas'), mapOptions);
-                                            marker = new google.maps.Marker({
+                                            var map = new google.maps.Map(document.getElementById('gmap_canvas'), mapOptions);
+                                            var marker = new google.maps.Marker({
                                                 map: map,
                                                 position: new google.maps.LatLng($scope.location.lat, $scope.location.lon)
                                             });
@@ -129,7 +138,10 @@ app.controller('NewLocationCtrl', ['$scope', '$rootScope', '$http', '$log', '$ti
         $scope.addLocation = function () {
             $('#new-location-dialog').modal('hide');
             $scope.location.name = $scope.name;
-            $scope.location.lookback = $scope.lookback;
+            $scope.location.time_range = $scope.timeRange.type;
+            $scope.location.lookback = $scope.timeRange.lookback;
+            $scope.location.history_start = $scope.timeRange.start.getTime();
+            $scope.location.history_end = $scope.timeRange.end.getTime();
 //        $scope.location.lookforward = $scope.lookforward;
             alertify.message('Wait until data will be loaded');
             $http({

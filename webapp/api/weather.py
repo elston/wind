@@ -1,5 +1,6 @@
 import calendar
 import logging
+from datetime import datetime
 
 import re
 from flask import jsonify, request
@@ -20,6 +21,11 @@ def get_locations():
         table_data = []
         for location in locations:
             table_data.append(location.to_dict())
+            for key in ('history_start', 'history_end'):
+                dt = table_data[-1].get(key)
+                if dt is None:
+                    dt = datetime.utcfromtimestamp(0)
+                table_data[-1][key] = calendar.timegm(dt.timetuple()) * 1000.0
 
         js = jsonify({'data': table_data})
         return js
@@ -35,10 +41,18 @@ def add_locations():
         return jsonify({'error': 'User unauthorized'})
     try:
         values = request.get_json()
-        location = Location.from_excess_args(user_id=current_user.id, **values)
-        db.session.add(location)
-        location.update_history()
-        location.update_forecast()
+        for key in ('history_start', 'history_end'):
+            values[key] = datetime.utcfromtimestamp(values.get(key, 0) / 1000.0).replace(hour=0, minute=0, second=0,
+                                                                                         microsecond=0)
+        if 'id' in values:
+            location = db.session.query(Location).filter_by(user_id=current_user.id, id=values['id']).first()
+            location.update_from_dict(values)
+            db.session.flush()
+        else:
+            location = Location.from_excess_args(user_id=current_user.id, **values)
+            db.session.add(location)
+        # location.update_history()
+        # location.update_forecast()
         db.session.commit()
 
         js = jsonify({'data': 'OK'})
