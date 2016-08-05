@@ -1,21 +1,11 @@
 /*global app,$SCRIPT_ROOT,alertify*/
 
-app.controller('NewWindParkCtrl', ['$scope', '$rootScope', '$uibModalInstance', '$http', 'locationService',
-    function ($scope, $rootScope, $uibModalInstance, $http, locationService) {
+app.controller('NewWindParkCtrl', ['$scope', '$rootScope', '$uibModalInstance', '$http', 'locationService', 'marketService',
+    function ($scope, $rootScope, $uibModalInstance, $http, locationService, marketService) {
         'use strict';
 
         $scope.locations = locationService.getLocations();
-        // TODO: idiotic way, use services to share markets
-        $http.get($SCRIPT_ROOT + '/markets')
-            .then(function (response) {
-                    if ('error' in response.data) {
-                        alertify.error('Error while getting markets: ' + response.data.error);
-                    }
-                    $scope.markets = response.data.data;
-                },
-                function (error) {
-                    alertify.error('Error while gettingmarkets: ' + error.statusText);
-                });
+        $scope.markets = marketService.getMarkets();
 
         $scope.close = function () {
             $uibModalInstance.close();

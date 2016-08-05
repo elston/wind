@@ -1,7 +1,7 @@
 /*global app,$SCRIPT_ROOT,alertify*/
 
-app.controller('MarketsCtrl', ['$scope', '$http', '$log', '$uibModal',
-    function ($scope, $http, $log, $uibModal) {
+app.controller('MarketsCtrl', ['$scope', '$uibModal', 'marketService',
+    function ($scope, $uibModal, marketService) {
         'use strict';
 
         $scope.gridOptions = {
@@ -78,13 +78,9 @@ app.controller('MarketsCtrl', ['$scope', '$http', '$log', '$uibModal',
         });
 
         $scope.deleteMarket = function (row) {
-            $http.delete($SCRIPT_ROOT + '/markets/' + row.entity.id)
+            marketService.deleteMarket(row.entity.id)
                 .then(function (data) {
-                        if ('error' in data.data) {
-                            alertify.error(data.data.error);
-                        } else {
-                            $scope.update();
-                        }
+                        $scope.update();
                     },
                     function (error) {
                         alertify.error(error);
@@ -92,21 +88,17 @@ app.controller('MarketsCtrl', ['$scope', '$http', '$log', '$uibModal',
         };
 
         $scope.update = function () {
-            $http.get($SCRIPT_ROOT + '/markets')
-                .then(function (data) {
-                        if ('error' in data.data) {
-                            alertify.error(data.data.error);
-                        } else {
-                            $scope.gridOptions.data = data.data.data;
-                            $scope.noMarkets = data.data.data.length === 0;
-                        }
-                    },
-                    function (error) {
-                        alertify.error(error);
-                    });
+            var markets = marketService.getMarkets();
+            $scope.gridOptions.data = markets;
+            $scope.noMarkets = markets.length === 0;
         };
 
-        $scope.update();
+        marketService.reload().then(function () {
+                $scope.update();
+            },
+            function (error) {
+                alertify.error(error);
+            });
 
         $scope.$on('updateMarkets', $scope.update);
     }]);

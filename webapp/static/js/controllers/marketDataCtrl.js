@@ -1,7 +1,7 @@
 /*global app,$SCRIPT_ROOT,alertify,Highcharts*/
 
-app.controller('MarketDataCtrl', ['$scope', '$http', '$q', '$uibModalInstance', 'Upload', 'entity',
-    function ($scope, $http, $q, $uibModalInstance, Upload, entity) {
+app.controller('MarketDataCtrl', ['$scope', '$uibModalInstance', 'entity', 'marketService',
+    function ($scope, $uibModalInstance, entity, marketService) {
         'use strict';
 
         $scope.marketName = entity.name;
@@ -24,16 +24,12 @@ app.controller('MarketDataCtrl', ['$scope', '$http', '$q', '$uibModalInstance', 
         ];
 
         $scope.update = function () {
-            $http.get($SCRIPT_ROOT + '/markets/summary/' + entity.id)
-                .then(function (response) {
-                        if ('error' in response.data) {
-                            alertify.error(response.data.error);
-                        } else {
-                            $scope.summary = response.data.data;
-                        }
+            marketService.getSummary(entity.id)
+                .then(function (result) {
+                        $scope.summary = result;
                     },
                     function (error) {
-                        alertify.error(error.statusText);
+                        alertify.error(error);
                     });
         };
 
@@ -44,36 +40,32 @@ app.controller('MarketDataCtrl', ['$scope', '$http', '$q', '$uibModalInstance', 
         };
 
         $scope.plotValue = function (value) {
-            $http.get($SCRIPT_ROOT + '/markets/prices/' + entity.id + '/' + value[0])
-                .then(function (response) {
-                        if ('error' in response.data) {
-                            alertify.error(response.data.error);
-                        } else {
-                            $scope.chart = new Highcharts.StockChart({
-                                chart: {
-                                    renderTo: 'plot-value-' + value[0],
-                                    animation: false
-                                },
+            marketService.getValues(entity.id, value[0])
+                .then(function (result) {
+                        $scope.chart = new Highcharts.StockChart({
+                            chart: {
+                                renderTo: 'plot-value-' + value[0],
+                                animation: false
+                            },
+                            title: {
+                                text: value[1]
+                            },
+                            credits: {
+                                enabled: false
+                            },
+                            yAxis: [{
                                 title: {
                                     text: value[1]
-                                },
-                                credits: {
-                                    enabled: false
-                                },
-                                yAxis: [{
-                                    title: {
-                                        text: value[1]
-                                    }
-                                }],
-                                series: [{
-                                    data: response.data.data,
-                                    animation: false
-                                }]
-                            });
-                        }
+                                }
+                            }],
+                            series: [{
+                                data: result,
+                                animation: false
+                            }]
+                        });
                     },
                     function (error) {
-                        alertify.error(error.statusText);
+                        alertify.error(error);
                     });
         };
 
@@ -82,32 +74,24 @@ app.controller('MarketDataCtrl', ['$scope', '$http', '$q', '$uibModalInstance', 
         };
 
         $scope.calculateMissing = function () {
-            $http.post($SCRIPT_ROOT + '/markets/prices/calculate_missing/' + entity.id)
+            marketService.calculateMissing(entity.id)
                 .then(function (response) {
-                        if ('error' in response.data) {
-                            alertify.error(response.data.error);
-                        } else {
-                            alertify.success('OK');
-                            $scope.update();
-                        }
+                        alertify.success('OK');
+                        $scope.update();
                     },
                     function (error) {
-                        alertify.error(error.statusText);
+                        alertify.error(error);
                     });
         };
 
         $scope.fitModel = function () {
-            $http.post($SCRIPT_ROOT + '/markets/prices/fit_model/' + entity.id)
+            marketService.fitModel(entity.id)
                 .then(function (response) {
-                        if ('error' in response.data) {
-                            alertify.error(response.data.error);
-                        } else {
-                            alertify.success('OK');
-                            $scope.update();
-                        }
+                        alertify.success('OK');
+                        $scope.update();
                     },
                     function (error) {
-                        alertify.error(error.statusText);
+                        alertify.error(error);
                     });
         };
 

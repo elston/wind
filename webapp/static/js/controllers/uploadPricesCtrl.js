@@ -1,7 +1,7 @@
 /*global app,$SCRIPT_ROOT,alertify,Highcharts*/
 
-app.controller('UploadPricesCtrl', ['$scope', '$http', '$q', '$uibModalInstance', 'Upload', 'entity',
-    function ($scope, $http, $q, $uibModalInstance, Upload, entity) {
+app.controller('UploadPricesCtrl', ['$scope', '$uibModalInstance', 'entity', 'marketService',
+    function ($scope, $uibModalInstance, entity, marketService) {
         'use strict';
 
         $scope.marketName = entity.name;
@@ -11,16 +11,9 @@ app.controller('UploadPricesCtrl', ['$scope', '$http', '$q', '$uibModalInstance'
         };
 
         $scope.previewFile = function (priceFile) {
-            Upload.upload({
-                    url: $SCRIPT_ROOT + '/markets/preview_prices',
-                    data: {format: $scope.fileFormat, file: priceFile},
-                })
-                .then(function (response) {
-                        if ('error' in response.data) {
-                            alertify.error(response.data.error);
-                        } else {
-                            $scope.showPrices(response.data.data);
-                        }
+            marketService.previewPrices($scope.fileFormat, priceFile)
+                .then(function (result) {
+                        $scope.showPrices(result);
                     },
                     function (error) {
                         alertify.error(error);
@@ -64,16 +57,9 @@ app.controller('UploadPricesCtrl', ['$scope', '$http', '$q', '$uibModalInstance'
         };
 
         $scope.uploadPrices = function () {
-            Upload.upload({
-                    url: $SCRIPT_ROOT + '/markets/prices',
-                    data: {format: $scope.fileFormat, file: $scope.priceFile, mkt_id: entity.id},
-                })
+            marketService.uploadPrices(entity.id, $scope.fileFormat, $scope.priceFile)
                 .then(function (response) {
-                        if ('error' in response.data) {
-                            alertify.error(response.data.error);
-                        } else {
-                            alertify.alert('Prices upload', 'Done');
-                        }
+                        alertify.alert('Prices upload', 'Done');
                     },
                     function (error) {
                         alertify.error(error);
