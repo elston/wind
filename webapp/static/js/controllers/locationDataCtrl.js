@@ -1,7 +1,7 @@
 /*global app,$SCRIPT_ROOT,alertify,Highcharts*/
 
-app.controller('LocationDataCtrl', ['$scope', '$rootScope', '$http', '$uibModalInstance', 'entity',
-    function ($scope, $rootScope, $http, $uibModalInstance, entity) {
+app.controller('LocationDataCtrl', ['$scope', '$rootScope', '$uibModalInstance', 'entity', 'locationService',
+    function ($scope, $rootScope, $uibModalInstance, entity, locationService) {
         'use strict';
 
         $scope.name = entity.name;
@@ -13,11 +13,7 @@ app.controller('LocationDataCtrl', ['$scope', '$rootScope', '$http', '$uibModalI
         };
 
         $scope.update = function () {
-            $http({
-                url: $SCRIPT_ROOT + '/locations',
-                method: "POST",
-                headers: {'Content-Type': 'application/json'},
-                data: JSON.stringify({
+            locationService.updateLocation({
                     id: entity.id,
                     name: $scope.name,
                     time_range: $scope.timeRange.type,
@@ -25,14 +21,9 @@ app.controller('LocationDataCtrl', ['$scope', '$rootScope', '$http', '$uibModalI
                     history_start: $scope.timeRange.start.getTime(),
                     history_end: $scope.timeRange.end.getTime()
                 })
-            })
                 .then(function (data) {
-                        if ('error' in data.data) {
-                            alertify.error(data.data.error);
-                        } else {
-                            alertify.success('OK');
-                            $rootScope.$broadcast('updateLocations');
-                        }
+                        alertify.success('OK');
+                        $rootScope.$broadcast('updateLocations');
                     },
                     function (error) {
                         alertify.error(error);

@@ -1,7 +1,7 @@
 /*global app,$SCRIPT_ROOT,alertify,Highcharts*/
 
-app.controller('WeatherPlotCtrl', ['$scope', '$http', '$q', '$uibModalInstance', 'entity',
-    function ($scope, $http, $q, $uibModalInstance, entity) {
+app.controller('WeatherPlotCtrl', ['$scope', '$q', '$uibModalInstance', 'entity', 'locationService',
+    function ($scope, $q, $uibModalInstance, entity, locationService) {
         'use strict';
 
         var locationId = entity.id;
@@ -33,29 +33,21 @@ app.controller('WeatherPlotCtrl', ['$scope', '$http', '$q', '$uibModalInstance',
         };
 
         $q.all([
-                $http.get($SCRIPT_ROOT + '/locations/' + locationId + '/history')
-                    .then(function (response) {
-                            if ('error' in response.data) {
-                                alertify.error('Error while getting history for location "' + $scope.locationName +
-                                    '": ' + response.data.error);
-                            }
-                            $scope.history_data = response.data.data;
+                locationService.getHistory(locationId)
+                    .then(function (result) {
+                            $scope.history_data = result;
                         },
                         function (error) {
                             alertify.error('Error while getting history for location "' + $scope.locationName +
-                                '": ' + error.statusText);
+                                '": ' + error);
                         }),
-                $http.get($SCRIPT_ROOT + '/locations/' + locationId + '/forecast')
-                    .then(function (response) {
-                            if ('error' in response.data) {
-                                alertify.error('Error while getting forecast for location "' + $scope.locationName +
-                                    '": ' + response.data.error);
-                            }
-                            $scope.forecast_data = response.data.data;
+                locationService.getForecast(locationId)
+                    .then(function (result) {
+                            $scope.forecast_data = result;
                         },
                         function (error) {
-                            alertify.error('Error while getting history for location "' + $scope.locationName +
-                                '": ' + error.statusText);
+                            alertify.error('Error while getting forecast for location "' + $scope.locationName +
+                                '": ' + error);
                         })
             ])
             .then(function () {

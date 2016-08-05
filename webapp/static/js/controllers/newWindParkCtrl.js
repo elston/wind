@@ -1,20 +1,11 @@
 /*global app,$SCRIPT_ROOT,alertify*/
 
-app.controller('NewWindParkCtrl', ['$scope', '$rootScope', '$uibModalInstance', '$http',
-    function ($scope, $rootScope, $uibModalInstance, $http) {
+app.controller('NewWindParkCtrl', ['$scope', '$rootScope', '$uibModalInstance', '$http', 'locationService',
+    function ($scope, $rootScope, $uibModalInstance, $http, locationService) {
         'use strict';
 
-        // TODO: idiotic way, use services to share locations and markets
-        $http.get($SCRIPT_ROOT + '/locations')
-            .then(function (response) {
-                    if ('error' in response.data) {
-                        alertify.error('Error while getting location: ' + response.data.error);
-                    }
-                    $scope.locations = response.data.data;
-                },
-                function (error) {
-                    alertify.error('Error while getting location: ' + error.statusText);
-                });
+        $scope.locations = locationService.getLocations();
+        // TODO: idiotic way, use services to share markets
         $http.get($SCRIPT_ROOT + '/markets')
             .then(function (response) {
                     if ('error' in response.data) {

@@ -1,6 +1,6 @@
 /*global app,$SCRIPT_ROOT,alertify,google*/
 
-app.controller('LocationsCtrl', ['$scope', '$http', '$log', '$uibModal', '$timeout', function ($scope, $http, $log, $uibModal, $timeout) {
+app.controller('LocationsCtrl', ['$scope', '$uibModal', 'locationService', function ($scope, $uibModal, locationService) {
     'use strict';
 
     $scope.gridOptions = {
@@ -22,7 +22,13 @@ app.controller('LocationsCtrl', ['$scope', '$http', '$log', '$uibModal', '$timeo
                     var rows = this.grid.rows;
                     rows.forEach(function (row) {
                         if (row.isSelected) {
-                            $scope.deleteLocation(row);
+                            locationService.deleteLocation(row.entity.id)
+                                .then(function () {
+                                        $scope.update();
+                                    },
+                                    function (error) {
+                                        alertify.error(error);
+                                    });
                         }
                     });
                 },
@@ -66,24 +72,17 @@ app.controller('LocationsCtrl', ['$scope', '$http', '$log', '$uibModal', '$timeo
     $scope.$on('updateWeather', function ($event) {
         var locationId = $event.targetScope.row.entity.id;
         var locationName = $event.targetScope.row.entity.name;
-        $http.post($SCRIPT_ROOT + '/locations/' + locationId + '/update_history')
-            .then(function (data) {
-                    if ('error' in data.data) {
-                        alertify.error('Error while updating history for location "' + locationName + '": ' + data.data.error);
-                    } else {
-                        alertify.success('History for location "' + locationName + '" updated');
-                    }
+        locationService.updateHistory(locationId)
+            .then(function () {
+                    alertify.success('History for location "' + locationName + '" updated');
                 },
                 function (error) {
                     alertify.error('Error while updating history for location "' + locationName + '": ' + error);
                 });
-        $http.post($SCRIPT_ROOT + '/locations/' + locationId + '/update_forecast')
-            .then(function (data) {
-                    if ('error' in data.data) {
-                        alertify.error('Error while updating forecast for location "' + locationName + '": ' + data.data.error);
-                    } else {
-                        alertify.success('Forecast for location "' + locationName + '" updated');
-                    }
+
+        locationService.updateForecast(locationId)
+            .then(function () {
+                    alertify.success('Forecast for location "' + locationName + '" updated');
                 },
                 function (error) {
                     alertify.error('Error while updating forecast for location "' + locationName + '": ' + error);
@@ -142,20 +141,6 @@ app.controller('LocationsCtrl', ['$scope', '$http', '$log', '$uibModal', '$timeo
     });
 
 
-    $scope.deleteLocation = function (row) {
-        $http.delete($SCRIPT_ROOT + '/locations/' + row.entity.id)
-            .then(function (data) {
-                    if ('error' in data.data) {
-                        alertify.error(data.data.error);
-                    } else {
-                        $scope.update();
-                    }
-                },
-                function (error) {
-                    alertify.error(error);
-                });
-    };
-
     $scope.updateMap = function () {
         var mapOptions = {
             //zoom: 7,
@@ -190,22 +175,18 @@ app.controller('LocationsCtrl', ['$scope', '$http', '$log', '$uibModal', '$timeo
     };
 
     $scope.update = function () {
-        $http.get($SCRIPT_ROOT + '/locations')
-            .then(function (data) {
-                    if ('error' in data.data) {
-                        alertify.error(data.data.error);
-                    } else {
-                        $scope.gridOptions.data = data.data.data;
-                        $scope.noLocations = data.data.data.length === 0;
-                        $scope.updateMap();
-                    }
-                },
-                function (error) {
-                    alertify.error(error);
-                });
+        var locations = locationService.getLocations();
+        $scope.gridOptions.data = locations;
+        $scope.noLocations = locations.length === 0;
+        $scope.updateMap();
     };
 
-    $scope.update();
+    locationService.reload().then(function () {
+            $scope.update();
+        },
+        function (error) {
+            alertify.error(error);
+        });
 
     $scope.$on('updateLocations', $scope.update);
     $scope.$on('updateMap', $scope.updateMap);
