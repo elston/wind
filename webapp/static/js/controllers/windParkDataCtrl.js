@@ -88,9 +88,10 @@ app.controller('WindParkDataCtrl', ['$scope', '$http', '$uibModalInstance', 'ent
                         if ('error' in response.data) {
                             alertify.error(response.data.error);
                         } else {
+                            $scope.beta = response.data.data.beta;
+                            $scope.sd_beta = response.data.data.sd_beta;
                             $scope.chart = new Highcharts.Chart({
                                 chart: {
-                                    type: 'scatter',
                                     zoomType: 'xy',
                                     renderTo: 'plot-wind-vs-power',
                                     animation: false
@@ -112,13 +113,23 @@ app.controller('WindParkDataCtrl', ['$scope', '$http', '$uibModalInstance', 'ent
                                     }
                                 }],
                                 series: [{
+                                    type: 'scatter',
                                     name: 'Wind vs Power',
-                                    data: response.data.data,
+                                    data: response.data.data.scatterplot,
                                     animation: false,
                                     tooltip: {
                                         valueDecimals: 3
                                     },
                                     color: 'rgba(119, 152, 191, .5)'
+                                },
+                                {
+                                    type: 'line',
+                                    name: 'Wind vs Power model',
+                                    data: response.data.data.model,
+                                    animation: false,
+                                    tooltip: {
+                                        valueDecimals: 3
+                                    }
                                 }]
                             });
                         }

@@ -3,8 +3,10 @@ import logging
 
 from flask import jsonify, request
 from flask_login import current_user
+import numpy as np
 import pandas as pd
 from webapp import app, db
+from webapp.api.math.wind_vs_power_model import fit, model_function
 from webapp.models import Windpark, Generation, Observation
 
 logger = logging.getLogger(__name__)
@@ -203,11 +205,20 @@ def get_wind_vs_power(wpark_id):
             .filter(Observation.time == Generation.time) \
             .all()
 
-        # values = {'power': [[calendar.timegm(x[0].utctimetuple()) * 1000, x[1]] for x in power],
-        #           'wind': [[calendar.timegm(x[0].utctimetuple()) * 1000, x[1]] for x in wind]
-        #           }
+        wind = np.array([x[0] for x in wind_vs_power])
+        power = np.array([x[1] for x in wind_vs_power])
 
-        js = jsonify({'data': wind_vs_power})
+        model = fit(wind, power)
+
+        model_wind = np.linspace(np.min(wind), np.max(wind))
+        model_power = model_function(model.beta, model_wind)
+
+        result = {'scatterplot': wind_vs_power,
+                  'beta': list(model.beta),
+                  'sd_beta': list(model.sd_beta),
+                  'model': zip(model_wind, model_power)}
+
+        js = jsonify({'data': result})
         return js
     except Exception, e:
         logger.exception(e)
