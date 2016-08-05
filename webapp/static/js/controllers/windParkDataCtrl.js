@@ -47,10 +47,28 @@ app.controller('WindParkDataCtrl', ['$scope', '$http', '$uibModalInstance', 'ent
                                     title: {
                                         text: 'Power, MW'
                                     }
+                                },
+                                {
+                                    title: {
+                                        text: 'Wind speed, km/h'
+                                    }
                                 }],
                                 series: [{
-                                    data: response.data.data,
-                                    animation: false
+                                    name: 'Generation, MW',
+                                    data: response.data.data.power,
+                                    animation: false,
+                                    tooltip: {
+                                        valueDecimals: 3
+                                    }
+                                },
+                                {
+                                    name: 'Wind speed, km/h',
+                                    data: response.data.data.wind,
+                                    animation: false,
+                                    yAxis: 1,
+                                    tooltip: {
+                                        valueDecimals: 1
+                                    }
                                 }]
                             });
                         }
@@ -62,6 +80,56 @@ app.controller('WindParkDataCtrl', ['$scope', '$http', '$uibModalInstance', 'ent
 
         $scope.cleanGenerationPlot = function () {
             $('#plot-generation').empty();
+        };
+
+        $scope.plotWindVsPower = function (value) {
+            $http.get($SCRIPT_ROOT + '/windparks/windvspower/' + entity.id)
+                .then(function (response) {
+                        if ('error' in response.data) {
+                            alertify.error(response.data.error);
+                        } else {
+                            $scope.chart = new Highcharts.Chart({
+                                chart: {
+                                    type: 'scatter',
+                                    zoomType: 'xy',
+                                    renderTo: 'plot-wind-vs-power',
+                                    animation: false
+                                },
+                                title: {
+                                    text: 'Wind vs Power'
+                                },
+                                credits: {
+                                    enabled: false
+                                },
+                                yAxis: [{
+                                    title: {
+                                        text: 'Power, MW'
+                                    }
+                                }],
+                                xAxis: [{
+                                    title: {
+                                        text: 'Wind speed, km/h'
+                                    }
+                                }],
+                                series: [{
+                                    name: 'Wind vs Power',
+                                    data: response.data.data,
+                                    animation: false,
+                                    tooltip: {
+                                        valueDecimals: 3
+                                    },
+                                    color: 'rgba(119, 152, 191, .5)'
+                                }]
+                            });
+                        }
+                    },
+                    function (error) {
+                        alertify.error(error.statusText);
+                    });
+        };
+
+        $scope.cleanWindVsPowerPlot = function () {
+            $('#plot-wind-vs-power').empty();
         };
 
 

@@ -5,7 +5,7 @@ from flask import jsonify, request
 from flask_login import current_user
 import pandas as pd
 from webapp import app, db
-from webapp.models import Windpark, Prices, Generation
+from webapp.models import Windpark, Generation, Observation
 
 logger = logging.getLogger(__name__)
 
@@ -162,14 +162,52 @@ def get_wpark_values(wpark_id):
     if not current_user.is_authenticated:
         return jsonify({'error': 'User unauthorized'})
     try:
-        values = db.session.query(Generation.time, Generation.power) \
+        power = db.session.query(Generation.time, Generation.power) \
             .filter_by(windpark_id=wpark_id) \
             .order_by(Generation.time) \
             .all()
 
-        values = [[calendar.timegm(x[0].utctimetuple()) * 1000, x[1]] for x in values]
+        location_id = db.session.query(Windpark.location_id) \
+            .filter_by(id=wpark_id) \
+            .first()[0]
+
+        wind = db.session.query(Observation.time, Observation.wspdm) \
+            .filter_by(location_id=location_id) \
+            .order_by(Observation.time) \
+            .all()
+
+        values = {'power': [[calendar.timegm(x[0].utctimetuple()) * 1000, x[1]] for x in power],
+                  'wind': [[calendar.timegm(x[0].utctimetuple()) * 1000, x[1]] for x in wind]
+                  }
 
         js = jsonify({'data': values})
+        return js
+    except Exception, e:
+        logger.exception(e)
+        js = jsonify({'error': repr(e)})
+        return js
+
+
+@app.route('/api/windparks/windvspower/<wpark_id>')
+def get_wind_vs_power(wpark_id):
+    if not current_user.is_authenticated:
+        return jsonify({'error': 'User unauthorized'})
+    try:
+        location_id = db.session.query(Windpark.location_id) \
+            .filter_by(id=wpark_id) \
+            .first()[0]
+
+        wind_vs_power = db.session.query(Observation.wspdm, Generation.power) \
+            .filter(Generation.windpark_id == wpark_id) \
+            .filter(Observation.location_id == location_id) \
+            .filter(Observation.time == Generation.time) \
+            .all()
+
+        # values = {'power': [[calendar.timegm(x[0].utctimetuple()) * 1000, x[1]] for x in power],
+        #           'wind': [[calendar.timegm(x[0].utctimetuple()) * 1000, x[1]] for x in wind]
+        #           }
+
+        js = jsonify({'data': wind_vs_power})
         return js
     except Exception, e:
         logger.exception(e)
