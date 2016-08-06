@@ -37,8 +37,8 @@ app.controller('WindParksCtrl', ['$scope', '$uibModal', 'windparkService',
             ],
             columnDefs: [
                 {field: 'name'},
-                {field: 'location'},
-                {field: 'market'},
+                {field: 'location.name', name: 'Location'},
+                {field: 'market.name', name: 'Market'},
                 {
                     field: 'action',
                     headerCellTemplate: ' ',

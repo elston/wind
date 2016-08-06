@@ -36,8 +36,14 @@ def add_windpark():
         return jsonify({'error': 'User unauthorized'})
     try:
         values = request.get_json()
-        windpark = Windpark.from_excess_args(user_id=current_user.id, **values)
-        db.session.add(windpark)
+
+        if 'id' in values:
+            windpark = db.session.query(Windpark).filter_by(user_id=current_user.id, id=values['id']).first()
+            windpark.update_from_dict(values)
+            db.session.flush()
+        else:
+            windpark = Windpark.from_excess_args(user_id=current_user.id, **values)
+            db.session.add(windpark)
         db.session.commit()
 
         js = jsonify({'data': 'OK'})

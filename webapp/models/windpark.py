@@ -1,4 +1,5 @@
 import calendar
+
 import numpy as np
 import pytz
 from sqlalchemy.orm import relationship
@@ -32,9 +33,14 @@ class Windpark(db.Model):
         d = {}
         for c in ('id', 'name'):
             d[c] = getattr(self, c)
-        d['location'] = self.location.name if self.location is not None else None
-        d['market'] = self.market.name if self.location is not None else None
+        d['location'] = self.location.to_dict()
+        d['market'] = self.market.to_dict()
         return d
+
+    def update_from_dict(self, d):
+        for c in self.__table__.columns:
+            if c.name in d:
+                setattr(self, c.name, d[c.name])
 
     def add_generation(self, df):
         for ts in df.index:

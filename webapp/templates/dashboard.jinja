@@ -123,12 +123,63 @@
 
 <script type="text/ng-template" id="windpark-data-modal.html">
     <div class="modal-header">
-        <h4 class="modal-title" id="windpark-data-modal-label">Wind park "{{ windParkName }}"</h4>
+        <h4 class="modal-title" id="windpark-data-modal-label">Wind park "{{ name }}"</h4>
     </div>
     <div class="modal-body">
-        <div class="panel panel-info">
+        <div class="container-fluid">
+            <form class="form-horizontal" name="newWindparkForm">
+                <div class="form-group">
+                    <label for="windpark-name" class="col-xs-3 control-label">Name: </label>
 
-            <div class="panel-heading"><h4 class="panel-title">Build power curve from historical generation data</h4></div>
+                    <div class="col-xs-9">
+                        <input type="text" ng-model="name" id="windpark-data-name" name="windpark-name"
+                               class="form-control" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="windpark-location" class="col-xs-3 control-label">Location: </label>
+
+                    <div class="col-xs-9">
+                        <select id="windpark-data-location" class="form-control" ng-model="location" required
+                                ng-options="location.name for location in locations track by location.id">
+                        </select>
+
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="windpark-market" class="col-xs-3 control-label">Market: </label>
+
+                    <div class="col-xs-9">
+                        <select id="windpark-data-market" class="form-control" ng-model="market" required
+                                ng-options="market.name for market in markets track by market.id">
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-xs-3 control-label">Power curve source: </label>
+
+                    <div class="col-xs-9">
+                        <input type="radio" name="windpark-data-source" ng-model="dataSource" value="turbines"
+                               selected>
+                        From turbines characteristics
+                        <input type="radio" name="windpark-data-source" ng-model="dataSource" value="historical">
+                        From historical wind and generation data
+                    </div>
+                </div>
+
+                <button type="button" class="btn btn-primary pull-right" ng-click="update()">Update</button>
+            </form>
+        </div>
+
+        <div class="panel panel-info" ng-if="dataSource == 'turbines'">
+            <div class="panel-heading"><h4 class="panel-title">Build power curve from turbines data</h4>
+            </div>
+            <div class="panel-body">
+            </div>
+        </div>
+        <div class="panel panel-info" ng-if="dataSource == 'historical'">
+            <div class="panel-heading"><h4 class="panel-title">Build power curve from historical generation data</h4>
+            </div>
             <div class="panel-body">
                 <div class="container-fluid">
                     <div class="row">
@@ -152,6 +203,7 @@
                         </div>
                     </div>
                     <p></p>
+
                     <div class="row">
                         <div class="col-xs-4 col-xs-offset-1">
                             <button class="btn btn-primary" style="width:100%"
@@ -167,6 +219,7 @@
                         </div>
                     </div>
                     <p></p>
+
                     <div uib-collapse="!summary.showGeneration" expanded="plotGeneration()"
                          collapsed="cleanGenerationPlot()">
                         <div class="well well-lg">
@@ -174,6 +227,7 @@
                         </div>
                     </div>
                     <p></p>
+
                     <div uib-collapse="!summary.showWindVsPower" expanded="plotWindVsPower()"
                          collapsed="cleanWindVsPowerPlot()">
                         <div class="well well-lg">

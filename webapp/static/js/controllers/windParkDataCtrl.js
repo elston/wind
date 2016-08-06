@@ -1,26 +1,45 @@
 /*global app,$SCRIPT_ROOT,alertify,Highcharts*/
 
-app.controller('WindParkDataCtrl', ['$scope', '$uibModalInstance', 'entity', 'windparkService',
-    function ($scope, $uibModalInstance, entity, windparkService) {
+app.controller('WindParkDataCtrl', ['$scope', '$rootScope', '$uibModalInstance', 'entity', 'locationService',
+    'marketService', 'windparkService',
+    function ($scope, $rootScope, $uibModalInstance, entity, locationService, marketService, windparkService) {
         'use strict';
+
+        $scope.name = entity.name;
+        $scope.locations = locationService.getLocations();
+        $scope.markets = marketService.getMarkets();
+        $scope.location = entity.location;
+        $scope.market = entity.market;
+        $scope.dataSource = 'historical';
 
         $scope.close = function () {
             $uibModalInstance.close();
         };
 
-        $scope.windParkName = entity.name;
-
-        $scope.update = function () {
-            windparkService.getSummary(entity.id)
+        windparkService.getSummary(entity.id)
                 .then(function (result) {
                         $scope.summary = result;
                     },
                     function (error) {
                         alertify.error(error);
                     });
-        };
 
-        $scope.update();
+        $scope.update = function () {
+            windparkService.updateWindpark({
+                    id: entity.id,
+                    name: $scope.name,
+                    location_id: $scope.location.id,
+                    market_id: $scope.market.id,
+                    data_source: $scope.dataSource
+                })
+                .then(function (data) {
+                        alertify.success('OK');
+                        $rootScope.$broadcast('updateWindParks');
+                    },
+                    function (error) {
+                        alertify.error(error);
+                    });
+        };
 
         $scope.plotGeneration = function () {
             windparkService.getGeneration(entity.id)
