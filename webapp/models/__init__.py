@@ -7,3 +7,5 @@ from .observation import Observation
 from .prices import Prices
 from .windpark import Windpark
 from .generation import Generation
+from .turbine import Turbine
+from .turbine_power_curve import TurbinePowerCurve
