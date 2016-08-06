@@ -1,7 +1,7 @@
 /*global app,$SCRIPT_ROOT,alertify*/
 
-app.controller('WindParksCtrl', ['$scope', '$http', '$uibModal',
-    function ($scope, $http, $uibModal) {
+app.controller('WindParksCtrl', ['$scope', '$uibModal', 'windparkService',
+    function ($scope, $uibModal, windparkService) {
         'use strict';
 
         $scope.gridOptions = {
@@ -85,13 +85,9 @@ app.controller('WindParksCtrl', ['$scope', '$http', '$uibModal',
         });
 
         $scope.deleteWindPark = function (row) {
-            $http.delete($SCRIPT_ROOT + '/windparks/' + row.entity.id)
-                .then(function (data) {
-                        if ('error' in data.data) {
-                            alertify.error(data.data.error);
-                        } else {
-                            $scope.update();
-                        }
+            windparkService.deleteWindpark(row.entity.id)
+                .then(function () {
+                        $scope.update();
                     },
                     function (error) {
                         alertify.error(error);
@@ -99,19 +95,18 @@ app.controller('WindParksCtrl', ['$scope', '$http', '$uibModal',
         };
 
         $scope.update = function () {
-            $http.get($SCRIPT_ROOT + '/windparks')
-                .then(function (data) {
-                        if ('error' in data.data) {
-                            alertify.error(data.data.error);
-                        } else {
-                            $scope.gridOptions.data = data.data.data;
-                            $scope.noWindParks = data.data.data.length === 0;
-                        }
-                    },
-                    function (error) {
-                        alertify.error(error);
-                    });
+            var windparks = windparkService.getWindparks();
+            $scope.gridOptions.data = windparks;
+            $scope.noWindParks = windparks.length === 0;
         };
+
+        windparkService.reload().then(function () {
+                $scope.update();
+            },
+            function (error) {
+                alertify.error(error);
+            });
+
 
         $scope.update();
 

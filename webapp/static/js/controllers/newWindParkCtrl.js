@@ -1,7 +1,8 @@
 /*global app,$SCRIPT_ROOT,alertify*/
 
-app.controller('NewWindParkCtrl', ['$scope', '$rootScope', '$uibModalInstance', '$http', 'locationService', 'marketService',
-    function ($scope, $rootScope, $uibModalInstance, $http, locationService, marketService) {
+app.controller('NewWindParkCtrl', ['$scope', '$rootScope', '$uibModalInstance', 'locationService',
+    'marketService', 'windparkService',
+    function ($scope, $rootScope, $uibModalInstance, locationService, marketService, windparkService) {
         'use strict';
 
         $scope.locations = locationService.getLocations();
@@ -13,23 +14,13 @@ app.controller('NewWindParkCtrl', ['$scope', '$rootScope', '$uibModalInstance', 
 
         $scope.addWindPark = function () {
             $uibModalInstance.close();
-            $http({
-                url: $SCRIPT_ROOT + '/windparks',
-                method: "POST",
-                headers: {'Content-Type': 'application/json'},
-                data: JSON.stringify({
+            windparkService.updateWindpark({
                     name: $scope.name,
                     location_id: $scope.location,
                     market_id: $scope.market
                 })
-            })
                 .then(function (data) {
-                        if ('error' in data.data) {
-                            alertify.error(data.data.error);
-                        } else {
-                            alertify.success('OK');
-                            $rootScope.$broadcast('updateWindParks');
-                        }
+                        $rootScope.$broadcast('updateWindParks');
                     },
                     function (error) {
                         alertify.error(error);

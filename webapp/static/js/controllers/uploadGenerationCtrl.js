@@ -1,7 +1,7 @@
 /*global app,$SCRIPT_ROOT,alertify,Highcharts*/
 
-app.controller('UploadGenerationCtrl', ['$scope', '$uibModalInstance', 'Upload', 'entity',
-    function ($scope, $uibModalInstance, Upload, entity) {
+app.controller('UploadGenerationCtrl', ['$scope', '$uibModalInstance', 'entity', 'windparkService',
+    function ($scope, $uibModalInstance, entity, windparkService) {
         'use strict';
 
         $scope.marketName = entity.name;
@@ -11,16 +11,9 @@ app.controller('UploadGenerationCtrl', ['$scope', '$uibModalInstance', 'Upload',
         };
 
         $scope.previewFile = function (generationFile) {
-            Upload.upload({
-                    url: $SCRIPT_ROOT + '/windparks/preview_generation',
-                    data: {format: $scope.fileFormat, file: generationFile}
-                })
-                .then(function (response) {
-                        if ('error' in response.data) {
-                            alertify.error(response.data.error);
-                        } else {
-                            $scope.showGeneration(response.data.data);
-                        }
+            windparkService.previewGeneration($scope.fileFormat, generationFile)
+                .then(function (result) {
+                        $scope.showGeneration(result);
                     },
                     function (error) {
                         alertify.error(error);
@@ -64,16 +57,9 @@ app.controller('UploadGenerationCtrl', ['$scope', '$uibModalInstance', 'Upload',
         };
 
         $scope.uploadGeneration = function () {
-            Upload.upload({
-                    url: $SCRIPT_ROOT + '/windparks/generation',
-                    data: {format: $scope.fileFormat, file: $scope.generationFile, wpark_id: entity.id}
-                })
-                .then(function (response) {
-                        if ('error' in response.data) {
-                            alertify.error(response.data.error);
-                        } else {
-                            alertify.alert('Generation upload', 'Done');
-                        }
+            windparkService.uploadGeneration(entity.id, $scope.fileFormat, $scope.generationFile)
+                .then(function () {
+                        alertify.alert('Generation upload', 'Done');
                     },
                     function (error) {
                         alertify.error(error);
