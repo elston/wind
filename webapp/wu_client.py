@@ -48,7 +48,7 @@ class WuClient:
         counter = db.session.query(WUDailyCount).filter_by(id=day_key).first()
         if counter is None:
             db.session.add(WUDailyCount(id=day_key, count=1))
-            db.session.flush()
+            db.session.commit()
         else:
             if counter.count >= self.day_limit:
                 dt = self.us_eastern_noon + timedelta(days=day_key + 1)
@@ -60,7 +60,7 @@ class WuClient:
                     % (hours, minutes))
             else:
                 db.session.query(WUDailyCount).filter_by(id=day_key).update({'count': WUDailyCount.count + 1})
-                db.session.flush()
+                db.session.commit()
 
     def check_limits(self):
         self.check_day_limit()
