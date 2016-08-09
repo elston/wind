@@ -14,6 +14,8 @@ user_id = 1
 test_name = 'Test location'
 
 
+# TODO: test adding API
+
 class LocationsTestCase(unittest.TestCase):
     def setUp(self):
         self.app = webapp.app.test_client()
@@ -192,7 +194,8 @@ class LocationsTestCase(unittest.TestCase):
         self.assertEqual(len(data['wdird']), 240)
 
     def test_fit_get_wspd_model(self):
-        test_location = Location(user_id=user_id, name=test_name, l='/q/zmw:00000.1.10400', lookback=10)
+        test_location = Location(user_id=user_id, name=test_name, l='/q/zmw:00000.1.10400', lookback=10,
+                                 time_range='rolling')
         self.session.add(test_location)
         self.session.commit()
 
@@ -204,6 +207,7 @@ class LocationsTestCase(unittest.TestCase):
         self.assertNotIn('error', result)
         data = result['data']
         print data
+
 
 if __name__ == '__main__':
     unittest.main()

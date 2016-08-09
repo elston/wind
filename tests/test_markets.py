@@ -14,6 +14,7 @@ logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(name)s - %(leve
 user_id = 1
 test_name = 'Test market'
 
+# TODO: test adding API
 
 class MarketsTestCase(unittest.TestCase):
     def setUp(self):

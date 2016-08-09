@@ -69,6 +69,10 @@ class Location(db.Model):
             self.update_rolling_history()
         elif self.time_range == 'fixed':
             self.update_fixed_history()
+        else:
+            raise Exception('Unsupported value time_range=%r', self.time_range)
+
+
 
     def update_rolling_history(self):
         now = datetime.utcnow().date()
