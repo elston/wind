@@ -70,18 +70,14 @@ app.controller('WindParksCtrl', ['$scope', '$uibModal', 'windparkService',
         });
 
         $scope.$on('viewData', function ($event) {
-            var modalInstance = $uibModal.open({
-                animation: false,
-                templateUrl: 'windpark-data-modal.html',
-                controller: 'WindParkDataCtrl',
-                size: 'lg',
-                resolve: {
-                    entity: function () {
-                        return $event.targetScope.row.entity;
-                    }
-                }
-            });
-
+            var windparkData = $event.targetScope.row.entity;
+            var tabData = {
+                id: windparkData.id,
+                title: windparkData.name + ' windpark',
+                type: 'windpark',
+                data: windparkData
+            };
+            $scope.$emit('addTab', tabData);
         });
 
         $scope.deleteWindPark = function (row) {

@@ -3,12 +3,16 @@
 
     $("ul.nav-tabs > li > a").on("shown.bs.tab", function (e) {
             var tabName = $(e.target).attr("href").substr(1);
-            // store the currently selected tab in the hash value
-            window.location.hash = tabName;
+            if (tabName.startsWith('dyntab-')) {
+                window.location.hash = null;
+            } else {
+                // store the currently selected tab in the hash value
+                window.location.hash = tabName;
+            }
             if (tabName === 'locations') {  // update Google map
                 var tabBody = document.querySelector('[ng-controller=LocationsCtrl]');
                 var tabScope = angular.element(tabBody).scope();
-                if(tabScope)
+                if (tabScope)
                     tabScope.updateMap();
             }
         }

@@ -20,6 +20,8 @@ class Windpark(db.Model):
     market = relationship('Market', back_populates='windparks')
     generation = relationship('Generation', back_populates='windpark', order_by='Generation.time',
                               cascade='all, delete-orphan')
+    turbines = relationship('WindparkTurbine', back_populates='windpark',
+                            cascade='all, delete-orphan')
 
     @classmethod
     def from_excess_args(cls, **kwargs):
@@ -33,8 +35,12 @@ class Windpark(db.Model):
         d = {}
         for c in ('id', 'name'):
             d[c] = getattr(self, c)
-        d['location'] = self.location.to_dict()
-        d['market'] = self.market.to_dict()
+        d['location'] = None if self.location is None else self.location.to_dict()
+        d['market'] = None if self.market is None else self.market.to_dict()
+        turbines = []
+        for rel in self.turbines:
+            turbines.append({'count': rel.count, 'turbine_id': rel.turbine_id})
+        d['turbines'] = turbines
         return d
 
     def update_from_dict(self, d):

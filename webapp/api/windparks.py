@@ -8,6 +8,7 @@ import pandas as pd
 from webapp import app, db
 from webapp.api.math.wind_vs_power_model import fit, model_function
 from webapp.models import Windpark, Generation, Observation
+from webapp.models.windpark_turbines import WindparkTurbine
 
 logger = logging.getLogger(__name__)
 
@@ -239,6 +240,45 @@ def fit_generation_model(wpark_id):
     try:
         windpark = db.session.query(Windpark).filter_by(id=wpark_id).first()
         windpark.fit_generation_model()
+        db.session.commit()
+
+        js = jsonify({'data': 'OK'})
+        return js
+    except Exception, e:
+        logger.exception(e)
+        js = jsonify({'error': repr(e)})
+        return js
+
+
+@app.route('/api/windparks/<wpark_id>/turbines', methods=['POST', ])
+def add_turbine(wpark_id):
+    if not current_user.is_authenticated:
+        return jsonify({'error': 'User unauthorized'})
+    try:
+        values = request.get_json()
+
+        windpark = db.session.query(Windpark).filter_by(id=wpark_id).first()
+        rel = WindparkTurbine(windpark_id=wpark_id, turbine_id=values['turbine_id'], count=values['count'])
+        windpark.turbines.append(rel)
+        db.session.commit()
+
+        js = jsonify({'data': 'OK'})
+        return js
+    except Exception, e:
+        logger.exception(e)
+        js = jsonify({'error': repr(e)})
+        return js
+
+
+@app.route('/api/windparks/<wpark_id>/turbines/<relationship_id>', methods=['DELETE', ])
+def delete_turbine(wpark_id, relationship_id):
+    if not current_user.is_authenticated:
+        return jsonify({'error': 'User unauthorized'})
+    try:
+        windpark = db.session.query(Windpark).filter_by(id=wpark_id).first()
+        for rel in windpark.turbines[:]:
+            if rel.id == int(relationship_id):
+                windpark.turbines.remove(rel)
         db.session.commit()
 
         js = jsonify({'data': 'OK'})

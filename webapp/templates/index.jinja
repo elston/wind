@@ -29,6 +29,7 @@
 {% else %}
     $ADMIN_ROLE = false;
 {% endif %}
+
 </script>
 <script src='https://maps.googleapis.com/maps/api/js?v=3.exp&key={{ gmap_api_key }}'></script>
 <script src="{{ url_for('.static', filename='bower_components/highcharts/highstock.js') }}"></script>
@@ -46,6 +47,7 @@
 <script src="{{ url_for('.static', filename='editablegrid/editablegrid_validators.js') }}"></script>
 <script src="{{ url_for('.static', filename='editablegrid/editablegrid_utils.js') }}"></script>
 <script src="{{ url_for('.static', filename='js/app.js') }}"></script>
+<script src="{{ url_for('.static', filename='js/controllers/mainCtrl.js') }}"></script>
 <script src="{{ url_for('.static', filename='js/controllers/locationCtrl.js') }}"></script>
 <script src="{{ url_for('.static', filename='js/controllers/newLocationCtrl.js') }}"></script>
 <script src="{{ url_for('.static', filename='js/controllers/marketCtrl.js') }}"></script>
@@ -69,7 +71,7 @@
 {% endblock scripts %}
 
 {% block content %}
-<div>
+<div ng-controller="MainCtrl">
     <ul class="nav">
         <li role="presentation" class="logo-in-tabs">
             <img src="{{ url_for('static', filename='img/TISLogoWeb-h30.png') }}"/>
@@ -89,6 +91,15 @@
         {% if current_user.has_role('admin') %}
         <li role="presentation"><a href="#admin" aria-controls="admin" role="tab" data-toggle="tab">Admin</a></li>
         {% endif %}
+        {% raw %}  <!--start angular templating-->
+        <li role="presentation" ng-repeat="tab in tabs"><a href="#dyntab-{{tab.type}}-{{tab.id}}"
+                                                           aria-controls="symbols" role="tab"
+                                                           data-toggle="tab">{{tab.title}}&nbsp;
+            <button type="button" class="close" aria-label="Close" ng-click="deleteTab(tab)"><span
+                    aria-hidden="true">&times;</span></button>
+        </a>
+        </li>
+        {% endraw %}  <!--return to jinja templating-->
     </ul>
     <!-- Tab panes -->
     <div class="tab-content">
@@ -98,6 +109,11 @@
         {% if current_user.has_role('admin') %}
         <div role="tabpanel" class="tab-pane" id="admin">{% include "admin.jinja" %}</div>
         {% endif %}
+        {% raw %}  <!--start angular templating-->
+        <div role="tabpanel" class="tab-pane" ng-repeat="tab in tabs" id="dyntab-{{tab.type}}-{{tab.id}}">
+            <div ng-if="tab.type=='windpark'" ng-include="'windpark-data.html'"></div>
+        </div>
+        {% endraw %}  <!--return to jinja templating-->
     </div>
 
 </div>

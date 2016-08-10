@@ -121,135 +121,140 @@
     </div>
 </script>
 
-<script type="text/ng-template" id="windpark-data-modal.html">
-    <div class="modal-header">
-        <h4 class="modal-title" id="windpark-data-modal-label">Wind park "{{ name }}"</h4>
-    </div>
-    <div class="modal-body">
-        <div class="container-fluid">
-            <form class="form-horizontal" name="newWindparkForm">
-                <div class="form-group">
-                    <label for="windpark-name" class="col-xs-3 control-label">Name: </label>
+<script type="text/ng-template" id="windpark-data.html">
+    <div class="container" ng-controller="WindParkDataCtrl">
+        <div class="row">
+            <div class="col-xs-12">
+                <form class="form-horizontal clearfix" name="newWindparkForm"
+                      style="margin-top:34px; margin-bottom:34px">
+                    <div class="form-group">
+                        <label for="windpark-data-name" class="col-xs-3 control-label">Name: </label>
 
-                    <div class="col-xs-9">
-                        <input type="text" ng-model="name" id="windpark-data-name" name="windpark-name"
-                               class="form-control" required>
+                        <div class="col-xs-9">
+                            <input type="text" ng-model="name" id="windpark-data-name" name="windpark-name"
+                                   class="form-control" required>
+                        </div>
                     </div>
-                </div>
-                <div class="form-group">
-                    <label for="windpark-location" class="col-xs-3 control-label">Location: </label>
+                    <div class="form-group">
+                        <label for="windpark-data-location" class="col-xs-3 control-label">Location: </label>
 
-                    <div class="col-xs-9">
-                        <select id="windpark-data-location" class="form-control" ng-model="location" required
-                                ng-options="location.name for location in locations track by location.id">
-                        </select>
+                        <div class="col-xs-9">
+                            <select id="windpark-data-location" class="form-control" ng-model="location" required
+                                    ng-options="location.name for location in locations track by location.id">
+                            </select>
 
+                        </div>
                     </div>
-                </div>
-                <div class="form-group">
-                    <label for="windpark-market" class="col-xs-3 control-label">Market: </label>
+                    <div class="form-group">
+                        <label for="windpark-data-market" class="col-xs-3 control-label">Market: </label>
 
-                    <div class="col-xs-9">
-                        <select id="windpark-data-market" class="form-control" ng-model="market" required
-                                ng-options="market.name for market in markets track by market.id">
-                        </select>
+                        <div class="col-xs-9">
+                            <select id="windpark-data-market" class="form-control" ng-model="market" required
+                                    ng-options="market.name for market in markets track by market.id">
+                            </select>
+                        </div>
                     </div>
-                </div>
-                <div class="form-group">
-                    <label class="col-xs-3 control-label">Power curve source: </label>
+                    <div class="form-group">
+                        <label class="col-xs-3 control-label">Power curve source: </label>
 
-                    <div class="col-xs-9">
-                        <input type="radio" name="windpark-data-source" ng-model="dataSource" value="turbines"
-                               selected>
-                        From turbines characteristics
-                        <input type="radio" name="windpark-data-source" ng-model="dataSource" value="historical">
-                        From historical wind and generation data
+                        <div class="col-xs-9">
+                            <label class="radio-inline">
+                                <input type="radio" name="windpark-data-source" ng-model="dataSource" value="turbines">
+                                From turbines characteristics</label>
+                            <label class="radio-inline">
+                                <input type="radio" name="windpark-data-source" ng-model="dataSource" value="historical"
+                                       selected>
+                                From historical wind and generation data</label>
+                        </div>
                     </div>
-                </div>
 
-                <button type="button" class="btn btn-primary pull-right" ng-click="update()">Update</button>
-            </form>
-        </div>
-
-        <div class="panel panel-info" ng-if="dataSource == 'turbines'">
-            <div class="panel-heading"><h4 class="panel-title">Build power curve from turbines data</h4>
-            </div>
-            <div class="panel-body">
+                    <button type="button" class="btn btn-primary pull-right" ng-click="update()">Update</button>
+                </form>
             </div>
         </div>
-        <div class="panel panel-info" ng-if="dataSource == 'historical'">
-            <div class="panel-heading"><h4 class="panel-title">Build power curve from historical generation data</h4>
+        <div class="col-xs-12">
+            <div class="panel panel-info" ng-if="dataSource == 'turbines'">
+                <div class="panel-heading"><h4 class="panel-title">Turbines characteristics</h4>
+                </div>
+                <div class="panel-body">
+                    <h4>Turbines</h4>
+
+                    <div id="turbines-list-grid" ui-grid="actualListOptions" ui-grid-selection
+                         class="grid" ui-grid-auto-resize></div>
+                </div>
             </div>
-            <div class="panel-body">
-                <div class="container-fluid">
-                    <div class="row">
-                        <div class="col-xs-4">
-                            <span class="data-label"><b>Start</b></span>{{ summary.start | date:'MMM d, y H:mm':'gmt' }}
+            <div class="panel panel-info" ng-if="dataSource == 'historical'">
+                <div class="panel-heading"><h4 class="panel-title">Historical wind and generation data</h4>
+                </div>
+                <div class="panel-body">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-xs-4">
+                                <span class="data-label"><b>Start</b></span>{{ summary.start | date:'MMM d, y
+                                H:mm':'gmt' }}
+                            </div>
+                            <div class="col-xs-4">
+                                <span class="data-label"><b>End</b></span>{{ summary.end | date:'MMM d, y H:mm':'gmt' }}
+                            </div>
+                            <div class="col-xs-4">
+                                <span class="data-label"><b>Min power, MW</b></span>{{ summary.min | number:2 }}
+                            </div>
+                            <div class="col-xs-4">
+                                <span class="data-label"><b>Max power, MW</b></span>{{ summary.max | number:2 }}
+                            </div>
+                            <div class="col-xs-4">
+                                <span class="data-label"><b>Mean power, MW</b></span>{{ summary.mean | number:2 }}
+                            </div>
+                            <div class="col-xs-4">
+                                <span class="data-label"><b>Power std, MW</b></span>{{ summary.std | number:2 }}
+                            </div>
                         </div>
-                        <div class="col-xs-4">
-                            <span class="data-label"><b>End</b></span>{{ summary.end | date:'MMM d, y H:mm':'gmt' }}
-                        </div>
-                        <div class="col-xs-4">
-                            <span class="data-label"><b>Min power, MW</b></span>{{ summary.min | number:2 }}
-                        </div>
-                        <div class="col-xs-4">
-                            <span class="data-label"><b>Max power, MW</b></span>{{ summary.max | number:2 }}
-                        </div>
-                        <div class="col-xs-4">
-                            <span class="data-label"><b>Mean power, MW</b></span>{{ summary.mean | number:2 }}
-                        </div>
-                        <div class="col-xs-4">
-                            <span class="data-label"><b>Power std, MW</b></span>{{ summary.std | number:2 }}
-                        </div>
-                    </div>
-                    <p></p>
+                        <p></p>
 
-                    <div class="row">
-                        <div class="col-xs-4 col-xs-offset-1">
-                            <button class="btn btn-primary" style="width:100%"
-                                    ng-click="summary.showGeneration = !summary.showGeneration"
-                                    ng-disabled="summary.max === null">Generation plot
-                            </button>
+                        <div class="row">
+                            <div class="col-xs-4 col-xs-offset-1">
+                                <button class="btn btn-primary" style="width:100%"
+                                        ng-click="summary.showGeneration = !summary.showGeneration"
+                                        ng-disabled="summary.max === null">Generation plot
+                                </button>
+                            </div>
+                            <div class="col-xs-4 col-xs-offset-2">
+                                <button class="btn btn-primary" style="width:100%"
+                                        ng-click="summary.showWindVsPower = !summary.showWindVsPower"
+                                        ng-disabled="summary.max === null">Wind vs Power
+                                </button>
+                            </div>
                         </div>
-                        <div class="col-xs-4 col-xs-offset-2">
-                            <button class="btn btn-primary" style="width:100%"
-                                    ng-click="summary.showWindVsPower = !summary.showWindVsPower"
-                                    ng-disabled="summary.max === null">Wind vs Power
-                            </button>
-                        </div>
-                    </div>
-                    <p></p>
+                        <p></p>
 
-                    <div uib-collapse="!summary.showGeneration" expanded="plotGeneration()"
-                         collapsed="cleanGenerationPlot()">
-                        <div class="well well-lg">
-                            <div id="plot-generation" style="width:100%; height:400px;"></div>
+                        <div uib-collapse="!summary.showGeneration" expanded="plotGeneration()"
+                             collapsed="cleanGenerationPlot()">
+                            <div class="well well-lg">
+                                <div id="plot-generation" style="width:100%; height:400px;"></div>
+                            </div>
                         </div>
-                    </div>
-                    <p></p>
+                        <p></p>
 
-                    <div uib-collapse="!summary.showWindVsPower" expanded="plotWindVsPower()"
-                         collapsed="cleanWindVsPowerPlot()">
-                        <div class="well well-lg">
-                            <dl class="dl-horizontal">
-                                <dt>V<sub>cut-in</sub></dt>
-                                <dd>{{ beta[0] | number:2 }}±{{ sd_beta[0] | number:2 }}</dd>
-                                <dt>V<sub>rated</sub></dt>
-                                <dd>{{ beta[1] | number:2 }}±{{ sd_beta[1] | number:2 }}</dd>
-                                <dt>V<sub>cut-out</sub></dt>
-                                <dd>{{ beta[2] | number:2 }}±{{ sd_beta[2] | number:2 }}</dd>
-                                <dt>W<sub>rated</sub></dt>
-                                <dd>{{ beta[3] | number:2 }}±{{ sd_beta[3] | number:2 }}</dd>
-                            </dl>
-                            <div id="plot-wind-vs-power" style="width:100%; height:400px;"></div>
+                        <div uib-collapse="!summary.showWindVsPower" expanded="plotWindVsPower()"
+                             collapsed="cleanWindVsPowerPlot()">
+                            <div class="well well-lg">
+                                <dl class="dl-horizontal">
+                                    <dt>V<sub>cut-in</sub></dt>
+                                    <dd>{{ beta[0] | number:2 }}±{{ sd_beta[0] | number:2 }}</dd>
+                                    <dt>V<sub>rated</sub></dt>
+                                    <dd>{{ beta[1] | number:2 }}±{{ sd_beta[1] | number:2 }}</dd>
+                                    <dt>V<sub>cut-out</sub></dt>
+                                    <dd>{{ beta[2] | number:2 }}±{{ sd_beta[2] | number:2 }}</dd>
+                                    <dt>W<sub>rated</sub></dt>
+                                    <dd>{{ beta[3] | number:2 }}±{{ sd_beta[3] | number:2 }}</dd>
+                                </dl>
+                                <div id="plot-wind-vs-power" style="width:100%; height:400px;"></div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-    <div class="modal-footer">
-        <button type="button" class="btn btn-default" ng-click="close()">Close</button>
     </div>
 </script>
 {% endraw %}
