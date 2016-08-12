@@ -57,6 +57,7 @@ app.controller('WindParkDataCtrl', ['$scope', '$rootScope', '$uibModal', 'locati
                                             $scope.actualListOptions.data = windparkList.find(function (el) {
                                                 return el.id === windpark.id;
                                             }).turbines;
+                                            reloadTotalPowerCurve();
                                         },
                                         function (error) {
                                             alertify.error(error);
@@ -85,10 +86,52 @@ app.controller('WindParkDataCtrl', ['$scope', '$rootScope', '$uibModal', 'locati
 
         $scope.actualListOptions.data = windpark.turbines;
 
+        var reloadTotalPowerCurve = function () {
+            windparkService.getTotalPowerCurve(windpark.id)
+                .then(function (curve) {
+                    $scope.chart = new Highcharts.Chart({
+                        chart: {
+                            renderTo: 'total-power-curve-container',
+                            animation: false
+                        },
+                        title: {
+                            text: 'Total power curve'
+                        },
+                        credits: {
+                            enabled: false
+                        },
+                        legend: {
+                            enabled: false
+                        },
+                        yAxis: [{
+                            title: {
+                                text: 'Power, MW'
+                            }
+                        }],
+                        xAxis: [{
+                            title: {
+                                text: 'Wind speed, m/s'
+                            }
+                        }],
+                        series: [{
+                            name: 'Power curve',
+                            data: curve,
+                            animation: false
+                        }]
+                    });
+                },
+                function (error) {
+                    alertify.error(error);
+                });
+        };
+
+        reloadTotalPowerCurve();
+
         $scope.$on('reloadTurbinesList', function () {
             $scope.actualListOptions.data = windparkService.getWindparks().find(function (el) {
                 return el.id === windpark.id;
             }).turbines;
+            reloadTotalPowerCurve();
         });
 
         $scope.update = function () {

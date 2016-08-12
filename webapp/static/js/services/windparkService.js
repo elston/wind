@@ -171,6 +171,20 @@ app.factory('windparkService', ['$http', 'Upload', function ($http, Upload) {
                 });
     };
 
+    var getTotalPowerCurve = function (windparkId) {
+        return $http.get($SCRIPT_ROOT + '/windparks/' + windparkId + '/totalpowercurve')
+            .then(function (response) {
+                    if ('error' in response.data) {
+                        throw response.data.error;
+                    } else {
+                        return response.data.data;
+                    }
+                },
+                function (error) {
+                    throw error.statusText;
+                });
+    };
+
 
     return {
         reload: reload,
@@ -183,7 +197,8 @@ app.factory('windparkService', ['$http', 'Upload', function ($http, Upload) {
         getGeneration: getGeneration,
         getWindVsPower: getWindVsPower,
         addTurbine: addTurbine,
-        deleteTurbine: deleteTurbine
+        deleteTurbine: deleteTurbine,
+        getTotalPowerCurve: getTotalPowerCurve
     };
 
 }]);

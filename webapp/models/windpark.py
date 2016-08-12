@@ -1,10 +1,13 @@
 import calendar
+
 import numpy as np
+import pandas as pd
 import pytz
 from sqlalchemy.orm import relationship
 from webapp import db
 from .generation import Generation
 from .turbine import Turbine
+from .turbine_power_curve import TurbinePowerCurve
 
 
 class Windpark(db.Model):
@@ -83,3 +86,18 @@ class Windpark(db.Model):
         result['mean'] = value_mean
         result['std'] = value_std
         return result
+
+    def get_total_power_curve(self):
+        if self.data_source != 'turbines':
+            return None
+        collected_curves = None
+        for turbine_rel in self.turbines:
+            curve = pd.read_sql(db.session.query(TurbinePowerCurve.wind_speed, TurbinePowerCurve.power)
+                                .filter_by(turbine_id=turbine_rel.turbine_id).statement,
+                                db.session.bind)
+            curve.loc[:, 'power'] *= turbine_rel.count
+            if collected_curves is None:
+                collected_curves = curve
+            else:
+                collected_curves['power'] += curve['power']
+        return [[x[0], x[1] / 1000.0] for x in collected_curves.values]

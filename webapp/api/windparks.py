@@ -287,3 +287,18 @@ def delete_turbine(wpark_id, relationship_id):
         logger.exception(e)
         js = jsonify({'error': repr(e)})
         return js
+
+
+@app.route('/api/windparks/<wpark_id>/totalpowercurve')
+def get_total_power_curve(wpark_id):
+    if not current_user.is_authenticated:
+        return jsonify({'error': 'User unauthorized'})
+    try:
+        windpark = db.session.query(Windpark).filter_by(id=wpark_id).first()
+        power_curve = windpark.get_total_power_curve()
+        js = jsonify({'data': power_curve})
+        return js
+    except Exception, e:
+        logger.exception(e)
+        js = jsonify({'error': repr(e)})
+        return js

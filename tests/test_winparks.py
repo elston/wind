@@ -134,6 +134,30 @@ class WindparksTestCase(unittest.TestCase):
         turbines = test_windpark['turbines']
         self.assertEqual(len(turbines), 0)
 
+    def test_get_total_power_curve(self):
+        test_windpark = Windpark(user_id=user_id, name=test_name, data_source='turbines')
+        self.session.add(test_windpark)
+        self.session.commit()
+        windpark_id = test_windpark.id
+
+        first_turbine = self.session.query(Turbine).filter_by(id=1).first()
+        rel = WindparkTurbine(windpark_id=windpark_id, turbine_id=first_turbine.id, count=2)
+        test_windpark.turbines.append(rel)
+        second_turbine = self.session.query(Turbine).filter_by(id=2).first()
+        rel = WindparkTurbine(windpark_id=windpark_id, turbine_id=second_turbine.id, count=1)
+        test_windpark.turbines.append(rel)
+        self.session.commit()
+
+        power_curve = test_windpark.get_total_power_curve()
+        print power_curve
+
+        self.assertIsInstance(power_curve, list)
+        for element in power_curve:
+            self.assertIsInstance(element, list)
+            self.assertEqual(len(element), 2)
+            self.assertIsInstance(element[0], float)
+            self.assertIsInstance(element[1], float)
+
 
 if __name__ == '__main__':
     unittest.main()
