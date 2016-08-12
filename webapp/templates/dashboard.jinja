@@ -176,7 +176,7 @@
             <div class="panel panel-info" ng-if="dataSource == 'turbines'">
                 <div class="panel-heading"><h4 class="panel-title">Turbines characteristics</h4>
                 </div>
-                <div class="panel-body">
+                <div class="panel-body" ng-controller="WindparkTurbinesCtrl">
                     <h4>Turbines</h4>
 
                     <div id="turbines-list-grid" ui-grid="actualListOptions" ui-grid-selection
@@ -187,7 +187,7 @@
             <div class="panel panel-info" ng-if="dataSource == 'historical'">
                 <div class="panel-heading"><h4 class="panel-title">Historical wind and generation data</h4>
                 </div>
-                <div class="panel-body">
+                <div class="panel-body" ng-controller="WindparkGenerationCtrl">
                     <div class="container-fluid">
                         <div class="row">
                             <div class="col-xs-4">
