@@ -11,6 +11,7 @@ app.factory('windparkService', ['$http', 'Upload', function ($http, Upload) {
                         throw response.data.error;
                     } else {
                         windparkList = response.data.data;
+                        return windparkList;
                     }
                 },
                 function (error) {
@@ -60,7 +61,7 @@ app.factory('windparkService', ['$http', 'Upload', function ($http, Upload) {
     var previewGeneration = function (format, file) {
         return Upload.upload({
                 url: $SCRIPT_ROOT + '/windparks/preview_generation',
-                data: {format: format, file: file},
+                data: {format: format, file: file}
             })
             .then(function (response) {
                     if ('error' in response.data) {
@@ -77,7 +78,7 @@ app.factory('windparkService', ['$http', 'Upload', function ($http, Upload) {
     var uploadGeneration = function (id, format, file) {
         return Upload.upload({
                 url: $SCRIPT_ROOT + '/windparks/generation',
-                data: {format: format, file: file, wpark_id: id},
+                data: {format: format, file: file, wpark_id: id}
             })
             .then(function (response) {
                     if ('error' in response.data) {
@@ -134,6 +135,43 @@ app.factory('windparkService', ['$http', 'Upload', function ($http, Upload) {
 
     };
 
+    var addTurbine = function (windparkId, turbineId, count) {
+        return $http({
+            url: $SCRIPT_ROOT + '/windparks/' + windparkId + '/turbines',
+            method: "POST",
+            headers: {'Content-Type': 'application/json'},
+            data: JSON.stringify({
+                turbine_id: turbineId,
+                count: count
+            })
+        })
+            .then(function (response) {
+                    if ('error' in response.data) {
+                        throw response.data.error;
+                    } else {
+                        return reload();
+                    }
+                },
+                function (error) {
+                    throw error.statusText;
+                });
+    };
+
+    var deleteTurbine = function (windparkId, relationId) {
+        return $http.delete($SCRIPT_ROOT + '/windparks/' + windparkId + '/turbines/' + relationId)
+            .then(function (response) {
+                    if ('error' in response.data) {
+                        throw response.data.error;
+                    } else {
+                        return reload();
+                    }
+                },
+                function (error) {
+                    throw error.statusText;
+                });
+    };
+
+
     return {
         reload: reload,
         deleteWindpark: deleteWindpark,
@@ -143,7 +181,9 @@ app.factory('windparkService', ['$http', 'Upload', function ($http, Upload) {
         uploadGeneration: uploadGeneration,
         getSummary: getSummary,
         getGeneration: getGeneration,
-        getWindVsPower: getWindVsPower
+        getWindVsPower: getWindVsPower,
+        addTurbine: addTurbine,
+        deleteTurbine: deleteTurbine
     };
 
 }]);

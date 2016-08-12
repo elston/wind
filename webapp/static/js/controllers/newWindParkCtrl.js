@@ -19,8 +19,8 @@ app.controller('NewWindParkCtrl', ['$scope', '$rootScope', '$uibModalInstance', 
                     location_id: $scope.location,
                     market_id: $scope.market
                 })
-                .then(function (data) {
-                        $rootScope.$broadcast('updateWindParks');
+                .then(function () {
+                        $rootScope.$broadcast('reloadWindParks');
                     },
                     function (error) {
                         alertify.error(error);

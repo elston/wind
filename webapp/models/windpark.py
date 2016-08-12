@@ -1,10 +1,10 @@
 import calendar
-
 import numpy as np
 import pytz
 from sqlalchemy.orm import relationship
 from webapp import db
 from .generation import Generation
+from .turbine import Turbine
 
 
 class Windpark(db.Model):
@@ -15,6 +15,7 @@ class Windpark(db.Model):
     user_id = db.Column(db.Integer(), db.ForeignKey('user.id'), index=True)
     location_id = db.Column(db.Integer(), db.ForeignKey('locations.id'), index=True)
     market_id = db.Column(db.Integer(), db.ForeignKey('markets.id'))
+    data_source = db.Column(db.String(255))
 
     location = relationship('Location', back_populates='windparks')
     market = relationship('Market', back_populates='windparks')
@@ -33,13 +34,18 @@ class Windpark(db.Model):
 
     def to_dict(self):
         d = {}
-        for c in ('id', 'name'):
+        for c in ('id', 'name', 'data_source'):
             d[c] = getattr(self, c)
         d['location'] = None if self.location is None else self.location.to_dict()
         d['market'] = None if self.market is None else self.market.to_dict()
         turbines = []
         for rel in self.turbines:
-            turbines.append({'count': rel.count, 'turbine_id': rel.turbine_id})
+            turbine = db.session.query(Turbine).filter_by(id=rel.turbine_id).first()
+            turbines.append({'count': rel.count,
+                             'relationship_id': rel.id,
+                             'turbine_id': rel.turbine_id,
+                             'name': turbine.name,
+                             'rated_power': turbine.rated_power})
         d['turbines'] = turbines
         return d
 

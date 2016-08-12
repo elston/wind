@@ -1,18 +1,20 @@
 /*global app,$SCRIPT_ROOT,alertify,Highcharts*/
 
-app.controller('WindParkDataCtrl', ['$scope', '$rootScope', 'locationService',
+app.controller('WindParkDataCtrl', ['$scope', '$rootScope', '$uibModal', 'locationService',
     'marketService', 'windparkService',
-    function ($scope, $rootScope, locationService, marketService, windparkService) {
+    function ($scope, $rootScope, $uibModal, locationService, marketService, windparkService) {
         'use strict';
 
-        $scope.name = $scope.tab.data.name;
+        var windpark = $scope.tab.data;
+
+        $scope.name = windpark.name;
+        $scope.dataSource = windpark.data_source;
         $scope.locations = locationService.getLocations();
         $scope.markets = marketService.getMarkets();
-        $scope.location = $scope.tab.data.location;
-        $scope.market = $scope.tab.data.market;
-        $scope.dataSource = 'historical';
+        $scope.location = windpark.location;
+        $scope.market = windpark.market;
 
-        windparkService.getSummary($scope.tab.id)
+        windparkService.getSummary(windpark.id)
             .then(function (result) {
                     $scope.summary = result;
                 },
@@ -23,6 +25,7 @@ app.controller('WindParkDataCtrl', ['$scope', '$rootScope', 'locationService',
         $scope.actualListOptions = {
             enableGridMenu: true,
             enableRowSelection: true,
+            enableFullRowSelection: true,
             multiSelect: true,
             gridMenuCustomItems: [
                 {
@@ -32,8 +35,14 @@ app.controller('WindParkDataCtrl', ['$scope', '$rootScope', 'locationService',
                             animation: false,
                             templateUrl: 'add-turbine.html',
                             controller: 'AddTurbineCtrl',
-                            size: 'lg'
-                        });                    },
+                            size: 'lg',
+                            resolve: {
+                                windpark: function () {
+                                    return windpark;
+                                }
+                            }
+                        });
+                    },
                     order: 210
                 },
                 {
@@ -42,9 +51,12 @@ app.controller('WindParkDataCtrl', ['$scope', '$rootScope', 'locationService',
                         var rows = this.grid.rows;
                         rows.forEach(function (row) {
                             if (row.isSelected) {
-                                windparkService.deleteTurbine(row.entity.id)
-                                    .then(function () {
-                                            $scope.update();
+                                windparkService.deleteTurbine(windpark.id, row.entity.relationship_id)
+                                    .then(function (windparkList) {
+                                            $rootScope.$broadcast('reloadWindParks');
+                                            $scope.actualListOptions.data = windparkList.find(function (el) {
+                                                return el.id === windpark.id;
+                                            }).turbines;
                                         },
                                         function (error) {
                                             alertify.error(error);
@@ -58,22 +70,30 @@ app.controller('WindParkDataCtrl', ['$scope', '$rootScope', 'locationService',
             columnDefs: [
                 {field: 'name'},
                 {field: 'count'},
-                {field: 'rated_power', 'name': 'Rated power, MW'},
-                {
-                    field: 'action',
-                    headerCellTemplate: '<div>&nbsp;</div>',
-                    enableHiding: false,
-                    cellTemplate: '<button type="button" class="btn btn-default btn-xs" ng-click="$emit(\'viewTurbineData\')" ' +
-                'tooltip-append-to-body="true" uib-tooltip="View data">' +
-                '<span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span></button>',
-                    width: 200
-                }
+                {field: 'rated_power', 'name': 'Rated power, MW'}
+//                {
+//                    field: 'action',
+//                    headerCellTemplate: '<div>&nbsp;</div>',
+//                    enableHiding: false,
+//                    cellTemplate: '<button type="button" class="btn btn-default btn-xs" ng-click="$emit(\'viewTurbineData\')" ' +
+//                'tooltip-append-to-body="true" uib-tooltip="View data">' +
+//                '<span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span></button>',
+//                    width: 200
+//                }
             ]
         };
 
+        $scope.actualListOptions.data = windpark.turbines;
+
+        $scope.$on('reloadTurbinesList', function () {
+            $scope.actualListOptions.data = windparkService.getWindparks().find(function (el) {
+                return el.id === windpark.id;
+            }).turbines;
+        });
+
         $scope.update = function () {
             windparkService.updateWindpark({
-                    id: $scope.tab.id,
+                    id: windpark.id,
                     name: $scope.name,
                     location_id: $scope.location.id,
                     market_id: $scope.market.id,
@@ -81,7 +101,7 @@ app.controller('WindParkDataCtrl', ['$scope', '$rootScope', 'locationService',
                 })
                 .then(function (data) {
                         alertify.success('OK');
-                        $rootScope.$broadcast('updateWindParks');
+                        $rootScope.$broadcast('reloadWindParks');
                     },
                     function (error) {
                         alertify.error(error);
@@ -89,7 +109,7 @@ app.controller('WindParkDataCtrl', ['$scope', '$rootScope', 'locationService',
         };
 
         $scope.plotGeneration = function () {
-            windparkService.getGeneration($scope.tab.id)
+            windparkService.getGeneration(windpark.id)
                 .then(function (result) {
                         $scope.chart = new Highcharts.StockChart({
                             chart: {
@@ -141,7 +161,7 @@ app.controller('WindParkDataCtrl', ['$scope', '$rootScope', 'locationService',
         };
 
         $scope.plotWindVsPower = function () {
-            windparkService.getWindVsPower($scope.tab.id)
+            windparkService.getWindVsPower(windpark.id)
                 .then(function (result) {
                         $scope.beta = result.beta;
                         $scope.sd_beta = result.sd_beta;

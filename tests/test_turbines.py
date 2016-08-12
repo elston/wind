@@ -1,7 +1,6 @@
 # coding=utf-8
 import logging
 import unittest
-
 from flask import json
 import webapp
 import re
@@ -38,6 +37,20 @@ class TurbinesTestCase(unittest.TestCase):
         self.assertIn('v_cutoff', data[0])
         self.assertIn('rotor_diameter', data[0])
         self.assertIn('name', data[0])
+
+    def test_get_power_curve(self):
+        rv = self.app.get('/api/turbines/1/powercurve')
+        result = json.loads(rv.data)
+        self.assertIn('data', result)
+        self.assertNotIn('error', result)
+        data = result['data']
+        print data
+        self.assertIsInstance(data, list)
+        for element in data:
+            self.assertIsInstance(element, list)
+            self.assertEqual(len(element), 2)
+            self.assertIsInstance(element[0], float)
+            self.assertIsInstance(element[1], float)
 
 
 if __name__ == '__main__':

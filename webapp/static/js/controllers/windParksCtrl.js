@@ -46,9 +46,7 @@ app.controller('WindParksCtrl', ['$scope', '$uibModal', 'windparkService',
                     cellTemplate: '<button type="button" class="btn btn-default btn-xs" ng-click="$emit(\'uploadGeneration\')" ' +
                     'tooltip-append-to-body="true" uib-tooltip="Upload generation data">' +
                     '<span class="glyphicon glyphicon-upload" aria-hidden="true"></span></button>' +
-                    '<button type="button" class="btn btn-default btn-xs" ng-click="$emit(\'viewData\')" ' +
-                    'tooltip-append-to-body="true" uib-tooltip="View data">' +
-                    '<span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span></button>',
+                    '<button type="button" class="btn btn-default btn-xs" ng-click="$emit(\'openInTab\')">Open</button>',
                     width: 200
                 }
             ]
@@ -69,7 +67,7 @@ app.controller('WindParksCtrl', ['$scope', '$uibModal', 'windparkService',
 
         });
 
-        $scope.$on('viewData', function ($event) {
+        $scope.$on('openInTab', function ($event) {
             var windparkData = $event.targetScope.row.entity;
             var tabData = {
                 id: windparkData.id,
@@ -83,29 +81,29 @@ app.controller('WindParksCtrl', ['$scope', '$uibModal', 'windparkService',
         $scope.deleteWindPark = function (row) {
             windparkService.deleteWindpark(row.entity.id)
                 .then(function () {
-                        $scope.update();
+                        $scope.reload();
                     },
                     function (error) {
                         alertify.error(error);
                     });
         };
 
-        $scope.update = function () {
+        $scope.reload = function () {
             var windparks = windparkService.getWindparks();
             $scope.gridOptions.data = windparks;
             $scope.noWindParks = windparks.length === 0;
         };
 
         windparkService.reload().then(function () {
-                $scope.update();
+                $scope.reload();
             },
             function (error) {
                 alertify.error(error);
             });
 
 
-        $scope.update();
+        $scope.reload();
 
-        $scope.$on('updateWindParks', $scope.update);
+        $scope.$on('reloadWindParks', $scope.reload);
 
     }]);

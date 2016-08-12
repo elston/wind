@@ -29,7 +29,6 @@
 {% else %}
     $ADMIN_ROLE = false;
 {% endif %}
-
 </script>
 <script src='https://maps.googleapis.com/maps/api/js?v=3.exp&key={{ gmap_api_key }}'></script>
 <script src="{{ url_for('.static', filename='bower_components/highcharts/highstock.js') }}"></script>
@@ -62,9 +61,11 @@
 <script src="{{ url_for('.static', filename='js/controllers/uploadGenerationCtrl.js') }}"></script>
 <script src="{{ url_for('.static', filename='js/controllers/windParkDataCtrl.js') }}"></script>
 <script src="{{ url_for('.static', filename='js/controllers/locationDataCtrl.js') }}"></script>
+<script src="{{ url_for('.static', filename='js/controllers/addTurbineCtrl.js') }}"></script>
 <script src="{{ url_for('.static', filename='js/services/locationService.js') }}"></script>
 <script src="{{ url_for('.static', filename='js/services/marketService.js') }}"></script>
 <script src="{{ url_for('.static', filename='js/services/windparkService.js') }}"></script>
+<script src="{{ url_for('.static', filename='js/services/turbinesService.js') }}"></script>
 {% if current_user.has_role('admin') %}
 <script src="{{ url_for('.static', filename='js/admin.js') }}"></script>
 {% endif %}
