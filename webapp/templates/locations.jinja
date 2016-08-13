@@ -200,6 +200,33 @@
     </div>
     <div class="modal-body">
         <div id="wspd-distr-container" style="width:100%; height:450px;"></div>
+        <h4>AR(2) model</h4>
+
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-xs-6">
+                    <dl class="dl-horizontal">
+                        <dt>ar1</dt>
+                        <dd>{{ windModel.coef.ar1 | number:3 }}±{{ windModel.s_e.ar1 | number:3 }}</dd>
+                        <dt>ar2</dt>
+                        <dd>{{ windModel.coef.ar2 | number:3 }}±{{ windModel.s_e.ar2 | number:3 }}</dd>
+                        <dt>intercept</dt>
+                        <dd>{{ windModel.coef.intercept | number:3 }}±{{ windModel.s_e.intercept | number:3 }}</dd>
+                    </dl>
+                </div>
+                <div class="col-xs-6">
+                    <dl class="dl-horizontal">
+                        <dt>sigma<sup>2</sup></dt>
+                        <dd>{{ windModel.sigma2 | number:4 }}</dd>
+                        <dt>log likelihood</dt>
+                        <dd>{{ windModel.loglik | number:4 }}</dd>
+                        <dt>AIC</dt>
+                        <dd>{{ windModel.aic | number:4 }}</dd>
+                    </dl>
+                </div>
+            </div>
+        </div>
+
     </div>
     <div class="modal-footer">
         <button type="button" class="btn btn-default" ng-click="close()">Close</button>

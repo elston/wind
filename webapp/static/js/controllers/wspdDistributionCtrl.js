@@ -6,6 +6,7 @@ app.controller('WspdDistributionCtrl', ['$scope', '$uibModalInstance', '$rootSco
 
         var locationId = entity.id;
         $scope.locationName = entity.name;
+        $scope.windModel = null;
 
         $scope.close = function () {
             $uibModalInstance.close();
@@ -13,6 +14,7 @@ app.controller('WspdDistributionCtrl', ['$scope', '$uibModalInstance', '$rootSco
 
         locationService.fitWindDistribution(locationId)
             .then(function (result) {
+                    $scope.windModel = result[6];
                     $rootScope.$broadcast('updateLocations');
                     $('#wspd-distr-container').empty();
                     $scope.chart = new Highcharts.Chart({
@@ -36,6 +38,11 @@ app.controller('WspdDistributionCtrl', ['$scope', '$uibModalInstance', '$rootSco
                             title: {
                                 text: 'Wind speed, km/h'
                             }
+                        },
+                        {
+                            title: {
+                                text: 'Normalized value'
+                            }
                         }],
                         tooltip: {
                             formatter: function () {
@@ -52,12 +59,27 @@ app.controller('WspdDistributionCtrl', ['$scope', '$uibModalInstance', '$rootSco
                             name: 'Actual histogram',
                             data: result[2],
                             type: 'column',
-                            animation: false
+                            animation: false,
+                            xAxis: 0
                         }, {
                             name: 'Fitted Weibull distribution',
                             data: result[3],
                             type: 'spline',
-                            animation: false
+                            animation: false,
+                            xAxis: 0
+                        },{
+                            name: 'Normalized values histogram',
+                            data: result[4],
+                            type: 'column',
+                            animation: false,
+                            xAxis: 1,
+                            color: 'rgba(144, 237, 125, 0.8)'
+                        }, {
+                            name: 'Desired normal distribution',
+                            data: result[5],
+                            type: 'spline',
+                            animation: false,
+                            xAxis: 1
                         }]
                     });
                 },

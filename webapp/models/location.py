@@ -10,6 +10,7 @@ from .observation import Observation
 from .history_download_status import HistoryDownloadStatus
 from .forecast import Forecast
 from .hourly_forecast import HourlyForecast
+from .arima_price_model import ArimaPriceModel
 
 
 class Location(db.Model):
@@ -33,6 +34,7 @@ class Location(db.Model):
     lookforward = db.Column(db.Integer())
     wspd_shape = db.Column(db.Float())  # shape parameter of wind speed Weibull model
     wspd_scale = db.Column(db.Float())  # scale parameter of wind speed Weibull model
+    wind_model = db.Column(ArimaPriceModel())
 
     observations = relationship('Observation', back_populates='location', order_by='Observation.time',
                                 cascade='all, delete-orphan')
@@ -56,7 +58,10 @@ class Location(db.Model):
     def to_dict(self):
         d = {}
         for c in self.__table__.columns:
-            d[c.name] = getattr(self, c.name)
+            if c.name == 'wind_model' and getattr(self, c.name) is not None:
+                d[c.name] = getattr(self, c.name).to_dict()
+            else:
+                d[c.name] = getattr(self, c.name)
         return d
 
     def update_from_dict(self, d):
@@ -71,8 +76,6 @@ class Location(db.Model):
             self.update_fixed_history()
         else:
             raise Exception('Unsupported value time_range=%r', self.time_range)
-
-
 
     def update_rolling_history(self):
         now = datetime.utcnow().date()
@@ -193,17 +196,37 @@ class Location(db.Model):
 
         wspdm_values = np.array([x.wspdm for x in observations], dtype=np.float)
         wspdm_values = wspdm_values[np.isfinite(wspdm_values)]
-        shape, scale, histogram, pdf = self._fit_get_wspd_model(wspdm_values)
+        shape, scale, histogram, pdf, z_histogram, z_pdf, wind_model = self._fit_get_wspd_model(wspdm_values)
         self.wspd_shape = shape
         self.wspd_scale = scale
+        self.wind_model = wind_model
         db.session.commit()
-        return shape, scale, histogram, pdf
+        return shape, scale, histogram, pdf, z_histogram, z_pdf, wind_model.to_dict()
 
     @staticmethod
     def _fit_get_wspd_model(data):
         shape, location, scale = stats.weibull_min.fit(data, floc=0)
-        hist, bin_edges = np.histogram(data, bins='auto')
+        hist, bin_edges = np.histogram(data, bins=10)
         bin_width = bin_edges[1] - bin_edges[0]
         bin_centers = 0.5 * (bin_edges[1:] + bin_edges[:-1])
         pdf = stats.weibull_min.pdf(bin_centers, shape, location, scale)
-        return shape, scale, zip(bin_centers, hist / float(sum(hist)) / bin_width), zip(bin_centers, pdf)
+
+        # calculate normalized values (eq 3.5)
+        z = stats.norm.ppf(stats.weibull_min.cdf(data, shape, location, scale))
+        z = z[np.abs(z) < 5]  # filter out -inf arising from windspeed=0
+        z_hist, z_bin_edges = np.histogram(z, bins=10)
+        z_bin_width = z_bin_edges[1] - z_bin_edges[0]
+        z_bin_centers = 0.5 * (z_bin_edges[1:] + z_bin_edges[:-1])
+        z_pdf = stats.norm.pdf(z_bin_centers, 0, 1)
+
+        wind_model = ArimaPriceModel()
+        wind_model.set_parameters(p=2, d=0, q=0, P=0, D=0, Q=0, m=0)
+        wind_model.fit(z)
+
+        return (shape,
+                scale,
+                zip(bin_centers, hist / float(sum(hist)) / bin_width),
+                zip(bin_centers, pdf),
+                zip(z_bin_centers, z_hist / float(sum(z_hist)) / z_bin_width),
+                zip(z_bin_centers, z_pdf),
+                wind_model)
