@@ -4,7 +4,7 @@ app.controller('WindparkGenerationCtrl', ['$scope', 'windparkService',
     function ($scope, windparkService) {
         'use strict';
 
-        windparkService.getSummary(windpark.id)
+        windparkService.getSummary($scope.windpark.id)
             .then(function (result) {
                     $scope.summary = result;
                 },
@@ -13,7 +13,7 @@ app.controller('WindparkGenerationCtrl', ['$scope', 'windparkService',
                 });
 
         $scope.plotGeneration = function () {
-            windparkService.getGeneration(windpark.id)
+            windparkService.getGeneration($scope.windpark.id)
                 .then(function (result) {
                         $scope.chart = new Highcharts.StockChart({
                             chart: {
@@ -65,7 +65,7 @@ app.controller('WindparkGenerationCtrl', ['$scope', 'windparkService',
         };
 
         $scope.plotWindVsPower = function () {
-            windparkService.getWindVsPower(windpark.id)
+            windparkService.getWindVsPower($scope.windpark.id)
                 .then(function (result) {
                         $scope.beta = result.beta;
                         $scope.sd_beta = result.sd_beta;
