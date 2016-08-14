@@ -1,4 +1,6 @@
+import csv
 import math
+import cStringIO
 
 import pytz
 import numpy as np
@@ -109,3 +111,13 @@ class Market(db.Model):
         self.sqrt_r_model = ArimaPriceModel()
         self.sqrt_r_model.set_parameters(p=2, d=0, q=1, P=1, D=0, Q=1, m=24)
         self.sqrt_r_model.fit(sqrt_r)
+
+    def get_csv(self):
+        csv_file = cStringIO.StringIO()
+        fields = ['time', 'lambdaD', 'lambdaA', 'MAvsMD', 'lambdaPlus', 'lambdaMinus', 'r_pos', 'r_neg', 'sqrt_r']
+        writer = csv.writer(csv_file)
+        writer.writerow(fields)
+
+        for prices in self.prices:
+            writer.writerow([getattr(prices, name) for name in fields])
+        return csv_file.getvalue()

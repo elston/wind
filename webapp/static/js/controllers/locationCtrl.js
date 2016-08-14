@@ -55,6 +55,9 @@ app.controller('LocationsCtrl', ['$scope', '$uibModal', 'locationService', funct
                 cellTemplate: '<button type="button" class="btn btn-default btn-xs" ng-click="$emit(\'updateWeather\')" ' +
                 'tooltip-append-to-body="true" uib-tooltip="Reload">' +
                 '<span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></button>' +
+                '<button type="button" class="btn btn-default btn-xs" ng-click="$emit(\'downloadData\')" ' +
+                'tooltip-append-to-body="true" uib-tooltip="Download data">' +
+                '<span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span></button>' +
                 '<button type="button" class="btn btn-default btn-xs" ng-click="$emit(\'viewData\')" ' +
                 'tooltip-append-to-body="true" uib-tooltip="View data">' +
                 '<span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span></button>' +
@@ -87,6 +90,11 @@ app.controller('LocationsCtrl', ['$scope', '$uibModal', 'locationService', funct
                 function (error) {
                     alertify.error('Error while updating forecast for location "' + locationName + '": ' + error);
                 });
+    });
+
+    $scope.$on('downloadData', function ($event) {
+        var locationId = $event.targetScope.row.entity.id;
+        location.href = $SCRIPT_ROOT + '/locations/' + locationId;
     });
 
     $scope.$on('viewWeather', function ($event) {

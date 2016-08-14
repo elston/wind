@@ -39,6 +39,9 @@ app.controller('MarketsCtrl', ['$scope', '$uibModal', 'marketService',
                     cellTemplate: '<button type="button" class="btn btn-default btn-xs" ng-click="$emit(\'uploadPrices\')" ' +
                     'tooltip-append-to-body="true" uib-tooltip="Upload prices">' +
                     '<span class="glyphicon glyphicon-upload" aria-hidden="true"></span></button>' +
+                    '<button type="button" class="btn btn-default btn-xs" ng-click="$emit(\'downloadData\')" ' +
+                    'tooltip-append-to-body="true" uib-tooltip="Download data">' +
+                    '<span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span></button>' +
                     '<button type="button" class="btn btn-default btn-xs" ng-click="$emit(\'viewData\')" ' +
                     'tooltip-append-to-body="true" uib-tooltip="View data">' +
                     '<span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span></button>',
@@ -60,6 +63,11 @@ app.controller('MarketsCtrl', ['$scope', '$uibModal', 'marketService',
                 }
             });
 
+        });
+
+        $scope.$on('downloadData', function ($event) {
+            var marketId = $event.targetScope.row.entity.id;
+            location.href = $SCRIPT_ROOT + '/markets/' + marketId;
         });
 
         $scope.$on('viewData', function ($event) {

@@ -1,5 +1,7 @@
+import csv
 from datetime import datetime, timedelta
 import logging
+import cStringIO
 
 from scipy import signal
 import numpy as np
@@ -230,3 +232,20 @@ class Location(db.Model):
                 zip(z_bin_centers, z_hist / float(sum(z_hist)) / z_bin_width),
                 zip(z_bin_centers, z_pdf),
                 wind_model)
+
+    def get_observations_csv(self):
+        if self.wind_model is None:
+            fields = ['time', 'tempm', 'wspdm', 'wdird']
+        else:
+            fields = ['time', 'tempm', 'wspdm', 'wdird', 'norm_wspd']
+        csv_file = cStringIO.StringIO()
+        writer = csv.writer(csv_file)
+        writer.writerow(fields)
+
+        for obs in self.observations:
+            if self.wind_model is None:
+                writer.writerow((obs.time, obs.tempm, obs.wspdm, obs.wdird))
+            else:
+                writer.writerow((obs.time, obs.tempm, obs.wspdm, obs.wdird,
+                                stats.norm.ppf(stats.weibull_min.cdf(obs.wspdm, self.wspd_shape, 0, self.wspd_scale))))
+        return csv_file.getvalue()

@@ -1,13 +1,16 @@
 import calendar
 import logging
 from datetime import datetime
+import cStringIO
+import zipfile
 
 import re
-from flask import jsonify, request
+from flask import jsonify, request, make_response
 from flask_login import current_user
 from sqlalchemy import func
 from webapp import app, db, wuclient
 from webapp.models import Location, Forecast, HourlyForecast
+from werkzeug.utils import secure_filename
 
 logger = logging.getLogger(__name__)
 
@@ -73,6 +76,36 @@ def delete_locations(loc_id):
         db.session.commit()
         js = jsonify({'data': 'OK'})
         return js
+    except Exception, e:
+        logger.exception(e)
+        js = jsonify({'error': repr(e)})
+        return js
+
+
+@app.route('/api/locations/<loc_id>')
+def download_weather_data(loc_id):
+    if not current_user.is_authenticated:
+        return jsonify({'error': 'User unauthorized'})
+    try:
+        location = db.session.query(Location).filter_by(user_id=current_user.id, id=loc_id).first()
+
+        zip_file = cStringIO.StringIO()
+        zipf = zipfile.ZipFile(zip_file, 'w')
+
+        observations_csv = location.get_observations_csv()
+        zipf.writestr('observations.csv', observations_csv)
+
+        for forecast in location.forecasts:
+            file_name = secure_filename('forecast_' + forecast.time.isoformat() + '.csv')
+            forecast_csv = forecast.get_csv()
+            zipf.writestr(file_name, forecast_csv)
+
+        zipf.close()
+        zip_data = zip_file.getvalue()
+        response = make_response(zip_data)
+        file_name = secure_filename(location.name + '.zip')
+        response.headers["Content-Disposition"] = "attachment; filename=%s" % file_name
+        return response
     except Exception, e:
         logger.exception(e)
         js = jsonify({'error': repr(e)})

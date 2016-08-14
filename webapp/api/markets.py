@@ -1,11 +1,12 @@
 import calendar
 import logging
 
-from flask import jsonify, request
+from flask import jsonify, request, make_response
 from flask_login import current_user
 import pandas as pd
 from webapp import app, db
 from webapp.models import Market, Prices
+from werkzeug.utils import secure_filename
 
 logger = logging.getLogger(__name__)
 
@@ -56,6 +57,23 @@ def delete_market(mkt_id):
         db.session.commit()
         js = jsonify({'data': 'OK'})
         return js
+    except Exception, e:
+        logger.exception(e)
+        js = jsonify({'error': repr(e)})
+        return js
+
+
+@app.route('/api/markets/<mkt_id>')
+def download_market_data(mkt_id):
+    if not current_user.is_authenticated:
+        return jsonify({'error': 'User unauthorized'})
+    try:
+        market = db.session.query(Market).filter_by(user_id=current_user.id, id=mkt_id).first()
+        csv_data = market.get_csv()
+        response = make_response(csv_data)
+        file_name = secure_filename(market.name + '.csv')
+        response.headers["Content-Disposition"] = "attachment; filename=%s" % file_name
+        return response
     except Exception, e:
         logger.exception(e)
         js = jsonify({'error': repr(e)})
