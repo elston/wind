@@ -1,3 +1,4 @@
+from collections import defaultdict
 import csv
 from datetime import datetime, timedelta
 import logging
@@ -196,8 +197,27 @@ class Location(db.Model):
             .order_by(Observation.time) \
             .all()
 
-        wspdm_values = np.array([x.wspdm for x in observations], dtype=np.float)
-        wspdm_values = wspdm_values[np.isfinite(wspdm_values)]
+        wspdm_collector = defaultdict(list)
+        for obs in observations:
+            hour = obs.time.replace(minute=0, second=0, microsecond=0)
+            wspdm_collector[hour].append(obs.wspdm)
+
+        first_time = min([obs.time for obs in observations])
+        last_time = max([obs.time for obs in observations])
+        first_hour = first_time.replace(minute=0)
+        last_hour = last_time.replace(minute=0)
+
+        wspdm_values = []
+        hour = first_hour
+        while hour <= last_hour:
+            hour_values_list = wspdm_collector[hour]
+            if len(hour_values_list) == 0:
+                wspdm_values.append(None)
+            else:
+                wspdm_values.append(sum(hour_values_list) / len(hour_values_list))
+            hour += timedelta(hours=1)
+
+        wspdm_values = np.array(wspdm_values, dtype=np.float)
         shape, scale, histogram, pdf, z_histogram, z_pdf, wind_model = self._fit_get_wspd_model(wspdm_values)
         self.wspd_shape = shape
         self.wspd_scale = scale
@@ -247,5 +267,5 @@ class Location(db.Model):
                 writer.writerow((obs.time, obs.tempm, obs.wspdm, obs.wdird))
             else:
                 writer.writerow((obs.time, obs.tempm, obs.wspdm, obs.wdird,
-                                stats.norm.ppf(stats.weibull_min.cdf(obs.wspdm, self.wspd_shape, 0, self.wspd_scale))))
+                                 stats.norm.ppf(stats.weibull_min.cdf(obs.wspdm, self.wspd_shape, 0, self.wspd_scale))))
         return csv_file.getvalue()
