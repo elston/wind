@@ -27,6 +27,10 @@ class Windpark(db.Model):
     turbines = relationship('WindparkTurbine', back_populates='windpark',
                             cascade='all, delete-orphan')
 
+    def __init__(self, *args, **kwargs):
+        super(Windpark, self).__init__(*args, **kwargs)
+        self.power_curve = None
+
     @classmethod
     def from_excess_args(cls, **kwargs):
         d = {}
@@ -88,8 +92,12 @@ class Windpark(db.Model):
         return result
 
     def get_total_power_curve(self):
+        self._calculate_total_power_curve()
+        return [[x[0], x[1] / 1000.0] for x in self.collected_curves.values]
+
+    def _calculate_total_power_curve(self):
         if self.data_source != 'turbines':
-            return None
+            raise Exception('Power curve from this source is unreliable and not supported')
         collected_curves = None
         for turbine_rel in self.turbines:
             curve = pd.read_sql(db.session.query(TurbinePowerCurve.wind_speed, TurbinePowerCurve.power)
@@ -100,4 +108,11 @@ class Windpark(db.Model):
                 collected_curves = curve
             else:
                 collected_curves['power'] += curve['power']
-        return [[x[0], x[1] / 1000.0] for x in collected_curves.values]
+        self.power_curve = collected_curves
+
+    def simulate_generation(self, time_span, n_samples):
+        if self.power_curve is None:
+            self._calculate_total_power_curve()
+        _, simulated_wind = self.location.simulate_wind(time_span, n_samples)
+        simulated_power = np.interp(simulated_wind, self.power_curve['wind_speed'], self.power_curve['power']) / 1000.0
+        return simulated_power

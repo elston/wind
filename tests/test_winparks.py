@@ -3,9 +3,10 @@ import logging
 import unittest
 
 from flask import json
+import numpy as np
 import webapp
 import re
-from webapp.models import Windpark, Turbine
+from webapp.models import Windpark, Turbine, Location
 from webapp.models.windpark_turbines import WindparkTurbine
 
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
@@ -157,6 +158,34 @@ class WindparksTestCase(unittest.TestCase):
             self.assertEqual(len(element), 2)
             self.assertIsInstance(element[0], float)
             self.assertIsInstance(element[1], float)
+
+    def test_simulate_generation(self):
+        test_windpark = Windpark(user_id=user_id, name=test_name, data_source='turbines')
+        self.session.add(test_windpark)
+        test_location = Location(user_id=user_id, name=test_name, l='/q/zmw:00000.1.10400', lookback=10,
+                                 time_range='rolling')
+        test_windpark.location = test_location
+        test_location.update_history()
+        test_location.fit_get_wspd_model()
+
+        self.session.commit()
+
+        windpark_id = test_windpark.id
+
+        first_turbine = self.session.query(Turbine).filter_by(id=1).first()
+        rel = WindparkTurbine(windpark_id=windpark_id, turbine_id=first_turbine.id, count=1)
+        test_windpark.turbines.append(rel)
+        self.session.commit()
+
+        time_span = 24
+        n_samples = 100
+        simulated_generation = test_windpark.simulate_generation(time_span, n_samples)
+        print simulated_generation
+
+        simulated_generation_np = np.array(simulated_generation)
+
+        # check size
+        self.assertEqual(simulated_generation_np.shape, (n_samples, time_span))
 
 
 if __name__ == '__main__':
