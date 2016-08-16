@@ -4,6 +4,8 @@ import unittest
 from urllib import urlencode
 
 from flask import json
+import numpy as np
+from scipy import stats
 import webapp
 import re
 from webapp.models import Location, HourlyForecast
@@ -207,6 +209,44 @@ class LocationsTestCase(unittest.TestCase):
         self.assertNotIn('error', result)
         data = result['data']
         print data
+
+    def test_wind_simulation(self):
+        test_location = Location(user_id=user_id, name=test_name, l='/q/zmw:00000.1.10400', lookback=10,
+                                 time_range='rolling')
+        self.session.add(test_location)
+        self.session.commit()
+
+        test_location.update_history()
+
+        test_location.fit_get_wspd_model()
+        print test_location.wspd_shape, test_location.wspd_scale, test_location.wind_model.to_dict()
+
+        n_samples = 100
+        time_span = 24
+
+        simulated_z, simulated_wind = test_location.simulate_wind(time_span=time_span, n_samples=n_samples)
+
+        simulated_z_np = np.array(simulated_z)
+
+        # check size
+        self.assertEqual(simulated_z_np.shape, (n_samples, time_span))
+
+        # check if distribution parameters differ from expected not more than 10%
+        mean, sigma = stats.norm.fit(simulated_z_np.flatten())
+        self.assertLess(np.abs(mean), 0.1)
+        self.assertLess(np.abs(sigma - 1), 0.1)
+        print mean, sigma
+
+        simulated_wind_np = np.array(simulated_wind)
+
+        # check size
+        self.assertEqual(simulated_wind_np.shape, (n_samples, time_span))
+
+        shape, location, scale = stats.weibull_min.fit(simulated_wind_np, floc=0)
+        # check if distribution parameters differ from expected not more than 10%
+        self.assertLess(np.abs(shape - test_location.wspd_shape) / test_location.wspd_shape, 0.1)
+        self.assertLess(np.abs(scale - test_location.wspd_scale) / test_location.wspd_scale, 0.1)
+        print shape, location, scale
 
 
 if __name__ == '__main__':

@@ -8,6 +8,12 @@ from scipy import signal
 import numpy as np
 from scipy import stats
 from sqlalchemy.orm import relationship
+from rpy2.robjects.packages import importr
+import rpy2.robjects as ro
+from rpy2.robjects import numpy2ri
+
+forecast = importr("forecast")
+
 from webapp import db, wuclient, app
 from .observation import Observation
 from .history_download_status import HistoryDownloadStatus
@@ -223,20 +229,23 @@ class Location(db.Model):
         self.wspd_scale = scale
         self.wind_model = wind_model
         db.session.commit()
-        return shape, scale, histogram, pdf, z_histogram, z_pdf, wind_model.to_dict()
+        wind_model_dict = wind_model.to_dict()
+        wind_model_dict['residuals'] = [x if np.isfinite(x) else None for x in wind_model_dict['residuals']]
+        return shape, scale, histogram, pdf, z_histogram, z_pdf, wind_model_dict
 
     @staticmethod
     def _fit_get_wspd_model(data):
-        shape, location, scale = stats.weibull_min.fit(data, floc=0)
-        hist, bin_edges = np.histogram(data, bins=10)
+        clean_data = data[np.isfinite(data)]
+        shape, location, scale = stats.weibull_min.fit(clean_data, floc=0)
+        hist, bin_edges = np.histogram(clean_data, bins=10)
         bin_width = bin_edges[1] - bin_edges[0]
         bin_centers = 0.5 * (bin_edges[1:] + bin_edges[:-1])
         pdf = stats.weibull_min.pdf(bin_centers, shape, location, scale)
 
         # calculate normalized values (eq 3.5)
         z = stats.norm.ppf(stats.weibull_min.cdf(data, shape, location, scale))
-        z = z[np.abs(z) < 5]  # filter out -inf arising from windspeed=0
-        z_hist, z_bin_edges = np.histogram(z, bins=10)
+        z[z == -np.inf] = np.nan  # filter out -inf arising from windspeed=0
+        z_hist, z_bin_edges = np.histogram(z[np.isfinite(z)], bins=10)
         z_bin_width = z_bin_edges[1] - z_bin_edges[0]
         z_bin_centers = 0.5 * (z_bin_edges[1:] + z_bin_edges[:-1])
         z_pdf = stats.norm.pdf(z_bin_centers, 0, 1)
@@ -269,3 +278,29 @@ class Location(db.Model):
                 writer.writerow((obs.time, obs.tempm, obs.wspdm, obs.wdird,
                                  stats.norm.ppf(stats.weibull_min.cdf(obs.wspdm, self.wspd_shape, 0, self.wspd_scale))))
         return csv_file.getvalue()
+
+    def simulate_wind(self, time_span, n_samples):
+        if self.wind_model is None:
+            raise Exception('Unable to simulate wind without model')
+
+        ro.r('model <- list(arma=c(2,0,0,0,0,0,0), coef=list(ar1=%f, ar2=%f, intercept=%f), sigma2=%f)' %
+             (self.wind_model.coef['ar1'], self.wind_model.coef['ar2'], self.wind_model.coef['intercept'],
+              self.wind_model.sigma2))
+        ro.r('arima.object <- Arima(0, model=model)')
+        ro.r('arima.object$sigma2 = %f' % self.wind_model.sigma2)
+
+        simulated_z_s = []
+        simulated_wind_s = []
+        for sample_num in xrange(n_samples):
+            simulated_z = ro.r('simulate.Arima(arima.object, %d)' % time_span)
+            simulated_z = numpy2ri.ri2py(simulated_z)
+            simulated_wind = stats.weibull_min.ppf(stats.norm.cdf(simulated_z), self.wspd_shape, 0, self.wspd_scale)
+            simulated_z_s.append(list(simulated_z))
+            simulated_wind_s.append(list(simulated_wind))
+
+        return simulated_z_s, simulated_wind_s
+
+        # model <- list(arma=c(2,0,0,0,0,0,0), coef=list(ar1=0.86, ar2=-0.04, intercept=-0.13), sigma2=0.3)
+        # new.arima.object <- Arima(0, model=model)
+        # new.arima.object$sigma2 = 0.3
+        # s<-simulate.Arima(new.arima.object, 200)
