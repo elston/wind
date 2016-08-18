@@ -38,7 +38,7 @@ class WspdFitTestCase(unittest.TestCase):
         pass
 
     def test(self):
-        shape, scale, histogram, pdf = Location._fit_get_wspd_model(self.sample)
+        shape, scale, histogram, pdf, z_histogram, z_pdf, wind_model = Location._fit_get_wspd_model(self.sample)
 
         # print histogram
         # print pdf

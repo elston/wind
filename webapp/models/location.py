@@ -235,6 +235,8 @@ class Location(db.Model):
 
     @staticmethod
     def _fit_get_wspd_model(data):
+        if isinstance(data, list):
+            data = np.array(data, dtype=np.float)
         clean_data = data[np.isfinite(data)]
         shape, location, scale = stats.weibull_min.fit(clean_data, floc=0)
         hist, bin_edges = np.histogram(clean_data, bins=10)

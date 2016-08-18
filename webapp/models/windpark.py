@@ -95,7 +95,7 @@ class Windpark(db.Model):
 
     def get_total_power_curve(self):
         self._calculate_total_power_curve()
-        return [[x[0], x[1] / 1000.0] for x in self.collected_curves.values]
+        return [[x[0], x[1] / 1000.0] for x in self.power_curve.values]
 
     def _calculate_total_power_curve(self):
         if self.data_source != 'turbines':
@@ -116,6 +116,7 @@ class Windpark(db.Model):
         if self.power_curve is None:
             self._calculate_total_power_curve()
         _, simulated_wind = self.location.simulate_wind(time_span, n_samples)
+        simulated_wind = [x / 3.6 for x in simulated_wind]  # km/h to m/s
         simulated_power = np.interp(simulated_wind, self.power_curve['wind_speed'], self.power_curve['power']) / 1000.0
         return simulated_power
 
