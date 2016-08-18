@@ -248,6 +248,17 @@ class LocationsTestCase(unittest.TestCase):
         self.assertLess(np.abs(scale - test_location.wspd_scale) / test_location.wspd_scale, 0.1)
         print shape, location, scale
 
+    def test_update_location(self):
+        test_location = Location(user_id=user_id, name=test_name, lookback=10, time_range='rolling')
+        rv = self.app.get('/api/locations/geolookup',
+                          data={'query': '/q/zmw:00000.1.10400'})
+        results = json.loads(rv.data)
+        location_data = results['data']['location']
+        test_location.update_from_dict(location_data)
+
+        self.assertEqual(test_location.l, '/q/zmw:00000.1.10400')
+        self.assertEqual(test_location.city, 'Duesseldorf')
+        self.assertEqual(test_location.tz_short, 'CEST')
 
 if __name__ == '__main__':
     unittest.main()

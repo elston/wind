@@ -4,6 +4,7 @@ import unittest
 from datetime import datetime
 
 from flask import json
+import numpy as np
 import pytz
 import webapp
 import re
@@ -401,6 +402,52 @@ class MarketsTestCase(unittest.TestCase):
         self.assertIsInstance(summary['lambdaD_model'], dict)
         self.assertIsInstance(summary['MAvsMD_model'], dict)
         self.assertIsInstance(summary['sqrt_r_model'], dict)
+
+    def test_simulate_prices(self):
+        test_market = Market(user_id=user_id, name=test_name)
+        self.session.add(test_market)
+        self.session.commit()
+        market_id = test_market.id
+
+        with open('tests/data/custom_test_100.csv') as csvfile:
+            rv = self.app.post('/api/markets/prices',
+                               data={'format': 'custom',
+                                     'file': (csvfile, 'test.csv'),
+                                     'mkt_id': market_id})
+        result = json.loads(rv.data)
+        self.assertIn('data', result)
+        self.assertNotIn('error', result)
+        data = result['data']
+        print data
+
+        test_market.fit_price_model()
+        self.session.commit()
+
+        print test_market.lambdaD_model.to_dict()
+        print test_market.MAvsMD_model.to_dict()
+        print test_market.sqrt_r_model.to_dict()
+
+        time_span = 24
+        n_samples = 3
+        start_hour = 22
+
+        simulated_lambdaD, simulated_MAvsMD, simulated_sqrt_r = test_market.simulate_prices(start_hour, time_span, n_samples)
+
+        print simulated_lambdaD
+        simulated_lambdaD_np = np.array(simulated_lambdaD)
+        # check size
+        self.assertEqual(simulated_lambdaD_np.shape, (n_samples, time_span))
+
+        print simulated_MAvsMD
+        simulated_MAvsMD_np = np.array(simulated_MAvsMD)
+        # check size
+        self.assertEqual(simulated_MAvsMD_np.shape, (n_samples, time_span))
+
+        print simulated_sqrt_r
+        simulated_sqrt_r_np = np.array(simulated_sqrt_r)
+        # check size
+        self.assertEqual(simulated_sqrt_r_np.shape, (n_samples, time_span))
+
 
 if __name__ == '__main__':
     unittest.main()

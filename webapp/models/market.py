@@ -1,10 +1,18 @@
+from collections import defaultdict
 import csv
+import logging
 import math
 import cStringIO
 
 import pytz
 import numpy as np
 from sqlalchemy.orm import relationship
+from rpy2.robjects.packages import importr
+import rpy2.robjects as ro
+from rpy2.robjects import numpy2ri
+
+forecast = importr("forecast")
+
 from webapp import db
 from .prices import Prices
 from .arima_price_model import ArimaPriceModel
@@ -95,19 +103,19 @@ class Market(db.Model):
             sqrt_r.append(price.sqrt_r)
 
         lambdaD = np.array(lambdaD, dtype=np.float)
-        values = np.log(lambdaD[np.isfinite(lambdaD)])
+        values = np.log(lambdaD)  # [np.isfinite(lambdaD)])
         self.lambdaD_model = ArimaPriceModel()
         self.lambdaD_model.set_parameters(p=2, d=0, q=1, P=1, D=1, Q=1, m=24)
         self.lambdaD_model.fit(values)
 
         MAvsMD = np.array(MAvsMD, dtype=np.float)
-        MAvsMD = MAvsMD[np.isfinite(MAvsMD)]
+        # MAvsMD = MAvsMD[np.isfinite(MAvsMD)]
         self.MAvsMD_model = ArimaPriceModel()
         self.MAvsMD_model.set_parameters(p=1, d=0, q=11, P=1, D=0, Q=1, m=24)
         self.MAvsMD_model.fit(MAvsMD)
 
         sqrt_r = np.array(sqrt_r, dtype=np.float)
-        sqrt_r = sqrt_r[np.isfinite(sqrt_r)]
+        # sqrt_r = sqrt_r[np.isfinite(sqrt_r)]
         self.sqrt_r_model = ArimaPriceModel()
         self.sqrt_r_model.set_parameters(p=2, d=0, q=1, P=1, D=0, Q=1, m=24)
         self.sqrt_r_model.fit(sqrt_r)
@@ -121,3 +129,58 @@ class Market(db.Model):
         for prices in self.prices:
             writer.writerow([getattr(prices, name) for name in fields])
         return csv_file.getvalue()
+
+    def simulate_prices(self, simulation_start_hour, time_span, n_samples):
+        if self.lambdaD_model is None or self.MAvsMD_model is None or self.sqrt_r_model is None:
+            raise Exception('Unable to simulate prices without model')
+
+        time_after_last = None
+        for price in self.prices:
+            if price.time.hour == simulation_start_hour:
+                time_after_last = price.time
+
+        seeds = defaultdict(list)
+
+        for price in self.prices:
+            if price.time >= time_after_last:
+                break
+            seeds['lambdaD'].append(price.lambdaD)
+            seeds['MAvsMD'].append(price.MAvsMD)
+            seeds['sqrt.r'].append(price.sqrt_r)
+
+        for model_name, model in (('lambdaD', self.lambdaD_model),
+                                  ('MAvsMD', self.MAvsMD_model),
+                                  ('sqrt.r', self.sqrt_r_model)):
+            long_command = '%s.model <- list(arma=c(%d,%d,%d,%d,%d,%d,%d), coef=list(%s), sigma2=%f)' % \
+                           (model_name, model.p, model.q, model.P, model.Q,
+                            model.m, model.d, model.D,
+                            ','.join(['%s=%f' % (name, value) for name, value in model.coef.iteritems()]),
+                            model.sigma2)
+            logging.debug(long_command)
+            ro.r(long_command)
+            if model_name == 'lambdaD':
+                seed = np.log(seeds[model_name])
+            else:
+                seed = np.array(seeds[model_name])
+            ro.r.assign('%s.seed' % model_name, numpy2ri.numpy2ri(seed))
+            ro.r('%s.arima <- Arima(%s.seed, model=%s.model)' % (model_name, model_name, model_name))
+            ro.r('%s.arima$sigma2 = %f' % (model_name, model.sigma2))
+
+        simulated_lambdaD_s = []
+        simulated_MAvsMD_s = []
+        simulated_sqrt_r_s = []
+        for sample_num in xrange(n_samples):
+            simulated_lambdaD = ro.r('simulate.Arima(lambdaD.arima, %d)' % time_span)
+            simulated_lambdaD = numpy2ri.ri2py(simulated_lambdaD)
+            simulated_lambdaD = np.exp(simulated_lambdaD)
+            simulated_lambdaD_s.append(list(simulated_lambdaD))
+
+            simulated_MAvsMD = ro.r('simulate.Arima(MAvsMD.arima, %d)' % time_span)
+            simulated_MAvsMD = numpy2ri.ri2py(simulated_MAvsMD)
+            simulated_MAvsMD_s.append(list(simulated_MAvsMD))
+
+            simulated_sqrt_r = ro.r('simulate.Arima(sqrt.r.arima, %d)' % time_span)
+            simulated_sqrt_r = numpy2ri.ri2py(simulated_sqrt_r)
+            simulated_sqrt_r_s.append(list(simulated_sqrt_r))
+
+        return simulated_lambdaD_s, simulated_MAvsMD_s, simulated_sqrt_r_s

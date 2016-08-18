@@ -1,4 +1,5 @@
 # coding=utf-8
+from datetime import date
 import logging
 import unittest
 
@@ -6,7 +7,7 @@ from flask import json
 import numpy as np
 import webapp
 import re
-from webapp.models import Windpark, Turbine, Location
+from webapp.models import Windpark, Turbine, Location, Market
 from webapp.models.windpark_turbines import WindparkTurbine
 
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
@@ -187,6 +188,46 @@ class WindparksTestCase(unittest.TestCase):
         # check size
         self.assertEqual(simulated_generation_np.shape, (n_samples, time_span))
 
+    def test_simulate_market(self):
+        test_windpark = Windpark(user_id=user_id, name=test_name, data_source='turbines')
+        self.session.add(test_windpark)
+
+        test_location = Location(user_id=user_id, name=test_name, lookback=10, time_range='rolling')
+        rv = self.app.get('/api/locations/geolookup',
+                          data={'query': '/q/zmw:00000.1.10400'})
+        results = json.loads(rv.data)
+        location_data = results['data']['location']
+        test_location.update_from_dict(location_data)
+        test_windpark.location = test_location
+        self.session.commit()
+
+        test_market = Market(user_id=user_id, name=test_name)
+        self.session.add(test_market)
+        self.session.commit()
+        market_id = test_market.id
+
+        with open('tests/data/custom_test_100.csv') as csvfile:
+            rv = self.app.post('/api/markets/prices',
+                               data={'format': 'custom',
+                                     'file': (csvfile, 'test.csv'),
+                                     'mkt_id': market_id})
+        result = json.loads(rv.data)
+        self.assertIn('data', result)
+        self.assertNotIn('error', result)
+
+        test_market.fit_price_model()
+        test_windpark.market = test_market
+        self.session.commit()
+
+        time_span = 24
+        n_samples = 100
+        simulated_market = test_windpark.simulate_market(date.today(), time_span, n_samples)
+        print simulated_market
+
+        simulated_market_np = np.array(simulated_market)
+
+        # check size
+        self.assertEqual(simulated_market_np.shape, (3, n_samples, time_span))
 
 if __name__ == '__main__':
     unittest.main()
