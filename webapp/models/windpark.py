@@ -5,6 +5,7 @@ import logging
 import numpy as np
 import pandas as pd
 import pytz
+from sqlalchemy import orm
 from sqlalchemy.orm import relationship
 from webapp import db
 from .generation import Generation
@@ -31,6 +32,10 @@ class Windpark(db.Model):
 
     def __init__(self, *args, **kwargs):
         super(Windpark, self).__init__(*args, **kwargs)
+        self.power_curve = None
+
+    @orm.reconstructor
+    def init_on_load(self):
         self.power_curve = None
 
     @classmethod
@@ -116,9 +121,10 @@ class Windpark(db.Model):
         if self.power_curve is None:
             self._calculate_total_power_curve()
         _, simulated_wind = self.location.simulate_wind(time_span, n_samples)
-        simulated_wind = [x / 3.6 for x in simulated_wind]  # km/h to m/s
+        simulated_wind = np.array(simulated_wind) / 3.6
+        # simulated_wind = [x / 3.6 for x in simulated_wind]  # km/h to m/s
         simulated_power = np.interp(simulated_wind, self.power_curve['wind_speed'], self.power_curve['power']) / 1000.0
-        return simulated_power
+        return simulated_wind, simulated_power
 
     def simulate_market(self, date, time_span, n_samples):
         # use location timezone to synchronize seasonal component of ARIMA
@@ -127,5 +133,6 @@ class Windpark(db.Model):
         start_dt_utc = start_dt_location_tz.astimezone(pytz.UTC)
         start_hour = start_dt_utc.hour
         logging.warning('Using windpark timezone %s as market day start (%d:00 UTC)', timezone_name, start_hour)
-        simulated_lambdaD, simulated_MAvsMD, simulated_sqrt_r = self.market.simulate_prices(start_hour, time_span, n_samples)
+        simulated_lambdaD, simulated_MAvsMD, simulated_sqrt_r = self.market.simulate_prices(start_hour, time_span,
+                                                                                            n_samples)
         return simulated_lambdaD, simulated_MAvsMD, simulated_sqrt_r

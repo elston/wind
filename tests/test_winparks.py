@@ -186,7 +186,7 @@ class WindparksTestCase(unittest.TestCase):
         simulated_generation_np = np.array(simulated_generation)
 
         # check size
-        self.assertEqual(simulated_generation_np.shape, (n_samples, time_span))
+        self.assertEqual(simulated_generation_np.shape, (2, n_samples, time_span))
 
     def test_simulate_market(self):
         test_windpark = Windpark(user_id=user_id, name=test_name, data_source='turbines')

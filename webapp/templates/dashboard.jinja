@@ -255,6 +255,44 @@
                     </div>
                 </div>
             </div>
+            <div class="panel panel-info" ng-controller="WindParkSimulationCtrl">
+                <div class="panel-heading">
+                    <h4 class="panel-title"><a href class="accordion-toggle"
+                                               ng-click="status.isDetailsOpen = !status.isDetailsOpen">
+                        Details</a></h4>
+                </div>
+                <div class="panel-collapse collapse" uib-collapse="!status.isDetailsOpen"
+                     expanded="showDetails()">
+                    <div class="panel-body">
+                        <h4>Wind & power simulation</h4>
+
+                        <form class="form-horizontal">
+                            <div class="form-group">
+                                <label for="time-span" class="col-xs-3 control-label">Time span: </label>
+
+                                <div class="col-xs-2">
+                                    <input type="number" ng-model="timeSpan" id="time-span"
+                                           class="form-control" required>
+                                </div>
+                                <label for="n-samples" class="col-xs-3 control-label"># samples: </label>
+
+                                <div class="col-xs-2">
+                                    <input type="number" ng-model="nSamples" id="n-samples"
+                                           class="form-control" required>
+                                </div>
+
+                                <div class="col-xs-2">
+                                    <button class="btn btn-primary" style="width:100%"
+                                            ng-click="updateWindSimulation()">Repeat simulation
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                        <div id="wind-sim" style="width:100%; height:300px;"></div>
+                        <div id="power-sim" style="width:100%; height:300px;"></div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </script>

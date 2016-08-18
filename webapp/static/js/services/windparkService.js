@@ -185,6 +185,22 @@ app.factory('windparkService', ['$http', 'Upload', function ($http, Upload) {
                 });
     };
 
+    var getSimulation = function (id, timeSpan, nSamples) {
+        return $http.get($SCRIPT_ROOT + '/windparks/simulation/' + id,
+                {params: {time_span: timeSpan, n_samples: nSamples}})
+            .then(function (response) {
+                    if ('error' in response.data) {
+                        throw response.data.error;
+                    } else {
+                        return response.data.data;
+                    }
+                },
+                function (error) {
+                    throw error.statusText;
+                });
+
+    };
+
 
     return {
         reload: reload,
@@ -198,7 +214,8 @@ app.factory('windparkService', ['$http', 'Upload', function ($http, Upload) {
         getWindVsPower: getWindVsPower,
         addTurbine: addTurbine,
         deleteTurbine: deleteTurbine,
-        getTotalPowerCurve: getTotalPowerCurve
+        getTotalPowerCurve: getTotalPowerCurve,
+        getSimulation: getSimulation
     };
 
 }]);

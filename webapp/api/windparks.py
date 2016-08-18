@@ -302,3 +302,23 @@ def get_total_power_curve(wpark_id):
         logger.exception(e)
         js = jsonify({'error': repr(e)})
         return js
+
+
+@app.route('/api/windparks/simulation/<wpark_id>')
+def get_simulation(wpark_id):
+    if not current_user.is_authenticated:
+        return jsonify({'error': 'User unauthorized'})
+    try:
+        windpark = db.session.query(Windpark).filter_by(id=wpark_id).first()
+
+        time_span = int(request.values.get('time_span'))
+        n_samples = int(request.values.get('n_samples'))
+
+        simulated_wind, simulated_power = windpark.simulate_generation(time_span, n_samples)
+
+        js = jsonify({'data': {'wind_speed': simulated_wind.tolist(), 'power': simulated_power.tolist()}})
+        return js
+    except Exception, e:
+        logger.exception(e)
+        js = jsonify({'error': repr(e)})
+        return js
