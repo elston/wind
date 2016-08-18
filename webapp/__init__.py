@@ -1,6 +1,7 @@
 import logging
 
 from flask import Flask, jsonify
+from flask.json import JSONEncoder
 from flask_bootstrap import Bootstrap
 from flask_environments import Environments
 from flask_sqlalchemy import SQLAlchemy
@@ -9,6 +10,23 @@ from flask_security import RoleMixin, UserMixin, SQLAlchemyUserDatastore, Securi
 
 app = Flask(__name__, template_folder='templates', static_folder='static')
 Bootstrap(app)
+
+
+class MyJSONEncoder(JSONEncoder):
+    def encode(self, o):
+        def anti_nan(obj):
+            if isinstance(obj, float) and obj != obj:  # NaN
+                return None
+            elif isinstance(obj, dict):
+                return dict((k, anti_nan(v)) for k, v in obj.items())
+            elif isinstance(obj, (list, tuple)):
+                return map(anti_nan, obj)
+            return obj
+
+        return super(MyJSONEncoder, self).encode(anti_nan(o))
+
+
+app.json_encoder = MyJSONEncoder
 
 # Load configuration depending on FLASK_ENV environment variable
 env = Environments(app)
