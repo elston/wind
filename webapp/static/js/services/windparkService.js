@@ -185,9 +185,28 @@ app.factory('windparkService', ['$http', 'Upload', function ($http, Upload) {
                 });
     };
 
-    var getSimulation = function (id, timeSpan, nSamples) {
-        return $http.get($SCRIPT_ROOT + '/windparks/simulation/' + id,
+    var getWindSimulation = function (id, timeSpan, nSamples) {
+        return $http.get($SCRIPT_ROOT + '/windparks/wind_simulation/' + id,
                 {params: {time_span: timeSpan, n_samples: nSamples}})
+            .then(function (response) {
+                    if ('error' in response.data) {
+                        throw response.data.error;
+                    } else {
+                        return response.data.data;
+                    }
+                },
+                function (error) {
+                    throw error.statusText;
+                });
+
+    };
+
+    var getMarketSimulation = function (id, dayStart, timeSpan, nSamples) {
+        return $http.get($SCRIPT_ROOT + '/windparks/market_simulation/' + id,
+                {params: {day_start: dayStart,
+                time_span: timeSpan,
+                n_samples: nSamples}
+                })
             .then(function (response) {
                     if ('error' in response.data) {
                         throw response.data.error;
@@ -215,7 +234,8 @@ app.factory('windparkService', ['$http', 'Upload', function ($http, Upload) {
         addTurbine: addTurbine,
         deleteTurbine: deleteTurbine,
         getTotalPowerCurve: getTotalPowerCurve,
-        getSimulation: getSimulation
+        getWindSimulation: getWindSimulation,
+        getMarketSimulation: getMarketSimulation
     };
 
 }]);

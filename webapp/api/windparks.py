@@ -304,8 +304,8 @@ def get_total_power_curve(wpark_id):
         return js
 
 
-@app.route('/api/windparks/simulation/<wpark_id>')
-def get_simulation(wpark_id):
+@app.route('/api/windparks/wind_simulation/<wpark_id>')
+def get_wind_simulation(wpark_id):
     if not current_user.is_authenticated:
         return jsonify({'error': 'User unauthorized'})
     try:
@@ -317,6 +317,30 @@ def get_simulation(wpark_id):
         simulated_wind, simulated_power = windpark.simulate_generation(time_span, n_samples)
 
         js = jsonify({'data': {'wind_speed': simulated_wind.tolist(), 'power': simulated_power.tolist()}})
+        return js
+    except Exception, e:
+        logger.exception(e)
+        js = jsonify({'error': repr(e)})
+        return js
+
+
+@app.route('/api/windparks/market_simulation/<wpark_id>')
+def get_market_simulation(wpark_id):
+    if not current_user.is_authenticated:
+        return jsonify({'error': 'User unauthorized'})
+    try:
+        windpark = db.session.query(Windpark).filter_by(id=wpark_id).first()
+
+        day_start = int(request.values.get('day_start'))
+        time_span = int(request.values.get('time_span'))
+        n_samples = int(request.values.get('n_samples'))
+
+        simulated_lambdaD, simulated_MAvsMD, simulated_sqrt_r = windpark.market.simulate_prices(day_start, time_span,
+                                                                                                n_samples)
+
+        js = jsonify({'data': {'lambdaD': simulated_lambdaD,
+                               'MAvsMD': simulated_MAvsMD,
+                               'sqrt_r': simulated_sqrt_r}})
         return js
     except Exception, e:
         logger.exception(e)

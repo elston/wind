@@ -290,6 +290,27 @@
                         </form>
                         <div id="wind-sim" style="width:100%; height:300px;"></div>
                         <div id="power-sim" style="width:100%; height:300px;"></div>
+
+                        <h4>Market simulation</h4>
+
+                        <form class="form-horizontal">
+                            <div class="form-group">
+                                <label for="day-start" class="col-xs-3 control-label">Day start hour: </label>
+
+                                <div class="col-xs-2">
+                                    <input type="number" ng-model="dayStart" id="day-start"
+                                           class="form-control" required>
+                                </div>
+                                <div class="col-xs-2 col-xs-offset-5">
+                                    <button class="btn btn-primary" style="width:100%"
+                                            ng-click="updateMarketSimulation()">Repeat simulation
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                        <div id="lambdad-sim" style="width:100%; height:300px;"></div>
+                        <div id="mavsmd-sim" style="width:100%; height:300px;"></div>
+                        <div id="sqrtr-sim" style="width:100%; height:300px;"></div>
                     </div>
                 </div>
             </div>

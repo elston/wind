@@ -32,6 +32,8 @@ class ArimaPriceModel(TypeDecorator):
         self.pred = None
         self.pred_se = None
         self.residuals = None
+        self.phi = None
+        self.theta = None
 
     def set_parameters(self, p, d, q, P, D, Q, m, n_ahead=48):
         self.p = p
@@ -78,12 +80,14 @@ class ArimaPriceModel(TypeDecorator):
             self.aic = self._model.rx2('aic')[0]
             self.loglik = self._model.rx2('loglik')[0]
             self.residuals = list(self._model.rx2('residuals'))
+            self.phi = list(self._model.rx2('model')[0])
+            self.theta = list(self._model.rx2('model')[1])
             self.pred = list(self._predict.rx2('pred'))
             self.pred_se = list(self._predict.rx2('se'))
 
         return dict(p=self.p, d=self.d, q=self.q, P=self.P, D=self.D, Q=self.Q, m=self.m,
                     coef=self.coef, s_e=self.s_e, sigma2=self.sigma2, loglik=self.loglik, aic=self.aic,
-                    residuals=self.residuals, pred=self.pred, pred_se=self.pred_se)
+                    residuals=self.residuals, phi=self.phi, theta=self.theta, pred=self.pred, pred_se=self.pred_se)
 
         # def to_json(self):
         #     return json.dumps(self.to_dict())

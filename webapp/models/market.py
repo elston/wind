@@ -7,11 +7,15 @@ import cStringIO
 import pytz
 import numpy as np
 from sqlalchemy.orm import relationship
-from rpy2.robjects.packages import importr
+
+
+# from rpy2.robjects.packages import importr
 import rpy2.robjects as ro
 from rpy2.robjects import numpy2ri
 
-forecast = importr("forecast")
+# forecast = importr("forecast")
+r_source = ro.r['source']
+r_source('webapp/models/arima_condsim.R')
 
 from webapp import db
 from .prices import Prices
@@ -148,39 +152,75 @@ class Market(db.Model):
             seeds['MAvsMD'].append(price.MAvsMD)
             seeds['sqrt.r'].append(price.sqrt_r)
 
+        # find first range without NaNs in all prices searching from end, jumping by whole days
+        while True:
+            if (all([x is not None for x in seeds['lambdaD'][-100:]]) and
+                    all([x is not None for x in seeds['MAvsMD'][-100:]]) and
+                    all([x is not None for x in seeds['sqrt.r'][-100:]])):
+                break
+            seeds['lambdaD'] = seeds['lambdaD'][:-24]
+            seeds['MAvsMD'] = seeds['MAvsMD'][:-24]
+            seeds['sqrt.r'] = seeds['sqrt.r'][:-24]
+        seeds['lambdaD'] = seeds['lambdaD'][-100:]
+        seeds['MAvsMD'] = seeds['MAvsMD'][-100:]
+        seeds['sqrt.r'] = seeds['sqrt.r'][-100:]
+
         for model_name, model in (('lambdaD', self.lambdaD_model),
                                   ('MAvsMD', self.MAvsMD_model),
                                   ('sqrt.r', self.sqrt_r_model)):
-            long_command = '%s.model <- list(arma=c(%d,%d,%d,%d,%d,%d,%d), coef=list(%s), sigma2=%f)' % \
+            # ro.r.assign('%s.coef' % model_name, ro.ListVector(model.coef.items()))
+
+            long_command = '%s.model <- list(arma=c(%d,%d,%d,%d,%d,%d,%d), coef=list(%s), sigma2=%f, model=list(phi=c(%s), theta=c(%s)))' % \
                            (model_name, model.p, model.q, model.P, model.Q,
                             model.m, model.d, model.D,
-                            ','.join(['%s=%f' % (name, value) for name, value in model.coef.iteritems()]),
-                            model.sigma2)
+                            ','.join(['%s=%.20f' % (name, value) for name, value in model.coef.iteritems()]),
+                            model.sigma2,
+                            ','.join(['%.20f' % x for x in model.phi]),
+                            ','.join(['%.20f' % x for x in model.theta]),
+                            )
+            # long_command = '%s.model <- list(arma=c(%d,%d,%d,%d,%d,%d,%d), coef=%s.coef, sigma2=%f)' % \
+            #                (model_name, model.p, model.q, model.P, model.Q,
+            #                 model.m, model.d, model.D, model_name,
+            #                 model.sigma2)
             logging.debug(long_command)
             ro.r(long_command)
+            # logging.debug(ro.r('Mod(polyroot(c(1, -%s.model$coef)))' % model_name))
+            # logging.debug(ro.r('%s.model' % model_name))
             if model_name == 'lambdaD':
-                seed = np.log(seeds[model_name])
+                seed = np.log(np.array(seeds[model_name], dtype=np.float))
             else:
-                seed = np.array(seeds[model_name])
+                seed = np.array(seeds[model_name], dtype=np.float)
             ro.r.assign('%s.seed' % model_name, numpy2ri.numpy2ri(seed))
-            ro.r('%s.arima <- Arima(%s.seed, model=%s.model)' % (model_name, model_name, model_name))
-            ro.r('%s.arima$sigma2 = %f' % (model_name, model.sigma2))
+            # ro.r('%s.arima <- Arima(%s.seed, model=%s.model)' % (model_name, model_name, model_name))
+            # ro.r('%s.arima <- Arima(rep(0, 48), model=%s.model)' % (model_name, model_name))
+            # ro.r('%s.arima$sigma2 = %f' % (model_name, model.sigma2))
 
-        simulated_lambdaD_s = []
-        simulated_MAvsMD_s = []
-        simulated_sqrt_r_s = []
-        for sample_num in xrange(n_samples):
-            simulated_lambdaD = ro.r('simulate.Arima(lambdaD.arima, %d)' % time_span)
-            simulated_lambdaD = numpy2ri.ri2py(simulated_lambdaD)
-            simulated_lambdaD = np.exp(simulated_lambdaD)
-            simulated_lambdaD_s.append(list(simulated_lambdaD))
+        # simulated_lambdaD_s = []
+        # simulated_MAvsMD_s = []
+        # simulated_sqrt_r_s = []
 
-            simulated_MAvsMD = ro.r('simulate.Arima(MAvsMD.arima, %d)' % time_span)
-            simulated_MAvsMD = numpy2ri.ri2py(simulated_MAvsMD)
-            simulated_MAvsMD_s.append(list(simulated_MAvsMD))
+        simulated_lambdaD = ro.r('arima.condsim(lambdaD.model, lambdaD.seed, %d, %d)' % (time_span * 3, n_samples))
+        simulated_lambdaD = numpy2ri.ri2py(simulated_lambdaD).transpose()[:, :time_span]
+        simulated_lambdaD = np.exp(simulated_lambdaD)
 
-            simulated_sqrt_r = ro.r('simulate.Arima(sqrt.r.arima, %d)' % time_span)
-            simulated_sqrt_r = numpy2ri.ri2py(simulated_sqrt_r)
-            simulated_sqrt_r_s.append(list(simulated_sqrt_r))
+        simulated_MAvsMD = ro.r('arima.condsim(MAvsMD.model, MAvsMD.seed, %d, %d)' % (time_span * 3, n_samples))
+        simulated_MAvsMD = numpy2ri.ri2py(simulated_MAvsMD).transpose()[:, :time_span]
 
-        return simulated_lambdaD_s, simulated_MAvsMD_s, simulated_sqrt_r_s
+        simulated_sqrt_r = ro.r('arima.condsim(sqrt.r.model, sqrt.r.seed, %d, %d)' % (time_span * 3, n_samples))
+        simulated_sqrt_r = numpy2ri.ri2py(simulated_sqrt_r).transpose()[:, :time_span]
+
+        # for sample_num in xrange(n_samples):
+        #     simulated_lambdaD = ro.r('simulate.Arima(lambdaD.arima, %d)' % time_span)
+        #     simulated_lambdaD = numpy2ri.ri2py(simulated_lambdaD)
+        #     simulated_lambdaD = np.exp(simulated_lambdaD)
+        #     simulated_lambdaD_s.append(list(simulated_lambdaD))
+        #
+        #     simulated_MAvsMD = ro.r('simulate.Arima(MAvsMD.arima, %d)' % time_span)
+        #     simulated_MAvsMD = numpy2ri.ri2py(simulated_MAvsMD)
+        #     simulated_MAvsMD_s.append(list(simulated_MAvsMD))
+        #
+        #     simulated_sqrt_r = ro.r('simulate.Arima(sqrt.r.arima, %d)' % time_span)
+        #     simulated_sqrt_r = numpy2ri.ri2py(simulated_sqrt_r)
+        #     simulated_sqrt_r_s.append(list(simulated_sqrt_r))
+
+        return simulated_lambdaD.tolist(), simulated_MAvsMD.tolist(), simulated_sqrt_r.tolist()
