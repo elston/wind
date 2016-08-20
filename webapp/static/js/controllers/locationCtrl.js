@@ -52,21 +52,21 @@ app.controller('LocationsCtrl', ['$scope', '$uibModal', 'locationService', funct
                 field: 'action',
                 headerCellTemplate: ' ',
                 enableHiding: false,
-                cellTemplate: '<button type="button" class="btn btn-default btn-xs" ng-click="$emit(\'updateWeather\')" ' +
+                cellTemplate: '<button type="button" class="btn btn-warning btn-xs" ng-click="$emit(\'updateWeather\')" ' +
                 'tooltip-append-to-body="true" uib-tooltip="Reload">' +
                 '<span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></button>' +
-                '<button type="button" class="btn btn-default btn-xs" ng-click="$emit(\'downloadData\')" ' +
-                'tooltip-append-to-body="true" uib-tooltip="Download data">' +
-                '<span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span></button>' +
-                '<button type="button" class="btn btn-default btn-xs" ng-click="$emit(\'viewData\')" ' +
-                'tooltip-append-to-body="true" uib-tooltip="View data">' +
-                '<span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span></button>' +
-                '<button type="button" class="btn btn-default btn-xs" ng-click="$emit(\'viewWeather\')" ' +
+                '<button type="button" class="btn btn-warning btn-xs" ng-click="$emit(\'viewData\')" ' +
+                'tooltip-append-to-body="true" uib-tooltip="Edit data">' +
+                '<span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></button>' +
+                '<button type="button" class="btn btn-info btn-xs" ng-click="$emit(\'viewWeather\')" ' +
                 'tooltip-append-to-body="true" uib-tooltip="View chart">' +
                 '<span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>' +
-                '<button type="button" class="btn btn-default btn-xs" ng-click="$emit(\'viewDistribution\')" ' +
+                '<button type="button" class="btn btn-info btn-xs" ng-click="$emit(\'viewDistribution\')" ' +
                 'tooltip-append-to-body="true" uib-tooltip="Fit and view wind speed distribution">' +
-                '<span class="glyphicon glyphicon-stats" aria-hidden="true"></span></button>',
+                '<span class="glyphicon glyphicon-stats" aria-hidden="true"></span></button>' +
+                '<button type="button" class="btn btn-secondary btn-xs" ng-click="$emit(\'downloadData\')" ' +
+                'tooltip-append-to-body="true" uib-tooltip="Download data">' +
+                '<span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span></button>',
                 width: 200
             }
         ]

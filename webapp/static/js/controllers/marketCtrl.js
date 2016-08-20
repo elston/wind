@@ -36,15 +36,15 @@ app.controller('MarketsCtrl', ['$scope', '$uibModal', 'marketService',
                     field: 'action',
                     headerCellTemplate: ' ',
                     enableHiding: false,
-                    cellTemplate: '<button type="button" class="btn btn-default btn-xs" ng-click="$emit(\'uploadPrices\')" ' +
+                    cellTemplate: '<button type="button" class="btn btn-warning btn-xs" ng-click="$emit(\'uploadPrices\')" ' +
                     'tooltip-append-to-body="true" uib-tooltip="Upload prices">' +
                     '<span class="glyphicon glyphicon-upload" aria-hidden="true"></span></button>' +
-                    '<button type="button" class="btn btn-default btn-xs" ng-click="$emit(\'downloadData\')" ' +
-                    'tooltip-append-to-body="true" uib-tooltip="Download data">' +
-                    '<span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span></button>' +
-                    '<button type="button" class="btn btn-default btn-xs" ng-click="$emit(\'viewData\')" ' +
+                    '<button type="button" class="btn btn-info btn-xs" ng-click="$emit(\'viewData\')" ' +
                     'tooltip-append-to-body="true" uib-tooltip="View data">' +
-                    '<span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span></button>',
+                    '<span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span></button>' +
+                    '<button type="button" class="btn btn-secondary btn-xs" ng-click="$emit(\'downloadData\')" ' +
+                    'tooltip-append-to-body="true" uib-tooltip="Download data">' +
+                    '<span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span></button>',
                     width: 200
                 }
             ]

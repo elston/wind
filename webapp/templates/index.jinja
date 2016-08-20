@@ -63,6 +63,7 @@
 <script src="{{ url_for('.static', filename='js/controllers/windParkGenerationCtrl.js') }}"></script>
 <script src="{{ url_for('.static', filename='js/controllers/windParkTurbinesCtrl.js') }}"></script>
 <script src="{{ url_for('.static', filename='js/controllers/windParkSimulationCtrl.js') }}"></script>
+<script src="{{ url_for('.static', filename='js/controllers/windParkOptimizationCtrl.js') }}"></script>
 <script src="{{ url_for('.static', filename='js/controllers/locationDataCtrl.js') }}"></script>
 <script src="{{ url_for('.static', filename='js/controllers/addTurbineCtrl.js') }}"></script>
 <script src="{{ url_for('.static', filename='js/services/locationService.js') }}"></script>
@@ -80,7 +81,7 @@
         <li role="presentation" class="logo-in-tabs">
             <img src="{{ url_for('static', filename='img/TISLogoWeb-h30.png') }}"/>
         </li>
-        <li role="presentation" class="button-in-tabs"><a href="{{ url_for('security.logout') }}" class="btn btn-info">Logout</a>
+        <li role="presentation" class="button-in-tabs"><a href="{{ url_for('security.logout') }}" class="btn btn-secondary">Logout</a>
         </li>
     </ul>
     <!-- Nav tabs -->
