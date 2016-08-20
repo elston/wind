@@ -259,7 +259,7 @@
                 <div class="panel-heading">
                     <h4 class="panel-title"><a href class="accordion-toggle"
                                                ng-click="status.isDetailsOpen = !status.isDetailsOpen">
-                        Details</a></h4>
+                        Inspect simulations</a></h4>
                 </div>
                 <div class="panel-collapse collapse" uib-collapse="!status.isDetailsOpen"
                      expanded="showDetails()">
@@ -268,20 +268,27 @@
 
                         <form class="form-horizontal">
                             <div class="form-group">
-                                <label for="time-span" class="col-xs-3 control-label">Time span: </label>
+                                <label for="time-span" class="col-xs-2 control-label">Time span: </label>
 
-                                <div class="col-xs-2">
+                                <div class="col-xs-1">
                                     <input type="number" ng-model="timeSpan" id="time-span"
                                            class="form-control" required>
                                 </div>
-                                <label for="n-samples" class="col-xs-3 control-label"># samples: </label>
+                                <label for="n-samples" class="col-xs-2 control-label"># samples: </label>
 
-                                <div class="col-xs-2">
+                                <div class="col-xs-1">
                                     <input type="number" ng-model="nSamples" id="n-samples"
                                            class="form-control" required>
                                 </div>
 
-                                <div class="col-xs-2">
+                                <label for="n-reduced-samples" class="col-xs-2 control-label"># reduced: </label>
+
+                                <div class="col-xs-1">
+                                    <input type="number" ng-model="nReducedSamples" id="n-reduced-samples"
+                                           class="form-control" required>
+                                </div>
+
+                                <div class="col-xs-3">
                                     <button class="btn btn-primary" style="width:100%"
                                             ng-click="updateWindSimulation()">Repeat simulation
                                     </button>
@@ -290,6 +297,8 @@
                         </form>
                         <div id="wind-sim" style="width:100%; height:300px;"></div>
                         <div id="power-sim" style="width:100%; height:300px;"></div>
+                        <div id="wind-red-sim" style="width:100%; height:300px;"></div>
+                        <div id="power-red-sim" style="width:100%; height:300px;"></div>
 
                         <h4>Market simulation</h4>
 
@@ -309,8 +318,11 @@
                             </div>
                         </form>
                         <div id="lambdad-sim" style="width:100%; height:300px;"></div>
+                        <div id="lambdad-red-sim" style="width:100%; height:300px;"></div>
                         <div id="mavsmd-sim" style="width:100%; height:300px;"></div>
+                        <div id="mavsmd-red-sim" style="width:100%; height:300px;"></div>
                         <div id="sqrtr-sim" style="width:100%; height:300px;"></div>
+                        <div id="sqrtr-red-sim" style="width:100%; height:300px;"></div>
                     </div>
                 </div>
             </div>

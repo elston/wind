@@ -185,9 +185,15 @@ app.factory('windparkService', ['$http', 'Upload', function ($http, Upload) {
                 });
     };
 
-    var getWindSimulation = function (id, timeSpan, nSamples) {
+    var getWindSimulation = function (id, timeSpan, nSamples, nReducedSamples) {
         return $http.get($SCRIPT_ROOT + '/windparks/wind_simulation/' + id,
-                {params: {time_span: timeSpan, n_samples: nSamples}})
+            {
+                params: {
+                    time_span: timeSpan,
+                    n_samples: nSamples,
+                    n_reduced_samples: nReducedSamples
+                }
+            })
             .then(function (response) {
                     if ('error' in response.data) {
                         throw response.data.error;
@@ -201,12 +207,16 @@ app.factory('windparkService', ['$http', 'Upload', function ($http, Upload) {
 
     };
 
-    var getMarketSimulation = function (id, dayStart, timeSpan, nSamples) {
+    var getMarketSimulation = function (id, dayStart, timeSpan, nSamples, nReducedSamples) {
         return $http.get($SCRIPT_ROOT + '/windparks/market_simulation/' + id,
-                {params: {day_start: dayStart,
-                time_span: timeSpan,
-                n_samples: nSamples}
-                })
+            {
+                params: {
+                    day_start: dayStart,
+                    time_span: timeSpan,
+                    n_samples: nSamples,
+                    n_reduced_samples: nReducedSamples
+                }
+            })
             .then(function (response) {
                     if ('error' in response.data) {
                         throw response.data.error;

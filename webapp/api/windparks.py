@@ -1,11 +1,11 @@
 import calendar
 import logging
-
 from flask import jsonify, request
 from flask_login import current_user
 import numpy as np
 import pandas as pd
 from webapp import app, db
+from webapp.api.math.reduce_scenarios import reduce_scenarios
 from webapp.api.math.wind_vs_power_model import fit, model_function
 from webapp.models import Windpark, Generation, Observation
 from webapp.models.windpark_turbines import WindparkTurbine
@@ -313,10 +313,19 @@ def get_wind_simulation(wpark_id):
 
         time_span = int(request.values.get('time_span'))
         n_samples = int(request.values.get('n_samples'))
+        n_reduced_samples = int(request.values.get('n_reduced_samples'))
 
         simulated_wind, simulated_power = windpark.simulate_generation(time_span, n_samples)
+        red_sim_wind, wind_probs = reduce_scenarios(simulated_wind, np.ones(n_samples) / n_samples, n_reduced_samples)
+        red_sim_power, power_probs = reduce_scenarios(simulated_power, np.ones(n_samples) / n_samples,
+                                                      n_reduced_samples)
 
-        js = jsonify({'data': {'wind_speed': simulated_wind.tolist(), 'power': simulated_power.tolist()}})
+        js = jsonify({'data': {'wind_speed': simulated_wind.tolist(),
+                               'power': simulated_power.tolist(),
+                               'reduced_wind_speed': red_sim_wind.tolist(),
+                               'wind_probs': wind_probs.tolist(),
+                               'reduced_power': red_sim_power.tolist(),
+                               'power_probs': power_probs.tolist()}})
         return js
     except Exception, e:
         logger.exception(e)
@@ -334,13 +343,31 @@ def get_market_simulation(wpark_id):
         day_start = int(request.values.get('day_start'))
         time_span = int(request.values.get('time_span'))
         n_samples = int(request.values.get('n_samples'))
+        n_reduced_samples = int(request.values.get('n_reduced_samples'))
 
-        simulated_lambdaD, simulated_MAvsMD, simulated_sqrt_r = windpark.market.simulate_prices(day_start, time_span,
+        simulated_lambdaD, simulated_MAvsMD, simulated_sqrt_r = windpark.market.simulate_prices(day_start,
+                                                                                                time_span,
                                                                                                 n_samples)
+        red_sim_lambdaD, lambdaD_probs = reduce_scenarios(simulated_lambdaD,
+                                                          np.ones(n_samples) / n_samples,
+                                                          n_reduced_samples)
+        red_sim_MAvsMD, MAvsMD_probs = reduce_scenarios(simulated_MAvsMD,
+                                                        np.ones(n_samples) / n_samples,
+                                                        n_reduced_samples)
+        red_sim_sqrt_r, sqrt_r_probs = reduce_scenarios(simulated_sqrt_r,
+                                                        np.ones(n_samples) / n_samples,
+                                                        n_reduced_samples)
 
         js = jsonify({'data': {'lambdaD': simulated_lambdaD,
                                'MAvsMD': simulated_MAvsMD,
-                               'sqrt_r': simulated_sqrt_r}})
+                               'sqrt_r': simulated_sqrt_r,
+                               'reduced_lambdaD': red_sim_lambdaD.tolist(),
+                               'reduced_MAvsMD': red_sim_MAvsMD.tolist(),
+                               'reduced_sqrt_r': red_sim_sqrt_r.tolist(),
+                               'lambdaD_probs': lambdaD_probs.tolist(),
+                               'MAvsMD_probs': MAvsMD_probs.tolist(),
+                               'sqrt_r_probs': sqrt_r_probs.tolist()
+                               }})
         return js
     except Exception, e:
         logger.exception(e)
