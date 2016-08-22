@@ -11,6 +11,8 @@ from webapp import db
 from .generation import Generation
 from .turbine import Turbine
 from .turbine_power_curve import TurbinePowerCurve
+from .optimization_results import OptimizationResults
+from .optimization_job import OptimizationJob
 
 
 class Windpark(db.Model):
@@ -22,6 +24,8 @@ class Windpark(db.Model):
     location_id = db.Column(db.Integer(), db.ForeignKey('locations.id'), index=True)
     market_id = db.Column(db.Integer(), db.ForeignKey('markets.id'))
     data_source = db.Column(db.String(255))
+    optimization_results = db.Column(OptimizationResults())
+    optimization_job = db.Column(OptimizationJob())
 
     location = relationship('Location', back_populates='windparks')
     market = relationship('Market', back_populates='windparks')
