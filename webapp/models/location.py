@@ -8,12 +8,8 @@ from scipy import signal
 import numpy as np
 from scipy import stats
 from sqlalchemy.orm import relationship
-from rpy2.robjects.packages import importr
 import rpy2.robjects as ro
 from rpy2.robjects import numpy2ri
-
-forecast = importr("forecast")
-
 from webapp import db, wuclient, app
 from .observation import Observation
 from .history_download_status import HistoryDownloadStatus
@@ -285,24 +281,20 @@ class Location(db.Model):
         if self.wind_model is None:
             raise Exception('Unable to simulate wind without model')
 
-        ro.r('model <- list(arma=c(2,0,0,0,0,0,0), coef=list(ar1=%f, ar2=%f, intercept=%f), sigma2=%f)' %
-             (self.wind_model.coef['ar1'], self.wind_model.coef['ar2'], self.wind_model.coef['intercept'],
-              self.wind_model.sigma2))
-        ro.r('arima.object <- Arima(0, model=model)')
-        ro.r('arima.object$sigma2 = %f' % self.wind_model.sigma2)
+        long_command = 'wind.model <- list(arma=c(2,0,0,0,0,0,0), coef=list(%s), sigma2=%f, model=list(phi=c(%s), theta=c(%s)))' % \
+                       (','.join(['%s=%.20f' % (name, value) for name, value in self.wind_model.coef.iteritems()]),
+                        self.wind_model.sigma2,
+                        ','.join(['%.20f' % x for x in self.wind_model.phi]),
+                        ','.join(['%.20f' % x for x in self.wind_model.theta]),
+                        )
+        logging.debug(long_command)
+        ro.r(long_command)
+        seed = np.ones(10) * self.wind_model.coef['intercept']
+        ro.r.assign('wind.seed', numpy2ri.numpy2ri(seed))
 
-        simulated_z_s = []
-        simulated_wind_s = []
-        for sample_num in xrange(n_samples):
-            simulated_z = ro.r('simulate.Arima(arima.object, %d)' % time_span)
-            simulated_z = numpy2ri.ri2py(simulated_z)
-            simulated_wind = stats.weibull_min.ppf(stats.norm.cdf(simulated_z), self.wspd_shape, 0, self.wspd_scale)
-            simulated_z_s.append(list(simulated_z))
-            simulated_wind_s.append(list(simulated_wind))
+        simulated_z = ro.r('arima.condsim(wind.model, wind.seed, %d, %d)' % (time_span * 3, n_samples))
+        simulated_z = numpy2ri.ri2py(simulated_z).transpose()[:, :time_span]
 
-        return simulated_z_s, simulated_wind_s
+        simulated_wind = stats.weibull_min.ppf(stats.norm.cdf(simulated_z), self.wspd_shape, 0, self.wspd_scale)
 
-        # model <- list(arma=c(2,0,0,0,0,0,0), coef=list(ar1=0.86, ar2=-0.04, intercept=-0.13), sigma2=0.3)
-        # new.arima.object <- Arima(0, model=model)
-        # new.arima.object$sigma2 = 0.3
-        # s<-simulate.Arima(new.arima.object, 200)
+        return simulated_z, simulated_wind
