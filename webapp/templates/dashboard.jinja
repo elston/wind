@@ -335,11 +335,35 @@
                     <div class="container-fluid">
                         <div class="row">
                             <div class="col-xs-4 col-xs-offset-4">
-                                 <button type="button" class="btn btn-primary btn-lg" ng-click="optimize()"
-                                         style="width: 100%">Optimize</button>
+                                <button type="button" class="btn btn-primary btn-lg" ng-click="optimize()"
+                                        ng-disabled="startDisabled"
+                                        style="width: 100%">Optimize
+                                </button>
                             </div>
                         </div>
                     </div>
+                    <h4>Status: {{ statusData.status }}</h4>
+                    <pre>{{ statusData.log }}</pre>
+                    <pre class="bg-danger" ng-if="statusData.isFailed">{{ statusData.error }}</pre>
+                    <!--<pre>{{ optimizationResults }}</pre>-->
+                    <dl class="dl-horizontal">
+                        <dt>Calculation start:</dt>
+                        <dd>{{ optimizationResults.computing_start }}</dd>
+                        <dt>Calculation finish:</dt>
+                        <dd>{{ optimizationResults.computing_finish }}</dd>
+                        <dt>Expected profit:</dt>
+                        <dd>{{ optimizationResults.expected_profit }}</dd>
+                        <dt>profit std:</dt>
+                        <dd>{{ optimizationResults.profit_std }}</dd>
+                        <dt>cvar:</dt>
+                        <dd>{{ optimizationResults.cvar }}</dd>
+                        <dt>Pd:</dt>
+                        <dd>{{ optimizationResults.Pd }}</dd>
+                        <dt>Pa:</dt>
+                        <dd>{{ optimizationResults.Pa }}</dd>
+                        <dt>Ps:</dt>
+                        <dd>{{ optimizationResults.Ps }}</dd>
+                    </dl>
                 </div>
             </div>
         </div>

@@ -9,9 +9,13 @@ from webapp.models import Windpark
 from webapp.models.optimization_job import OptimizationJob
 from webapp.models.optimization_results import OptimizationResults
 
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+
 
 class Optimizer(object):
-    def __init__(self, windpark_id):
+    def __init__(self, windpark_id, log_handler=None):
+        if log_handler is not None:
+            logging.getLogger().addHandler(log_handler)
         self.result = OptimizationResults()
         self.windpark = db.session.query(Windpark).filter_by(id=windpark_id).first()
 

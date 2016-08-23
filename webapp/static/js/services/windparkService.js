@@ -230,6 +230,48 @@ app.factory('windparkService', ['$http', 'Upload', function ($http, Upload) {
 
     };
 
+    var startOptimization = function (windparkId) {
+        return $http.post($SCRIPT_ROOT + '/windparks/' + windparkId + '/start_optimization')
+            .then(function (response) {
+                    if ('error' in response.data) {
+                        throw response.data.error;
+                    } else {
+                        return response.data.data;
+                    }
+                },
+                function (error) {
+                    throw error.statusText;
+                });
+    };
+
+    var optimizationStatus = function (windparkId) {
+        return $http.get($SCRIPT_ROOT + '/windparks/' + windparkId + '/optimization_status')
+            .then(function (response) {
+                    if ('error' in response.data) {
+                        throw response.data.error;
+                    } else {
+                        return response.data.data;
+                    }
+                },
+                function (error) {
+                    throw error.statusText;
+                });
+    };
+
+    var optimizationResults = function (windparkId) {
+        return $http.get($SCRIPT_ROOT + '/windparks/' + windparkId + '/optimization_results')
+            .then(function (response) {
+                    if ('error' in response.data) {
+                        throw response.data.error;
+                    } else {
+                        return response.data.data;
+                    }
+                },
+                function (error) {
+                    throw error.statusText;
+                });
+    };
+
 
     return {
         reload: reload,
@@ -245,7 +287,10 @@ app.factory('windparkService', ['$http', 'Upload', function ($http, Upload) {
         deleteTurbine: deleteTurbine,
         getTotalPowerCurve: getTotalPowerCurve,
         getWindSimulation: getWindSimulation,
-        getMarketSimulation: getMarketSimulation
+        getMarketSimulation: getMarketSimulation,
+        startOptimization: startOptimization,
+        optimizationStatus, optimizationStatus,
+        optimizationResults: optimizationResults
     };
 
 }]);

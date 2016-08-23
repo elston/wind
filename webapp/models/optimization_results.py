@@ -1,4 +1,5 @@
 import json
+import flask
 
 from sqlalchemy import TypeDecorator, VARCHAR
 
@@ -27,7 +28,7 @@ class OptimizationResults(TypeDecorator):
         if value is None:
             return None
         else:
-            return json.dumps(value.to_dict())
+            return flask.json.dumps(value.to_dict())
 
     def process_result_value(self, value, dialect):
         if value is None:
