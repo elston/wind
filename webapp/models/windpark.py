@@ -65,6 +65,7 @@ class Windpark(db.Model):
                              'name': turbine.name,
                              'rated_power': turbine.rated_power})
         d['turbines'] = turbines
+        d['optimization_job'] = OptimizationJob().to_dict() if self.optimization_job is None else self.optimization_job.to_dict()
         return d
 
     def update_from_dict(self, d):

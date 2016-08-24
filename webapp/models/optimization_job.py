@@ -1,5 +1,6 @@
-from datetime import date
+from datetime import date, datetime
 import json
+import flask
 
 from sqlalchemy import TypeDecorator, VARCHAR
 
@@ -46,7 +47,13 @@ class OptimizationJob(TypeDecorator):
             model = OptimizationJob()
             d = json.loads(value)
             for k, v in d.iteritems():
-                setattr(model, k, v)
+                if k == 'date':
+                    try:
+                        setattr(model, k, datetime.strptime(v, '%Y-%m-%d').date())
+                    except:
+                        pass
+                else:
+                    setattr(model, k, v)
             return model
 
     def to_dict(self):
@@ -56,4 +63,6 @@ class OptimizationJob(TypeDecorator):
                     n_redc_lambdaD_scenarios=self.n_redc_lambdaD_scenarios,
                     n_MAvsMD_scenarios=self.n_MAvsMD_scenarios, n_redc_MAvsMD_scenarios=self.n_redc_MAvsMD_scenarios,
                     n_sqrt_r_scenarios=self.n_sqrt_r_scenarios, n_redc_sqrt_r_scenarios=self.n_redc_sqrt_r_scenarios,
-                    market_start_hour=self.market_start_hour, time_span=self.time_span)
+                    market_start_hour=self.market_start_hour, time_span=self.time_span, date=self.date.isoformat(),
+                    dt=self.dt,
+                    Pmax=self.Pmax, alpha=self.alpha, beta=self.beta)

@@ -7,11 +7,13 @@ app.controller('WindParkOptimizationCtrl', ['$scope', '$interval', 'windparkServ
         $scope.startDisabled = false;
         $scope.statusData = null;
         $scope.optimizationResults = null;
+        $scope.optimizationDate = new Date($scope.windpark.optimization_job.date);
 
         var stopRefresh;
 
         $scope.optimize = function () {
-            windparkService.startOptimization($scope.windpark.id);
+            $scope.startDisabled = true;
+            windparkService.startOptimization($scope.windpark.id, $scope.windpark.optimization_job);
 
             if ( angular.isDefined(stopRefresh) ) return;
 
@@ -24,7 +26,13 @@ app.controller('WindParkOptimizationCtrl', ['$scope', '$interval', 'windparkServ
             windparkService.optimizationStatus($scope.windpark.id)
                 .then(function (statusData) {
                     $scope.statusData = statusData;
-                    $scope.startDisabled = statusData.isWorking || statusData.isQueued;
+                    if( statusData === null) {
+                        $scope.startDisabled = false;
+                        $interval.cancel(stopRefresh);
+                        stopRefresh = undefined;
+                        return;
+                    }
+                    $scope.startDisabled = statusData.isStarted || statusData.isQueued;
                     if(statusData.isFinished || statusData.isFailed) {
                         $interval.cancel(stopRefresh);
                         stopRefresh = undefined;

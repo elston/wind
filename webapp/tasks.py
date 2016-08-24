@@ -39,7 +39,7 @@ class RqLogHandler(logging.Handler):
 
 def start_windpark_optimization(windpark_id, job_parameters=OptimizationJob()):
     job_id = 'windpark_opt_%d' % windpark_id
-    job = q.enqueue(windpark_optimizer_job, windpark_id, job_parameters, job_id=job_id, result_ttl=-1)
+    job = q.enqueue(windpark_optimizer_job, windpark_id, job_parameters, job_id=job_id, timeout=1200)
     return job
 
 

@@ -1,5 +1,6 @@
 import calendar
 import logging
+from datetime import datetime
 
 from flask import jsonify, request
 from flask_login import current_user
@@ -9,6 +10,7 @@ from webapp import app, db
 from webapp.api.math.reduce_scenarios import reduce_scenarios
 from webapp.api.math.wind_vs_power_model import fit, model_function
 from webapp.models import Windpark, Generation, Observation
+from webapp.models.optimization_job import OptimizationJob
 from webapp.models.windpark_turbines import WindparkTurbine
 from webapp.tasks import start_windpark_optimization, windpark_optimization_status
 
@@ -382,7 +384,22 @@ def start_optimization(wpark_id):
     if not current_user.is_authenticated:
         return jsonify({'error': 'User unauthorized'})
     try:
-        start_windpark_optimization(int(wpark_id))
+        job_parameters = request.get_json()
+        opt_job = OptimizationJob()
+        for k, v in job_parameters.iteritems():
+            if k == 'date':
+                try:
+                    setattr(opt_job, k, datetime.strptime(v, '%Y-%m-%d').date())
+                except:
+                    pass
+            else:
+                setattr(opt_job, k, v)
+
+        windpark = db.session.query(Windpark).filter_by(id=wpark_id).first()
+        windpark.optimization_job = opt_job
+        db.session.commit()
+
+        start_windpark_optimization(int(wpark_id), opt_job)
         js = jsonify({'data': 'OK'})
         return js
     except Exception, e:
@@ -397,14 +414,17 @@ def optimization_status(wpark_id):
         return jsonify({'error': 'User unauthorized'})
     try:
         job = windpark_optimization_status(int(wpark_id))
-        result = {'log': '\n'.join(job.meta.get('log')),
-                  'error': job.exc_info if job.is_failed else None,
-                  'status': job.status,
-                  'isFailed': job.is_failed,
-                  'isFinished': job.is_finished,
-                  'isStarted': job.is_started,
-                  'isQueued': job.is_queued}
-        js = jsonify({'data': result})
+        if job is None:
+            return jsonify({'data': None})
+        else:
+            result = {'log': '\n'.join(job.meta.get('log')),
+                      'error': job.exc_info if job.is_failed else None,
+                      'status': job.status,
+                      'isFailed': job.is_failed,
+                      'isFinished': job.is_finished,
+                      'isStarted': job.is_started,
+                      'isQueued': job.is_queued}
+            js = jsonify({'data': result})
         return js
     except Exception, e:
         logger.exception(e)
