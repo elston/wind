@@ -417,13 +417,14 @@ def optimization_status(wpark_id):
         if job is None:
             return jsonify({'data': None})
         else:
-            result = {'log': '\n'.join(job.meta.get('log')),
-                      'error': job.exc_info if job.is_failed else None,
+            result = {'error': job.exc_info if job.is_failed else None,
                       'status': job.status,
                       'isFailed': job.is_failed,
                       'isFinished': job.is_finished,
                       'isStarted': job.is_started,
                       'isQueued': job.is_queued}
+            if 'log' in job.meta:
+                result['log'] = '\n'.join(job.meta.get('log'))
             js = jsonify({'data': result})
         return js
     except Exception, e:
@@ -438,7 +439,8 @@ def optimization_results(wpark_id):
         return jsonify({'error': 'User unauthorized'})
     try:
         windpark = db.session.query(Windpark).filter_by(id=wpark_id).first()
-        js = jsonify({'data': windpark.optimization_results.to_dict()})
+        result = None if windpark.optimization_results is None else windpark.optimization_results.to_dict()
+        js = jsonify({'data': result})
         return js
     except Exception, e:
         logger.exception(e)

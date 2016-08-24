@@ -145,7 +145,8 @@ app.controller('WindParkOptimizationCtrl', ['$scope', '$interval', '$timeout', '
             windparkService.optimizationResults($scope.windpark.id)
                 .then(function (data) {
                     $scope.optimizationResults = data;
-                    refreshCharts(data);
+                    if (data !== null)
+                        refreshCharts(data);
                 },
                 function (error) {
                     alertify.error(error);
