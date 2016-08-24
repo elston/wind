@@ -466,18 +466,15 @@
                         <dt>Calculation finish:</dt>
                         <dd>{{ optimizationResults.computing_finish }}</dd>
                         <dt>Expected profit:</dt>
-                        <dd>{{ optimizationResults.expected_profit }}</dd>
+                        <dd>{{ optimizationResults.expected_profit | number:0 }}</dd>
                         <dt>profit std:</dt>
-                        <dd>{{ optimizationResults.profit_std }}</dd>
+                        <dd>{{ optimizationResults.profit_std | number:0 }}</dd>
                         <dt>cvar:</dt>
-                        <dd>{{ optimizationResults.cvar }}</dd>
-                        <dt>Pd:</dt>
-                        <dd>{{ optimizationResults.Pd }}</dd>
-                        <dt>Pa:</dt>
-                        <dd>{{ optimizationResults.Pa }}</dd>
-                        <dt>Ps:</dt>
-                        <dd>{{ optimizationResults.Ps }}</dd>
+                        <dd>{{ optimizationResults.cvar | number:0 }}</dd>
                     </dl>
+                    <div id="da-volumes" style="width:100%; height:300px;"></div>
+                    <div id="am-volumes" style="width:100%; height:300px;"></div>
+                    <div id="total-volumes" style="width:100%; height:300px;"></div>
                 </div>
             </div>
         </div>
