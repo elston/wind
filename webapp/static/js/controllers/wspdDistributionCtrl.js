@@ -39,11 +39,11 @@ app.controller('WspdDistributionCtrl', ['$scope', '$uibModalInstance', '$rootSco
                                 text: 'Wind speed, km/h'
                             }
                         },
-                        {
-                            title: {
-                                text: 'Normalized value'
-                            }
-                        }],
+                            {
+                                title: {
+                                    text: 'Normalized value'
+                                }
+                            }],
                         tooltip: {
                             formatter: function () {
                                 var s = '<b>' + Highcharts.numberFormat(this.x, 2) + ' km/h</b>';
@@ -67,7 +67,7 @@ app.controller('WspdDistributionCtrl', ['$scope', '$uibModalInstance', '$rootSco
                             type: 'spline',
                             animation: false,
                             xAxis: 0
-                        },{
+                        }, {
                             name: 'Normalized values histogram',
                             data: result[4],
                             type: 'column',

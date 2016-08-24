@@ -71,42 +71,42 @@ app.controller('WindparkTurbinesCtrl', ['$scope', '$rootScope', '$timeout', '$ui
         var reloadTotalPowerCurve = function () {
             windparkService.getTotalPowerCurve($scope.windpark.id)
                 .then(function (curve) {
-                    $timeout(function () {
-                        $scope.chart = new Highcharts.Chart({
-                            chart: {
-                                renderTo: 'total-power-curve-container',
-                                animation: false
-                            },
-                            title: {
-                                text: 'Total power curve'
-                            },
-                            credits: {
-                                enabled: false
-                            },
-                            legend: {
-                                enabled: false
-                            },
-                            yAxis: [{
+                        $timeout(function () {
+                            $scope.chart = new Highcharts.Chart({
+                                chart: {
+                                    renderTo: 'total-power-curve-container',
+                                    animation: false
+                                },
                                 title: {
-                                    text: 'Power, MW'
-                                }
-                            }],
-                            xAxis: [{
-                                title: {
-                                    text: 'Wind speed, m/s'
-                                }
-                            }],
-                            series: [{
-                                name: 'Power curve',
-                                data: curve,
-                                animation: false
-                            }]
-                        })
+                                    text: 'Total power curve'
+                                },
+                                credits: {
+                                    enabled: false
+                                },
+                                legend: {
+                                    enabled: false
+                                },
+                                yAxis: [{
+                                    title: {
+                                        text: 'Power, MW'
+                                    }
+                                }],
+                                xAxis: [{
+                                    title: {
+                                        text: 'Wind speed, m/s'
+                                    }
+                                }],
+                                series: [{
+                                    name: 'Power curve',
+                                    data: curve,
+                                    animation: false
+                                }]
+                            });
+                        });
+                    },
+                    function (error) {
+                        alertify.error(error);
                     });
-                },
-                function (error) {
-                    alertify.error(error);
-                });
         };
 
         reloadTotalPowerCurve();

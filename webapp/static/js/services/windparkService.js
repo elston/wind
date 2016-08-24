@@ -231,7 +231,7 @@ app.factory('windparkService', ['$http', 'Upload', function ($http, Upload) {
     };
 
     var startOptimization = function (windparkId, jobParameters) {
-        return $http.post($SCRIPT_ROOT + '/windparks/' + windparkId + '/start_optimization',jobParameters)
+        return $http.post($SCRIPT_ROOT + '/windparks/' + windparkId + '/start_optimization', jobParameters)
             .then(function (response) {
                     if ('error' in response.data) {
                         throw response.data.error;
@@ -289,7 +289,7 @@ app.factory('windparkService', ['$http', 'Upload', function ($http, Upload) {
         getWindSimulation: getWindSimulation,
         getMarketSimulation: getMarketSimulation,
         startOptimization: startOptimization,
-        optimizationStatus, optimizationStatus,
+        optimizationStatus: optimizationStatus,
         optimizationResults: optimizationResults
     };
 
