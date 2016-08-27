@@ -454,6 +454,12 @@
                                         style="width: 100%">Optimize
                                 </button>
                             </div>
+                            <div class="col-xs-4">
+                                <button type="button" class="btn btn-danger btn-lg" ng-click="terminate()"
+                                        ng-if="startDisabled"
+                                        style="width: 100%">Terminate
+                                </button>
+                            </div>
                         </div>
                     </div>
                     <h4>Status: {{ statusData.status }}</h4>

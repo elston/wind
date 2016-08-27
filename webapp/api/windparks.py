@@ -7,12 +7,12 @@ from flask_login import current_user
 import numpy as np
 import pandas as pd
 from webapp import app, db
-from webapp.api.math.reduce_scenarios import reduce_scenarios
-from webapp.api.math.wind_vs_power_model import fit, model_function
+from .math.reduce_scenarios import reduce_scenarios
+from .math.wind_vs_power_model import fit, model_function
 from webapp.models import Windpark, Generation, Observation
 from webapp.models.optimization_job import OptimizationJob
 from webapp.models.windpark_turbines import WindparkTurbine
-from webapp.tasks import start_windpark_optimization, windpark_optimization_status
+from webapp.tasks import start_windpark_optimization, windpark_optimization_status, terminate_windpark_optimization
 
 logger = logging.getLogger(__name__)
 
@@ -441,6 +441,20 @@ def optimization_results(wpark_id):
         windpark = db.session.query(Windpark).filter_by(id=wpark_id).first()
         result = None if windpark.optimization_results is None else windpark.optimization_results.to_dict()
         js = jsonify({'data': result})
+        return js
+    except Exception, e:
+        logger.exception(e)
+        js = jsonify({'error': repr(e)})
+        return js
+
+
+@app.route('/api/windparks/<wpark_id>/terminate_optimization', methods=['POST', ])
+def terminate_optimization(wpark_id):
+    if not current_user.is_authenticated:
+        return jsonify({'error': 'User unauthorized'})
+    try:
+        terminate_windpark_optimization(int(wpark_id))
+        js = jsonify({'data': 'OK'})
         return js
     except Exception, e:
         logger.exception(e)

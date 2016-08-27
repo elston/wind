@@ -24,6 +24,17 @@ app.controller('WindParkOptimizationCtrl', ['$scope', '$interval', '$timeout', '
             }, 2000);
         };
 
+        $scope.terminate = function () {
+            windparkService.terminateOptimization($scope.windpark.id)
+                .then(function (statusData) {
+                        alertify.success('OK');
+                        refresh();
+                    },
+                    function (error) {
+                        alertify.error(error);
+                    });
+        };
+
         var refreshCharts = function (data) {
             var i, j;
             var Pd_series = [];

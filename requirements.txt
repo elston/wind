@@ -30,6 +30,8 @@ openopt==0.5625
 pandas==0.18.1
 passlib==1.6.5
 patsy==0.4.1
+procname==0.3
+psutil==4.3.0
 pyparsing==2.1.5
 python-dateutil==2.5.3
 python-editor==1.0.1

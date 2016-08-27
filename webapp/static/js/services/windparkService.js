@@ -272,6 +272,20 @@ app.factory('windparkService', ['$http', 'Upload', function ($http, Upload) {
                 });
     };
 
+    var terminateOptimization = function (windparkId) {
+        return $http.post($SCRIPT_ROOT + '/windparks/' + windparkId + '/terminate_optimization')
+            .then(function (response) {
+                    if ('error' in response.data) {
+                        throw response.data.error;
+                    } else {
+                        return response.data.data;
+                    }
+                },
+                function (error) {
+                    throw error.statusText;
+                });
+    };
+
 
     return {
         reload: reload,
@@ -290,7 +304,8 @@ app.factory('windparkService', ['$http', 'Upload', function ($http, Upload) {
         getMarketSimulation: getMarketSimulation,
         startOptimization: startOptimization,
         optimizationStatus: optimizationStatus,
-        optimizationResults: optimizationResults
+        optimizationResults: optimizationResults,
+        terminateOptimization: terminateOptimization
     };
 
 }]);
