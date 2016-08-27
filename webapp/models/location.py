@@ -298,3 +298,38 @@ class Location(db.Model):
         simulated_wind = stats.weibull_min.ppf(stats.norm.cdf(simulated_z), self.wspd_shape, 0, self.wspd_scale)
 
         return simulated_z, simulated_wind
+
+    def simulate_wind_2stage(self, time_span, n_scenarios, da_am_time_span, n_da_am_scenarios):
+        if self.wind_model is None:
+            raise Exception('Unable to simulate wind without model')
+
+        long_command = 'wind.model <- list(arma=c(2,0,0,0,0,0,0), coef=list(%s), sigma2=%f, model=list(phi=c(%s), theta=c(%s)))' % \
+                       (','.join(['%s=%.20f' % (name, value) for name, value in self.wind_model.coef.iteritems()]),
+                        self.wind_model.sigma2,
+                        ','.join(['%.20f' % x for x in self.wind_model.phi]),
+                        ','.join(['%.20f' % x for x in self.wind_model.theta]),
+                        )
+        logging.debug(long_command)
+        ro.r(long_command)
+        seed = np.ones(10) * self.wind_model.coef['intercept']
+        ro.r.assign('wind.seed.da.am', numpy2ri.numpy2ri(seed))
+
+        simulated_z_da_am = ro.r(
+            'arima.condsim(wind.model, wind.seed.da.am, %d, %d)' % (da_am_time_span * 3, n_da_am_scenarios))
+        simulated_z_da_am = numpy2ri.ri2py(simulated_z_da_am).transpose()[:, :da_am_time_span]
+
+        simulated_zs = []
+
+        for da_am_z in simulated_z_da_am:
+            ro.r.assign('wind.seed', numpy2ri.numpy2ri(da_am_z))
+            simulated_z = ro.r('arima.condsim(wind.model, wind.seed, %d, %d)' % (time_span * 3, n_scenarios))
+            simulated_z = numpy2ri.ri2py(simulated_z).transpose()[:, :time_span]
+            x = np.tile(da_am_z, (simulated_z.shape[0], 1))
+            simulated_z = np.concatenate((x, simulated_z), axis=1)
+            simulated_zs.append(simulated_z)
+
+        simulated_z = np.array(simulated_zs)
+
+        simulated_wind = stats.weibull_min.ppf(stats.norm.cdf(simulated_z), self.wspd_shape, 0, self.wspd_scale)
+
+        return simulated_z, simulated_wind

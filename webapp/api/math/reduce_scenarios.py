@@ -41,7 +41,7 @@ def reduce_scenarios(scenarios, probabilities, new_n_scenarios):
         scenario_to_add = np.argmin(distances_to_reduced)
         new_probabilities[scenario_to_add] += probabilities[i]
 
-    return new_scenarios, new_probabilities
+    return new_scenarios, new_probabilities, reduced_set
 
 
 def scenarios_distance(s1, s2):

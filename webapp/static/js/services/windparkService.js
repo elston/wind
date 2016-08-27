@@ -185,13 +185,16 @@ app.factory('windparkService', ['$http', 'Upload', function ($http, Upload) {
                 });
     };
 
-    var getWindSimulation = function (id, timeSpan, nSamples, nReducedSamples) {
+    var getWindSimulation = function (id, timeSpan, nScenarios, nReducedScenarios, nDaAmScenarios,
+    nDaAmReducedScenarios) {
         return $http.get($SCRIPT_ROOT + '/windparks/wind_simulation/' + id,
             {
                 params: {
                     time_span: timeSpan,
-                    n_samples: nSamples,
-                    n_reduced_samples: nReducedSamples
+                    n_scenarios: nScenarios,
+                    n_reduced_scenarios: nReducedScenarios,
+                    n_da_am_scenarios: nDaAmScenarios,
+                    n_da_am_reduced_scenarios: nDaAmReducedScenarios
                 }
             })
             .then(function (response) {
@@ -207,14 +210,20 @@ app.factory('windparkService', ['$http', 'Upload', function ($http, Upload) {
 
     };
 
-    var getMarketSimulation = function (id, dayStart, timeSpan, nSamples, nReducedSamples) {
+    var getMarketSimulation = function (id, dayStart, timeSpan, nDaPriceScenarios, nDaRedcPriceScenarios,
+            nDaAmPriceScenarios, nDaAmRedcPriceScenarios,
+            nAdjPriceScenarios, nAdjRedcPriceScenarios) {
         return $http.get($SCRIPT_ROOT + '/windparks/market_simulation/' + id,
             {
                 params: {
                     day_start: dayStart,
                     time_span: timeSpan,
-                    n_samples: nSamples,
-                    n_reduced_samples: nReducedSamples
+                    n_da_price_scenarios: nDaPriceScenarios,
+                    n_da_redc_price_scenarios: nDaRedcPriceScenarios,
+                    n_da_am_price_scenarios: nDaAmPriceScenarios,
+                    n_da_am_redc_price_scenarios: nDaAmRedcPriceScenarios,
+                    n_adj_price_scenarios: nAdjPriceScenarios,
+                    n_adj_redc_price_scenarios: nAdjRedcPriceScenarios,
                 }
             })
             .then(function (response) {

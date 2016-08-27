@@ -268,26 +268,37 @@
 
                         <form class="form-horizontal">
                             <div class="form-group">
-                                <label for="time-span" class="col-xs-2 control-label">Time span: </label>
+                                <label for="n-scenarios" class="col-xs-2 control-label"># day scenarios: </label>
 
                                 <div class="col-xs-1">
-                                    <input type="number" ng-model="timeSpan" id="time-span"
-                                           class="form-control" required>
-                                </div>
-                                <label for="n-samples" class="col-xs-2 control-label"># samples: </label>
-
-                                <div class="col-xs-1">
-                                    <input type="number" ng-model="nSamples" id="n-samples"
-                                           class="form-control" required>
+                                    <input type="number" ng-model="nScenarios" id="n-scenarios"
+                                           class="form-control input-sm" required>
                                 </div>
 
                                 <label for="n-reduced-samples" class="col-xs-2 control-label"># reduced: </label>
 
                                 <div class="col-xs-1">
-                                    <input type="number" ng-model="nReducedSamples" id="n-reduced-samples"
-                                           class="form-control" required>
+                                    <input type="number" ng-model="nReducedScenarios" id="n-reduced-samples"
+                                           class="form-control input-sm" required>
                                 </div>
 
+                                <label for="n-da-am-scenarios" class="col-xs-2 control-label"># da-am
+                                    scenarios: </label>
+
+                                <div class="col-xs-1">
+                                    <input type="number" ng-model="nDaAmScenarios" id="n-da-am-scenarios"
+                                           class="form-control input-sm" required>
+                                </div>
+
+                                <label for="n-da-am-reduced-scenarios" class="col-xs-2 control-label"># da-am
+                                    reduced: </label>
+
+                                <div class="col-xs-1">
+                                    <input type="number" ng-model="nDaAmReducedScenarios" id="n-da-am-reduced-scenarios"
+                                           class="form-control input-sm" required>
+                                </div>
+                            </div>
+                            <div class="form-group">
                                 <div class="col-xs-3">
                                     <button class="btn btn-info" style="width:100%"
                                             ng-click="updateWindSimulation()">Repeat simulation
@@ -304,13 +315,51 @@
 
                         <form class="form-horizontal">
                             <div class="form-group">
-                                <label for="day-start" class="col-xs-3 control-label">Day start hour: </label>
+                                <label for="day-start" class="col-xs-2 control-label">Day start hour: </label>
 
-                                <div class="col-xs-2">
+                                <div class="col-xs-1">
                                     <input type="number" ng-model="dayStart" id="day-start"
-                                           class="form-control" required>
+                                           class="form-control input-sm" required>
                                 </div>
-                                <div class="col-xs-2 col-xs-offset-5">
+                                <label for="n-da-scenarios" class="col-xs-2 control-label"># DA price scenarios: </label>
+
+                                <div class="col-xs-1">
+                                    <input type="number" ng-model="nDaPriceScenarios" id="n-da-scenarios"
+                                           class="form-control input-sm" required>
+                                </div>
+                                <label for="n-da-am-price-scenarios" class="col-xs-2 control-label"># DA-AM price scenarios: </label>
+
+                                <div class="col-xs-1">
+                                    <input type="number" ng-model="nDaAmPriceScenarios" id="n-da-am-price-scenarios"
+                                           class="form-control input-sm" required>
+                                </div>
+                                <label for="n-adj-scenarios" class="col-xs-2 control-label"># adj price scenarios: </label>
+
+                                <div class="col-xs-1">
+                                    <input type="number" ng-model="nAdjPriceScenarios" id="n-adj-scenarios"
+                                           class="form-control input-sm" required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="n-da-redc-scenarios" class="col-xs-2 control-label"># DA redc price scenarios: </label>
+
+                                <div class="col-xs-1">
+                                    <input type="number" ng-model="nDaRedcPriceScenarios" id="n-da-redc-scenarios"
+                                           class="form-control input-sm" required>
+                                </div>
+                                <label for="n-da-am-redc-price-scenarios" class="col-xs-2 control-label"># DA-AM redc price scenarios: </label>
+
+                                <div class="col-xs-1">
+                                    <input type="number" ng-model="nDaAmRedcPriceScenarios" id="n-da-am-redc-price-scenarios"
+                                           class="form-control input-sm" required>
+                                </div>
+                                <label for="n-adj-redc-scenarios" class="col-xs-2 control-label"># adj redc price scenarios: </label>
+
+                                <div class="col-xs-1">
+                                    <input type="number" ng-model="nAdjRedcPriceScenarios" id="n-adj-redc-scenarios"
+                                           class="form-control input-sm" required>
+                                </div>
+                                <div class="col-xs-3">
                                     <button class="btn btn-info" style="width:100%"
                                             ng-click="updateMarketSimulation()">Repeat simulation
                                     </button>

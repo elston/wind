@@ -65,7 +65,8 @@ class Windpark(db.Model):
                              'name': turbine.name,
                              'rated_power': turbine.rated_power})
         d['turbines'] = turbines
-        d['optimization_job'] = OptimizationJob().to_dict() if self.optimization_job is None else self.optimization_job.to_dict()
+        d[
+            'optimization_job'] = OptimizationJob().to_dict() if self.optimization_job is None else self.optimization_job.to_dict()
         return d
 
     def update_from_dict(self, d):
@@ -122,10 +123,11 @@ class Windpark(db.Model):
                 collected_curves['power'] += curve['power']
         self.power_curve = collected_curves
 
-    def simulate_generation(self, time_span, n_samples):
+    def simulate_generation(self, time_span, n_scenarios, da_am_time_span, n_da_am_scenarios):
         if self.power_curve is None:
             self._calculate_total_power_curve()
-        _, simulated_wind = self.location.simulate_wind(time_span, n_samples)
+        _, simulated_wind = self.location.simulate_wind_2stage(time_span, n_scenarios, da_am_time_span,
+                                                               n_da_am_scenarios)
         simulated_wind = np.array(simulated_wind) / 3.6
         # simulated_wind = [x / 3.6 for x in simulated_wind]  # km/h to m/s
         simulated_power = np.interp(simulated_wind, self.power_curve['wind_speed'], self.power_curve['power']) / 1000.0

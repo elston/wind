@@ -9,6 +9,8 @@ import numpy as np
 from sqlalchemy.orm import relationship
 
 
+
+
 # from rpy2.robjects.packages import importr
 import rpy2.robjects as ro
 from rpy2.robjects import numpy2ri
@@ -134,7 +136,9 @@ class Market(db.Model):
             writer.writerow([getattr(prices, name) for name in fields])
         return csv_file.getvalue()
 
-    def simulate_prices(self, simulation_start_hour, time_span, n_samples):
+    def simulate_prices(self, simulation_start_hour, time_span, n_da_price_scenarios, n_da_am_price_scenarios,
+                        n_adj_price_scenarios):
+
         if self.lambdaD_model is None or self.MAvsMD_model is None or self.sqrt_r_model is None:
             raise Exception('Unable to simulate prices without model')
 
@@ -199,14 +203,17 @@ class Market(db.Model):
         # simulated_MAvsMD_s = []
         # simulated_sqrt_r_s = []
 
-        simulated_lambdaD = ro.r('arima.condsim(lambdaD.model, lambdaD.seed, %d, %d)' % (time_span * 3, n_samples))
+        simulated_lambdaD = ro.r(
+            'arima.condsim(lambdaD.model, lambdaD.seed, %d, %d)' % (time_span * 3, n_da_price_scenarios))
         simulated_lambdaD = numpy2ri.ri2py(simulated_lambdaD).transpose()[:, :time_span]
         simulated_lambdaD = np.exp(simulated_lambdaD)
 
-        simulated_MAvsMD = ro.r('arima.condsim(MAvsMD.model, MAvsMD.seed, %d, %d)' % (time_span * 3, n_samples))
+        simulated_MAvsMD = ro.r(
+            'arima.condsim(MAvsMD.model, MAvsMD.seed, %d, %d)' % (time_span * 3, n_da_am_price_scenarios))
         simulated_MAvsMD = numpy2ri.ri2py(simulated_MAvsMD).transpose()[:, :time_span]
 
-        simulated_sqrt_r = ro.r('arima.condsim(sqrt.r.model, sqrt.r.seed, %d, %d)' % (time_span * 3, n_samples))
+        simulated_sqrt_r = ro.r(
+            'arima.condsim(sqrt.r.model, sqrt.r.seed, %d, %d)' % (time_span * 3, n_adj_price_scenarios))
         simulated_sqrt_r = numpy2ri.ri2py(simulated_sqrt_r).transpose()[:, :time_span]
 
         # for sample_num in xrange(n_samples):

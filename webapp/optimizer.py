@@ -31,7 +31,8 @@ class Optimizer(object):
             self.finish_refit_market()
 
         self.start_scenarios_generation()
-        _, PD = self.windpark.simulate_generation(time_span=job.time_span, n_samples=job.n_wind_scenarios)
+        _, PD = self.windpark.simulate_generation(time_span=job.time_span, n_scenarios=job.n_wind_scenarios,
+                                                  da_am_time_span=12, n_da_am_scenarion=job.n_da_am_wind_scenarios)
         PD_red, PD_prob = reduce_scenarios(PD, np.ones(job.n_wind_scenarios) / job.n_wind_scenarios,
                                            job.n_redc_wind_scenarios)
 

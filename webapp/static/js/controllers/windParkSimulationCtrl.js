@@ -6,9 +6,18 @@ app.controller('WindParkSimulationCtrl', ['$scope', '$timeout', 'windparkService
 
         $scope.status = {isDetailsOpen: false};
         $scope.timeSpan = 24;
-        $scope.nSamples = 100;
-        $scope.nReducedSamples = 10;
+        $scope.nScenarios = 15;
+        $scope.nReducedScenarios = 5;
+        $scope.nDaAmScenarios = 15;
+        $scope.nDaAmReducedScenarios = 2;
         $scope.dayStart = 22;
+
+        $scope.nDaPriceScenarios = 100;
+        $scope.nDaAmPriceScenarios = 100;
+        $scope.nAdjPriceScenarios = 100;
+        $scope.nDaRedcPriceScenarios = 5;
+        $scope.nDaAmRedcPriceScenarios = 5;
+        $scope.nAdjRedcPriceScenarios = 5;
 
         $scope.showDetails = function () {
         };
@@ -70,8 +79,8 @@ app.controller('WindParkSimulationCtrl', ['$scope', '$timeout', 'windparkService
         };
 
         $scope.updateWindSimulation = function () {
-            windparkService.getWindSimulation($scope.windpark.id, $scope.timeSpan, $scope.nSamples,
-                $scope.nReducedSamples)
+            windparkService.getWindSimulation($scope.windpark.id, $scope.timeSpan, $scope.nScenarios,
+                $scope.nReducedScenarios, $scope.nDaAmScenarios, $scope.nDaAmReducedScenarios)
                 .then(function (data) {
                         var wind_series = [];
                         data.wind_speed.forEach(function (sample) {
@@ -245,8 +254,10 @@ app.controller('WindParkSimulationCtrl', ['$scope', '$timeout', 'windparkService
         };
 
         $scope.updateMarketSimulation = function () {
-            windparkService.getMarketSimulation($scope.windpark.id, $scope.dayStart, $scope.timeSpan, $scope.nSamples,
-                $scope.nReducedSamples)
+            windparkService.getMarketSimulation($scope.windpark.id, $scope.dayStart, $scope.timeSpan,
+            $scope.nDaPriceScenarios, $scope.nDaRedcPriceScenarios,
+            $scope.nDaAmPriceScenarios, $scope.nDaAmRedcPriceScenarios,
+            $scope.nAdjPriceScenarios, $scope.nAdjRedcPriceScenarios)
                 .then(function (data) {
                         var lambdaD_series = [];
                         data.lambdaD.forEach(function (sample) {

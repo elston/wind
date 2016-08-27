@@ -316,13 +316,72 @@ def get_wind_simulation(wpark_id):
         windpark = db.session.query(Windpark).filter_by(id=wpark_id).first()
 
         time_span = int(request.values.get('time_span'))
-        n_samples = int(request.values.get('n_samples'))
-        n_reduced_samples = int(request.values.get('n_reduced_samples'))
+        n_scenarios = int(request.values.get('n_scenarios'))
+        n_reduced_scenarios = int(request.values.get('n_reduced_scenarios'))
+        n_da_am_scenarios = int(request.values.get('n_da_am_scenarios'))
+        n_da_am_reduced_scenarios = int(request.values.get('n_da_am_reduced_scenarios'))
 
-        simulated_wind, simulated_power = windpark.simulate_generation(time_span, n_samples)
-        red_sim_wind, wind_probs = reduce_scenarios(simulated_wind, np.ones(n_samples) / n_samples, n_reduced_samples)
-        red_sim_power, power_probs = reduce_scenarios(simulated_power, np.ones(n_samples) / n_samples,
-                                                      n_reduced_samples)
+        simulated_wind, simulated_power = windpark.simulate_generation(time_span, n_scenarios, 12, n_da_am_scenarios)
+
+        da_am_wind_scenarios = simulated_wind[:, 0, :12]
+
+        red_sim_da_am_wind, da_am_wind_probs, da_am_idxs = reduce_scenarios(da_am_wind_scenarios,
+                                                                            np.ones(da_am_wind_scenarios.shape[0]) /
+                                                                            da_am_wind_scenarios.shape[0],
+                                                                            n_da_am_reduced_scenarios)
+
+        red_sim_wind_s = []
+        wind_probs_s = []
+        for da_am_red_wind_scenario_idx in xrange(n_da_am_reduced_scenarios):
+            da_am_scenario_idx = da_am_idxs[da_am_red_wind_scenario_idx]
+            wind_scenarios = simulated_wind[da_am_scenario_idx, :, 12:]
+            red_wind_scenarios, wind_probs, _ = reduce_scenarios(wind_scenarios,
+                                                                 np.ones(wind_scenarios.shape[0]) /
+                                                                 wind_scenarios.shape[0],
+                                                                 n_reduced_scenarios)
+            da_am_wind = da_am_wind_scenarios[da_am_scenario_idx, :]
+            x = np.tile(da_am_wind, (red_wind_scenarios.shape[0], 1))
+            red_wind_scenarios = np.concatenate((x, red_wind_scenarios), axis=1)
+            wind_probs *= da_am_wind_probs[da_am_red_wind_scenario_idx]
+            red_sim_wind_s.append(red_wind_scenarios)
+            wind_probs_s.append(wind_probs)
+        red_sim_wind = np.array(red_sim_wind_s)
+        red_sim_wind = red_sim_wind.reshape(red_sim_wind.shape[0] * red_sim_wind.shape[1], red_sim_wind.shape[2])
+        wind_probs = np.array(wind_probs_s)
+        wind_probs = wind_probs.reshape(wind_probs.shape[0] * wind_probs.shape[1])
+
+        da_am_power_scenarios = simulated_power[:, 0, :12]
+
+        red_sim_da_am_power, da_am_power_probs, da_am_idxs = reduce_scenarios(da_am_power_scenarios,
+                                                                              np.ones(da_am_power_scenarios.shape[0]) /
+                                                                              da_am_power_scenarios.shape[0],
+                                                                              n_da_am_reduced_scenarios)
+
+        red_sim_power_s = []
+        power_probs_s = []
+        for da_am_red_power_scenario_idx in xrange(n_da_am_reduced_scenarios):
+            da_am_scenario_idx = da_am_idxs[da_am_red_power_scenario_idx]
+            power_scenarios = simulated_power[da_am_scenario_idx, :, 12:]
+            red_power_scenarios, power_probs, _ = reduce_scenarios(power_scenarios,
+                                                                   np.ones(power_scenarios.shape[0]) /
+                                                                   power_scenarios.shape[0],
+                                                                   n_reduced_scenarios)
+            da_am_power = da_am_power_scenarios[da_am_scenario_idx, :]
+            x = np.tile(da_am_power, (red_power_scenarios.shape[0], 1))
+            red_power_scenarios = np.concatenate((x, red_power_scenarios), axis=1)
+            power_probs *= da_am_power_probs[da_am_red_power_scenario_idx]
+            red_sim_power_s.append(red_power_scenarios)
+            power_probs_s.append(power_probs)
+        red_sim_power = np.array(red_sim_power_s)
+        red_sim_power = red_sim_power.reshape(red_sim_power.shape[0] * red_sim_power.shape[1], red_sim_power.shape[2])
+        power_probs = np.array(power_probs_s)
+        power_probs = power_probs.reshape(power_probs.shape[0] * power_probs.shape[1])
+
+        simulated_wind = simulated_wind.reshape(simulated_wind.shape[0] * simulated_wind.shape[1],
+                                                simulated_wind.shape[2])
+
+        simulated_power = simulated_power.reshape(simulated_power.shape[0] * simulated_power.shape[1],
+                                                  simulated_power.shape[2])
 
         js = jsonify({'data': {'wind_speed': simulated_wind.tolist(),
                                'power': simulated_power.tolist(),
@@ -346,21 +405,27 @@ def get_market_simulation(wpark_id):
 
         day_start = int(request.values.get('day_start'))
         time_span = int(request.values.get('time_span'))
-        n_samples = int(request.values.get('n_samples'))
-        n_reduced_samples = int(request.values.get('n_reduced_samples'))
+        n_da_price_scenarios = int(request.values.get('n_da_price_scenarios'))
+        n_da_redc_price_scenarios = int(request.values.get('n_da_redc_price_scenarios'))
+        n_da_am_price_scenarios = int(request.values.get('n_da_am_price_scenarios'))
+        n_da_am_redc_price_scenarios = int(request.values.get('n_da_am_redc_price_scenarios'))
+        n_adj_price_scenarios = int(request.values.get('n_adj_price_scenarios'))
+        n_adj_redc_price_scenarios = int(request.values.get('n_adj_redc_price_scenarios'))
 
         simulated_lambdaD, simulated_MAvsMD, simulated_sqrt_r = windpark.market.simulate_prices(day_start,
                                                                                                 time_span,
-                                                                                                n_samples)
-        red_sim_lambdaD, lambdaD_probs = reduce_scenarios(simulated_lambdaD,
-                                                          np.ones(n_samples) / n_samples,
-                                                          n_reduced_samples)
-        red_sim_MAvsMD, MAvsMD_probs = reduce_scenarios(simulated_MAvsMD,
-                                                        np.ones(n_samples) / n_samples,
-                                                        n_reduced_samples)
-        red_sim_sqrt_r, sqrt_r_probs = reduce_scenarios(simulated_sqrt_r,
-                                                        np.ones(n_samples) / n_samples,
-                                                        n_reduced_samples)
+                                                                                                n_da_price_scenarios,
+                                                                                                n_da_am_price_scenarios,
+                                                                                                n_adj_price_scenarios)
+        red_sim_lambdaD, lambdaD_probs, _ = reduce_scenarios(simulated_lambdaD,
+                                                          np.ones(n_da_price_scenarios) / n_da_price_scenarios,
+                                                          n_da_redc_price_scenarios)
+        red_sim_MAvsMD, MAvsMD_probs, _ = reduce_scenarios(simulated_MAvsMD,
+                                                        np.ones(n_da_am_price_scenarios) / n_da_am_price_scenarios,
+                                                        n_da_am_redc_price_scenarios)
+        red_sim_sqrt_r, sqrt_r_probs, _ = reduce_scenarios(simulated_sqrt_r,
+                                                        np.ones(n_adj_price_scenarios) / n_adj_price_scenarios,
+                                                        n_adj_redc_price_scenarios)
 
         js = jsonify({'data': {'lambdaD': simulated_lambdaD,
                                'MAvsMD': simulated_MAvsMD,
