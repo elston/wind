@@ -410,6 +410,22 @@
                                            class="form-control" required>
                                 </div>
 
+                                <label class="col-xs-2 control-label"># DA-AM wind scenarios: </label>
+
+                                <div class="col-xs-2">
+                                    <input type="number" ng-model="windpark.optimization_job.n_da_am_wind_scenarios"
+                                           class="form-control" required>
+                                </div>
+                                <label class="col-xs-2 control-label"># reduced DA-AM wind scenarios: </label>
+
+                                <div class="col-xs-2">
+                                    <input type="number" ng-model="windpark.optimization_job.n_redc_da_am_wind_scenarios"
+                                           class="form-control" required>
+                                </div>
+
+                            </div>
+
+                            <div class="form-group form-group-sm">
                                 <label class="col-xs-2 control-label"># DA price scenarios: </label>
 
                                 <div class="col-xs-2">
@@ -424,9 +440,6 @@
                                            class="form-control"
                                            required>
                                 </div>
-                            </div>
-
-                            <div class="form-group form-group-sm">
                                 <label class="col-xs-2 control-label"># MAvsMD scenarios: </label>
 
                                 <div class="col-xs-2">
@@ -434,6 +447,9 @@
                                            class="form-control" required>
                                 </div>
 
+                            </div>
+
+                            <div class="form-group form-group-sm">
                                 <label class="col-xs-2 control-label"># reduced MAvsMD scenarios: </label>
 
                                 <div class="col-xs-2">
@@ -448,9 +464,6 @@
                                            class="form-control" required>
                                 </div>
 
-                            </div>
-
-                            <div class="form-group form-group-sm">
                                 <label class="col-xs-2 control-label"># reduced imbalance scenarios: </label>
 
                                 <div class="col-xs-2">
@@ -458,6 +471,9 @@
                                            class="form-control"
                                            required>
                                 </div>
+                            </div>
+
+                            <div class="form-group form-group-sm">
                                 <label class="col-xs-2 control-label">Market start hour: </label>
 
                                 <div class="col-xs-2">
@@ -472,15 +488,15 @@
                                            class="form-control" required>
                                 </div>
 
-                            </div>
-
-                            <div class="form-group form-group-sm">
                                 <label class="col-xs-2 control-label">Maximum power, MW: </label>
 
                                 <div class="col-xs-2">
                                     <input type="number" ng-model="windpark.optimization_job.Pmax" class="form-control"
                                            required>
                                 </div>
+                            </div>
+
+                            <div class="form-group form-group-sm">
                                 <label class="col-xs-2 control-label">alpha: </label>
 
                                 <div class="col-xs-2">

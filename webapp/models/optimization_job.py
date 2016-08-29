@@ -1,6 +1,5 @@
 from datetime import date, datetime
 import json
-import flask
 
 from sqlalchemy import TypeDecorator, VARCHAR
 
@@ -15,8 +14,10 @@ class OptimizationJob(TypeDecorator):
         super(OptimizationJob, self).__init__(*args, **kwargs)
         self.refit_weather = False
         self.refit_market = False
-        self.n_wind_scenarios = 100
-        self.n_redc_wind_scenarios = 4
+        self.n_da_am_wind_scenarios = 10
+        self.n_redc_da_am_wind_scenarios = 3
+        self.n_wind_scenarios = 10
+        self.n_redc_wind_scenarios = 3
         self.n_lambdaD_scenarios = 100
         self.n_redc_lambdaD_scenarios = 4
         self.n_MAvsMD_scenarios = 100
@@ -59,6 +60,8 @@ class OptimizationJob(TypeDecorator):
     def to_dict(self):
         return dict(refit_weather=self.refit_weather, refit_market=self.refit_market,
                     n_wind_scenarios=self.n_wind_scenarios, n_redc_wind_scenarios=self.n_redc_wind_scenarios,
+                    n_da_am_wind_scenarios=self.n_da_am_wind_scenarios,
+                    n_redc_da_am_wind_scenarios=self.n_redc_da_am_wind_scenarios,
                     n_lambdaD_scenarios=self.n_lambdaD_scenarios,
                     n_redc_lambdaD_scenarios=self.n_redc_lambdaD_scenarios,
                     n_MAvsMD_scenarios=self.n_MAvsMD_scenarios, n_redc_MAvsMD_scenarios=self.n_redc_MAvsMD_scenarios,

@@ -311,18 +311,18 @@ class Location(db.Model):
                         )
         logging.debug(long_command)
         ro.r(long_command)
-        seed = np.ones(10) * self.wind_model.coef['intercept']
+        seed = np.ones(2) * self.wind_model.coef['intercept']
         ro.r.assign('wind.seed.da.am', numpy2ri.numpy2ri(seed))
 
         simulated_z_da_am = ro.r(
-            'arima.condsim(wind.model, wind.seed.da.am, %d, %d)' % (da_am_time_span * 3, n_da_am_scenarios))
+            'arima.condsim(wind.model, wind.seed.da.am, %d, %d)' % (da_am_time_span + 1, n_da_am_scenarios))
         simulated_z_da_am = numpy2ri.ri2py(simulated_z_da_am).transpose()[:, :da_am_time_span]
 
         simulated_zs = []
 
         for da_am_z in simulated_z_da_am:
             ro.r.assign('wind.seed', numpy2ri.numpy2ri(da_am_z))
-            simulated_z = ro.r('arima.condsim(wind.model, wind.seed, %d, %d)' % (time_span * 3, n_scenarios))
+            simulated_z = ro.r('arima.condsim(wind.model, wind.seed, %d, %d)' % (time_span + 1, n_scenarios))
             simulated_z = numpy2ri.ri2py(simulated_z).transpose()[:, :time_span]
             x = np.tile(da_am_z, (simulated_z.shape[0], 1))
             simulated_z = np.concatenate((x, simulated_z), axis=1)

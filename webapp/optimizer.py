@@ -31,23 +31,51 @@ class Optimizer(object):
             self.finish_refit_market()
 
         self.start_scenarios_generation()
-        _, PD = self.windpark.simulate_generation(time_span=job.time_span, n_scenarios=job.n_wind_scenarios,
-                                                  da_am_time_span=12, n_da_am_scenarion=job.n_da_am_wind_scenarios)
-        PD_red, PD_prob = reduce_scenarios(PD, np.ones(job.n_wind_scenarios) / job.n_wind_scenarios,
-                                           job.n_redc_wind_scenarios)
+
+        _, simulated_power = self.windpark.simulate_generation(time_span=job.time_span,
+                                                               n_scenarios=job.n_wind_scenarios,
+                                                               da_am_time_span=12,
+                                                               n_da_am_scenarios=job.n_da_am_wind_scenarios)
+
+        da_am_power_scenarios = simulated_power[:, 0, :12]
+
+        red_sim_da_am_power, da_am_power_probs, da_am_idxs = reduce_scenarios(da_am_power_scenarios,
+                                                                              np.ones(da_am_power_scenarios.shape[0]) /
+                                                                              da_am_power_scenarios.shape[0],
+                                                                              job.n_redc_da_am_wind_scenarios)
+
+        red_sim_power_s = []
+        power_probs_s = []
+        for da_am_red_power_scenario_idx in xrange(job.n_redc_da_am_wind_scenarios):
+            da_am_scenario_idx = da_am_idxs[da_am_red_power_scenario_idx]
+            power_scenarios = simulated_power[da_am_scenario_idx, :, 12:]
+            red_power_scenarios, power_probs, _ = reduce_scenarios(power_scenarios,
+                                                                   np.ones(power_scenarios.shape[0]) /
+                                                                   power_scenarios.shape[0],
+                                                                   job.n_redc_wind_scenarios)
+            da_am_power = da_am_power_scenarios[da_am_scenario_idx, :]
+            x = np.tile(da_am_power, (red_power_scenarios.shape[0], 1))
+            red_power_scenarios = np.concatenate((x, red_power_scenarios), axis=1)
+            power_probs *= da_am_power_probs[da_am_red_power_scenario_idx]
+            red_sim_power_s.append(red_power_scenarios)
+            power_probs_s.append(power_probs)
+        red_sim_power = np.array(red_sim_power_s)
+        power_probs = np.array(power_probs_s)
 
         lambdaD, MAvsMD, sqrt_r = self.windpark.simulate_market(date=job.date, time_span=job.time_span,
-                                                                n_samples=job.n_wind_scenarios)  # TODO: wrong. we need separate n
-        lambdaD_red, lambdaD_prob = reduce_scenarios(lambdaD,
-                                                     np.ones(job.n_lambdaD_scenarios) / job.n_lambdaD_scenarios,
-                                                     job.n_redc_lambdaD_scenarios)
-        MAvsMD_red, MAvsMD_prob = reduce_scenarios(MAvsMD, np.ones(job.n_MAvsMD_scenarios) / job.n_MAvsMD_scenarios,
-                                                   job.n_redc_MAvsMD_scenarios)
-        sqrt_r_red, sqrt_r_prob = reduce_scenarios(sqrt_r, np.ones(job.n_sqrt_r_scenarios) / job.n_sqrt_r_scenarios,
-                                                   job.n_redc_sqrt_r_scenarios)
+                                                                n_lambdaD_scenarios=job.n_lambdaD_scenarios,
+                                                                n_MAvsMD_scenarios=job.n_MAvsMD_scenarios,
+                                                                n_sqrt_r_scenarios=job.n_sqrt_r_scenarios)
+        lambdaD_red, lambdaD_prob, _ = reduce_scenarios(lambdaD,
+                                                        np.ones(job.n_lambdaD_scenarios) / job.n_lambdaD_scenarios,
+                                                        job.n_redc_lambdaD_scenarios)
+        MAvsMD_red, MAvsMD_prob, _ = reduce_scenarios(MAvsMD, np.ones(job.n_MAvsMD_scenarios) / job.n_MAvsMD_scenarios,
+                                                      job.n_redc_MAvsMD_scenarios)
+        sqrt_r_red, sqrt_r_prob, _ = reduce_scenarios(sqrt_r, np.ones(job.n_sqrt_r_scenarios) / job.n_sqrt_r_scenarios,
+                                                      job.n_redc_sqrt_r_scenarios)
 
         D = job.n_redc_lambdaD_scenarios
-        L = 1  # do not use 2-stage wind simulation (chapter 6.4.2) (temporarily)
+        L = job.n_redc_da_am_wind_scenarios
         A = job.n_redc_MAvsMD_scenarios
         W = job.n_redc_wind_scenarios
         K = job.n_redc_sqrt_r_scenarios
@@ -59,7 +87,7 @@ class Optimizer(object):
                 for a in xrange(A):
                     for w in xrange(W):
                         for k in xrange(K):
-                            pi[d, l, a, w, k] = lambdaD_prob[d] * 1 * MAvsMD_prob[a] * PD_prob[w] * sqrt_r_prob[k]
+                            pi[d, l, a, w, k] = lambdaD_prob[d] * MAvsMD_prob[a] * power_probs[l][w] * sqrt_r_prob[k]
         r = np.power(sqrt_r_red, 2)
         r_pos = np.minimum(r, 1)
         r_neg = np.maximum(r, 1)
@@ -69,7 +97,7 @@ class Optimizer(object):
                     Pmax=job.Pmax,
                     alfa=job.alpha,
                     beta=job.beta,
-                    P=PD_red.reshape(1, W, NT),
+                    P=red_sim_power[:, :, 12:],
                     lambdaD=lambdaD_red,
                     MAvsMD=MAvsMD_red,
                     r_pos=r_pos,

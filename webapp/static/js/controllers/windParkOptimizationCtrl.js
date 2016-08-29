@@ -50,7 +50,7 @@ app.controller('WindParkOptimizationCtrl', ['$scope', '$interval', '$timeout', '
                 for (j = 0; j < data.Pa[i].length; j++) {
                     Pa_series.push({
                         data: data.Pa[i][j],
-                        name: 'd' + i + ',l' + j
+                        name: 'l' + j + ',d' + i
                     });
                 }
             }
@@ -70,7 +70,7 @@ app.controller('WindParkOptimizationCtrl', ['$scope', '$interval', '$timeout', '
                         chart: {
                             renderTo: 'da-volumes',
                             animation: false,
-                            type: 'column'
+//                            type: 'column'
                         },
                         title: {
                             text: 'Day ahead volumes'
@@ -98,7 +98,7 @@ app.controller('WindParkOptimizationCtrl', ['$scope', '$interval', '$timeout', '
                         chart: {
                             renderTo: 'am-volumes',
                             animation: false,
-                            type: 'column'
+//                            type: 'column'
                         },
                         title: {
                             text: 'Adjustment market volumes'
@@ -126,7 +126,7 @@ app.controller('WindParkOptimizationCtrl', ['$scope', '$interval', '$timeout', '
                         chart: {
                             renderTo: 'total-volumes',
                             animation: false,
-                            type: 'column'
+//                            type: 'column'
                         },
                         title: {
                             text: 'Total volumes'
@@ -194,6 +194,12 @@ app.controller('WindParkOptimizationCtrl', ['$scope', '$interval', '$timeout', '
 
         refreshOptimizationResults();
         refresh();
+
+        if (!angular.isDefined(stopRefresh)) {
+            stopRefresh = $interval(function () {
+                refresh();
+            }, 2000);
+        }
 
         $scope.$on('$destroy', function () {
             if (angular.isDefined(stopRefresh)) {

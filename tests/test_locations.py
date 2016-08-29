@@ -267,13 +267,13 @@ class LocationsTestCase(unittest.TestCase):
         da_am_time_span = 12
 
         simulated_z, simulated_wind = test_location.simulate_wind_2stage(time_span=time_span, n_scenarios=n_scenarios,
-                                                                  da_am_time_span=da_am_time_span,
-                                                                  n_da_am_scenarios=n_da_am_scenarios)
+                                                                         da_am_time_span=da_am_time_span,
+                                                                         n_da_am_scenarios=n_da_am_scenarios)
 
         simulated_z_np = np.array(simulated_z)
 
         # check size
-        self.assertEqual(simulated_z_np.shape, (n_scenarios, n_da_am_scenarios, time_span))
+        self.assertEqual(simulated_z_np.shape, (n_scenarios, n_da_am_scenarios, time_span + da_am_time_span))
 
         # check if distribution parameters differ from expected not more than 10%
         mean, sigma = stats.norm.fit(simulated_z_np.flatten())
@@ -303,6 +303,7 @@ class LocationsTestCase(unittest.TestCase):
         self.assertEqual(test_location.l, '/q/zmw:00000.1.10400')
         self.assertEqual(test_location.city, 'Duesseldorf')
         self.assertEqual(test_location.tz_short, 'CEST')
+
 
 if __name__ == '__main__':
     unittest.main()
