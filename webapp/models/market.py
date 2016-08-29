@@ -230,4 +230,4 @@ class Market(db.Model):
         #     simulated_sqrt_r = numpy2ri.ri2py(simulated_sqrt_r)
         #     simulated_sqrt_r_s.append(list(simulated_sqrt_r))
 
-        return simulated_lambdaD.tolist(), simulated_MAvsMD.tolist(), simulated_sqrt_r.tolist()
+        return simulated_lambdaD, simulated_MAvsMD, simulated_sqrt_r
