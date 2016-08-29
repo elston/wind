@@ -179,14 +179,15 @@ class WindparksTestCase(unittest.TestCase):
         self.session.commit()
 
         time_span = 24
-        n_samples = 100
-        simulated_generation = test_windpark.simulate_generation(time_span, n_samples)
+        n_scenarios = 10
+        n_da_am_scenarios = 10
+        simulated_generation = test_windpark.simulate_generation(time_span, n_scenarios, 12, n_da_am_scenarios)
         print simulated_generation
 
         simulated_generation_np = np.array(simulated_generation)
 
         # check size
-        self.assertEqual(simulated_generation_np.shape, (2, n_samples, time_span))
+        self.assertEqual(simulated_generation_np.shape, (2, n_da_am_scenarios, n_scenarios, 12 + time_span))
 
     def test_simulate_market(self):
         test_windpark = Windpark(user_id=user_id, name=test_name, data_source='turbines')
@@ -220,14 +221,20 @@ class WindparksTestCase(unittest.TestCase):
         self.session.commit()
 
         time_span = 24
-        n_samples = 100
-        simulated_market = test_windpark.simulate_market(date.today(), time_span, n_samples)
+        n_lambdaD_scenarios = 3
+        n_MAvsMD_scenarios = 3
+        n_sqrt_r_scenarios = 3
+        simulated_market = test_windpark.simulate_market(date.today(), time_span,
+                                                         n_lambdaD_scenarios,
+                                                         n_MAvsMD_scenarios,
+                                                         n_sqrt_r_scenarios)
         print simulated_market
 
         simulated_market_np = np.array(simulated_market)
 
         # check size
-        self.assertEqual(simulated_market_np.shape, (3, n_samples, time_span))
+        self.assertEqual(simulated_market_np.shape, (3, n_lambdaD_scenarios, time_span))
+
 
 if __name__ == '__main__':
     unittest.main()

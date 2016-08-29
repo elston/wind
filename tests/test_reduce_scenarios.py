@@ -20,7 +20,7 @@ class ReduceTestCase(unittest.TestCase):
                                                     [95., 60., 40., 0.]])
 
     def test_reduce(self):
-        new_scenarios, new_probabilities = reduce_scenarios(self.scenarios, self.probabilities, 2)
+        new_scenarios, new_probabilities, idxs = reduce_scenarios(self.scenarios, self.probabilities, 2)
 
         self.assertEqual(new_scenarios.shape, (2, 1))
         self.assertAlmostEqual(new_scenarios[0][0], 60.0)
@@ -28,11 +28,14 @@ class ReduceTestCase(unittest.TestCase):
         self.assertEqual(new_probabilities.shape, (2,))
         self.assertAlmostEqual(new_probabilities[0], 0.65)
         self.assertAlmostEqual(new_probabilities[1], 0.35)
+        self.assertEqual(len(idxs), 2)
+        self.assertEqual(idxs[0], 2)
+        self.assertEqual(idxs[1], 3)
 
     def test_reduce_big(self):
         n_scenarios = 1000
         n_new_scenarios = 30
-        new_scenarios, new_probabilities = reduce_scenarios(np.random.rand(n_scenarios, 24),
+        new_scenarios, new_probabilities, idxs = reduce_scenarios(np.random.rand(n_scenarios, 24),
                                                             np.ones(n_scenarios) / n_scenarios,
                                                             n_new_scenarios)
 

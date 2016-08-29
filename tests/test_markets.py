@@ -428,25 +428,30 @@ class MarketsTestCase(unittest.TestCase):
         print test_market.sqrt_r_model.to_dict()
 
         time_span = 24
-        n_samples = 3
+        n_lambdaD_scenarios = 3
+        n_MAvsMD_scenarios = 4
+        n_sqrt_r_scenarios = 5
         start_hour = 22
 
-        simulated_lambdaD, simulated_MAvsMD, simulated_sqrt_r = test_market.simulate_prices(start_hour, time_span, n_samples)
+        simulated_lambdaD, simulated_MAvsMD, simulated_sqrt_r = test_market.simulate_prices(start_hour, time_span,
+                                                                                            n_lambdaD_scenarios,
+                                                                                            n_MAvsMD_scenarios,
+                                                                                            n_sqrt_r_scenarios)
 
         print simulated_lambdaD
         simulated_lambdaD_np = np.array(simulated_lambdaD)
         # check size
-        self.assertEqual(simulated_lambdaD_np.shape, (n_samples, time_span))
+        self.assertEqual(simulated_lambdaD_np.shape, (n_lambdaD_scenarios, time_span))
 
         print simulated_MAvsMD
         simulated_MAvsMD_np = np.array(simulated_MAvsMD)
         # check size
-        self.assertEqual(simulated_MAvsMD_np.shape, (n_samples, time_span))
+        self.assertEqual(simulated_MAvsMD_np.shape, (n_MAvsMD_scenarios, time_span))
 
         print simulated_sqrt_r
         simulated_sqrt_r_np = np.array(simulated_sqrt_r)
         # check size
-        self.assertEqual(simulated_sqrt_r_np.shape, (n_samples, time_span))
+        self.assertEqual(simulated_sqrt_r_np.shape, (n_sqrt_r_scenarios, time_span))
 
 
 if __name__ == '__main__':
