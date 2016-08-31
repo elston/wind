@@ -430,9 +430,9 @@ def get_market_simulation(wpark_id):
                                                            np.ones(n_adj_price_scenarios) / n_adj_price_scenarios,
                                                            n_adj_redc_price_scenarios)
 
-        js = jsonify({'data': {'lambdaD': simulated_lambdaD,
-                               'MAvsMD': simulated_MAvsMD,
-                               'sqrt_r': simulated_sqrt_r,
+        js = jsonify({'data': {'lambdaD': simulated_lambdaD.tolist(),
+                               'MAvsMD': simulated_MAvsMD.tolist(),
+                               'sqrt_r': simulated_sqrt_r.tolist(),
                                'reduced_lambdaD': red_sim_lambdaD.tolist(),
                                'reduced_MAvsMD': red_sim_MAvsMD.tolist(),
                                'reduced_sqrt_r': red_sim_sqrt_r.tolist(),
