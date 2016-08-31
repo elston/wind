@@ -27,6 +27,11 @@ app.controller('MarketDataCtrl', ['$scope', '$uibModalInstance', 'entity', 'mark
             marketService.getSummary(entity.id)
                 .then(function (result) {
                         $scope.summary = result;
+                        $scope.summary.selectedDataPlot = 'off';
+                        $scope.summary.selectedAnalyticPlot = {};
+                        $scope.modelsMetadata.forEach(function (elem) {
+                            $scope.summary.selectedAnalyticPlot[elem[0]] = 'off';
+                        });
                     },
                     function (error) {
                         alertify.error(error);
@@ -96,6 +101,17 @@ app.controller('MarketDataCtrl', ['$scope', '$uibModalInstance', 'entity', 'mark
         };
 
         $scope.plotPrediction = function (value) {
+            var pred = $scope.summary[value[0] + '_model'].pred;
+            var pred_se = $scope.summary[value[0] + '_model'].pred_se;
+            var pred_data = [];
+            var pred_data_plus_minus = [];
+            var d = new Date($scope.summary.end);
+
+            for (var i = 0; i < pred.length; i++) {
+                d.setHours(d.getHours() + 1);
+                pred_data.push([d.getTime(), pred[i]]);
+                pred_data_plus_minus.push([d.getTime(), pred[i] - pred_se[i], pred[i] + pred_se[i]]);
+            }
             $scope.chart = new Highcharts.StockChart({
                 chart: {
                     renderTo: 'plot-' + value[0] + '-pred',
@@ -112,19 +128,36 @@ app.controller('MarketDataCtrl', ['$scope', '$uibModalInstance', 'entity', 'mark
                         text: value[1]
                     }
                 }],
-                series: [{
-                    data: $scope.summary[value[0] + '_model'].pred,
-                    animation: false
-                },
+                xAxis: [{
+                    type: 'datetime'
+                }],
+                series: [
                     {
-                        data: $scope.summary[value[0] + '_model'].pred_se,
-                        animation: false
+                        data: pred_data,
+                        animation: false,
+                        zIndex: 1
+                    },
+                    {
+                        data: pred_data_plus_minus,
+                        animation: false,
+                        type: 'arearange',
+                        lineWidth: 0,
+                        zIndex: 0,
+                        fillOpacity: 0.3
                     }]
             });
 
         };
 
         $scope.plotResiduals = function (value) {
+            var residuals = $scope.summary[value[0] + '_model'].residuals;
+            var residuals_data = [];
+            var d = new Date($scope.summary.end);
+
+            for (var i = 0; i < residuals.length; i++) {
+                d.setHours(d.getHours() + 1);
+                residuals_data.push([d.getTime(), residuals[i]]);
+            }
             $scope.chart = new Highcharts.StockChart({
                 chart: {
                     renderTo: 'plot-' + value[0] + '-residuals',
@@ -141,8 +174,11 @@ app.controller('MarketDataCtrl', ['$scope', '$uibModalInstance', 'entity', 'mark
                         text: value[1]
                     }
                 }],
+                xAxis: [{
+                    type: 'datetime'
+                }],
                 series: [{
-                    data: $scope.summary[value[0] + '_model'].residuals,
+                    data: residuals_data,
                     animation: false
                 }]
             });
