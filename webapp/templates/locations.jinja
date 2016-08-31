@@ -5,7 +5,7 @@
 
             <div ng-controller="LocationsCtrl">
                 <div id="locations-grid" ui-grid="gridOptions" ui-grid-selection class="grid" ui-grid-auto-resize></div>
-                <div ng-if='noLocations'>
+                <div class="ng-cloak" ng-if='noLocations'>
                     <h3 align="center">No data. Use "hamburger" menu at top right corner to add location.</h3>
                 </div>
 

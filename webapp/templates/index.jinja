@@ -19,6 +19,7 @@
 <link type="text/css" href="{{ url_for('.static', filename='editablegrid/editablegrid.css') }}" rel='stylesheet'/>
 <link type="text/css" href="{{ url_for('.static', filename='css/style.css') }}" rel='stylesheet'/>
 <link href="{{ url_for('static', filename='img/favicon.png') }}" rel="shortcut icon"/>
+<script src="{{ url_for('.static', filename='bower_components/angular/angular.min.js') }}"></script>
 {% endblock styles %}
 
 {% block scripts %}
@@ -36,7 +37,6 @@
 <script src="{{ url_for('.static', filename='bower_components/highcharts/highstock.js') }}"></script>
 <script src="{{ url_for('.static', filename='bower_components/highcharts/highcharts-more.js') }}"></script>
 <script src="{{ url_for('.static', filename='bower_components/alertify-js/build/alertify.min.js') }}"></script>
-<script src="{{ url_for('.static', filename='bower_components/angular/angular.min.js') }}"></script>
 <script src="{{ url_for('.static', filename='bower_components/angular-ui-grid/ui-grid.min.js') }}"></script>
 <script src="{{ url_for('.static', filename='bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js') }}"></script>
 <script src="{{ url_for('.static', filename='bower_components/spin.js/spin.js') }}"></script>
@@ -101,7 +101,7 @@
         <li role="presentation"><a href="#admin" aria-controls="admin" role="tab" data-toggle="tab">Admin</a></li>
         {% endif %}
         {% raw %}  <!--start angular templating-->
-        <li role="presentation" ng-repeat="tab in tabs"><a href="#dyntab-{{tab.type}}-{{tab.id}}"
+        <li role="presentation" class="ng-cloak" ng-repeat="tab in tabs"><a href="#dyntab-{{tab.type}}-{{tab.id}}"
                                                            aria-controls="symbols" role="tab"
                                                            data-toggle="tab">{{tab.title}}&nbsp;
             <button type="button" class="close" aria-label="Close" ng-click="deleteTab(tab)"><span
@@ -120,7 +120,7 @@
         {% endif %}
         {% raw %}  <!--start angular templating-->
         <div role="tabpanel" class="tab-pane" ng-repeat="tab in tabs" id="dyntab-{{tab.type}}-{{tab.id}}">
-            <div ng-if="tab.type=='windpark'" ng-include="'windpark-data.html'"></div>
+            <div class="ng-cloak" ng-if="tab.type=='windpark'" ng-include="'windpark-data.html'"></div>
         </div>
         {% endraw %}  <!--return to jinja templating-->
     </div>

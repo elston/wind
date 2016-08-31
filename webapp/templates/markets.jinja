@@ -5,7 +5,7 @@
 
             <div ng-controller="MarketsCtrl">
                 <div id="markets-grid" ui-grid="gridOptions" ui-grid-selection class="grid" ui-grid-auto-resize></div>
-                <div ng-if='noMarkets'>
+                <div class="ng-cloak" ng-if='noMarkets'>
                     <h3 align="center">No data. Use "hamburger" menu at top right corner to add market.</h3>
                 </div>
             </div>
