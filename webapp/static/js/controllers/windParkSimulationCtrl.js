@@ -255,9 +255,9 @@ app.controller('WindParkSimulationCtrl', ['$scope', '$timeout', 'windparkService
 
         $scope.updateMarketSimulation = function () {
             windparkService.getMarketSimulation($scope.windpark.id, $scope.dayStart, $scope.timeSpan,
-            $scope.nDaPriceScenarios, $scope.nDaRedcPriceScenarios,
-            $scope.nDaAmPriceScenarios, $scope.nDaAmRedcPriceScenarios,
-            $scope.nAdjPriceScenarios, $scope.nAdjRedcPriceScenarios)
+                $scope.nDaPriceScenarios, $scope.nDaRedcPriceScenarios,
+                $scope.nDaAmPriceScenarios, $scope.nDaAmRedcPriceScenarios,
+                $scope.nAdjPriceScenarios, $scope.nAdjRedcPriceScenarios)
                 .then(function (data) {
                         var lambdaD_series = [];
                         data.lambdaD.forEach(function (sample) {

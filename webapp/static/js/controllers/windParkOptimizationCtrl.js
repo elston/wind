@@ -69,8 +69,7 @@ app.controller('WindParkOptimizationCtrl', ['$scope', '$interval', '$timeout', '
                     $scope.chart1 = new Highcharts.Chart({
                         chart: {
                             renderTo: 'da-volumes',
-                            animation: false,
-//                            type: 'column'
+                            animation: false
                         },
                         title: {
                             text: 'Day ahead volumes'
@@ -102,8 +101,7 @@ app.controller('WindParkOptimizationCtrl', ['$scope', '$interval', '$timeout', '
                     $scope.chart2 = new Highcharts.Chart({
                         chart: {
                             renderTo: 'am-volumes',
-                            animation: false,
-//                            type: 'column'
+                            animation: false
                         },
                         title: {
                             text: 'Adjustment market volumes'
@@ -135,8 +133,7 @@ app.controller('WindParkOptimizationCtrl', ['$scope', '$interval', '$timeout', '
                     $scope.chart3 = new Highcharts.Chart({
                         chart: {
                             renderTo: 'total-volumes',
-                            animation: false,
-//                            type: 'column'
+                            animation: false
                         },
                         title: {
                             text: 'Total volumes'
@@ -221,12 +218,12 @@ app.controller('WindParkOptimizationCtrl', ['$scope', '$interval', '$timeout', '
         };
 
         $scope.daOfferingCurveHour = {
-          value: 12,
-          options: {
-            floor: 0,
-            ceil: 23,
-            vertical: true
-          }
+            value: 12,
+            options: {
+                floor: 0,
+                ceil: 23,
+                vertical: true
+            }
         };
 
         $timeout(function () {
@@ -234,51 +231,52 @@ app.controller('WindParkOptimizationCtrl', ['$scope', '$interval', '$timeout', '
         });
 
         $scope.$watch(
-            function(scope) { return scope.daOfferingCurveHour.value },
+            function (scope) {
+                return scope.daOfferingCurveHour.value;
+            },
             function (newVal, oldVal) {
                 windparkService.getDaOfferingCurve($scope.windpark.id, newVal)
                     .then(function (data) {
-                        $timeout(function () {
-                            var chart = new Highcharts.Chart({
-                                chart: {
-                                    renderTo: 'da-offering-curve',
-                                    animation: false,
-        //                            type: 'column'
-                                },
-                                title: {
-                                    text: 'DA offering cirve'
-                                },
-                                credits: {
-                                    enabled: false
-                                },
-                                legend: {
-                                    enabled: false
-                                },
-                                plotOptions: {
-                                    line: {
+                            $timeout(function () {
+                                var chart = new Highcharts.Chart({
+                                    chart: {
+                                        renderTo: 'da-offering-curve',
                                         animation: false
                                     },
-                                    marker: {
-                                        enabled: true
-                                    }
-                                },
-                                xAxis: [{
                                     title: {
-                                        text: 'Volume, MWh'
-                                    }
-                                }],
-                                yAxis: [{
-                                    title: {
-                                        text: 'DA price, €/MWh'
-                                    }
-                                }],
-                                series: [{
+                                        text: 'DA offering cirve'
+                                    },
+                                    credits: {
+                                        enabled: false
+                                    },
+                                    legend: {
+                                        enabled: false
+                                    },
+                                    plotOptions: {
+                                        line: {
+                                            animation: false
+                                        },
+                                        marker: {
+                                            enabled: true
+                                        }
+                                    },
+                                    xAxis: [{
+                                        title: {
+                                            text: 'Volume, MWh'
+                                        }
+                                    }],
+                                    yAxis: [{
+                                        title: {
+                                            text: 'DA price, €/MWh'
+                                        }
+                                    }],
+                                    series: [{
                                         name: 'DA offering cirve',
                                         data: data,
                                         animation: false
                                     }]
+                                });
                             });
-                        });
                         },
                         function (error) {
                             alertify.error(error);
