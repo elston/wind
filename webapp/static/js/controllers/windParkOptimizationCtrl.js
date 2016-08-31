@@ -205,6 +205,72 @@ app.controller('WindParkOptimizationCtrl', ['$scope', '$interval', '$timeout', '
             windparkService.downloadOptRes($scope.windpark.id);
         };
 
+        $scope.daOfferingCurveHour = {
+          value: 12,
+          options: {
+            floor: 0,
+            ceil: 23,
+            vertical: true
+          }
+        };
+
+        $timeout(function () {
+            $scope.$broadcast('rzSliderForceRender');
+        });
+
+        $scope.$watch(
+            function(scope) { return scope.daOfferingCurveHour.value },
+            function (newVal, oldVal) {
+                windparkService.getDaOfferingCurve($scope.windpark.id, newVal)
+                    .then(function (data) {
+                        $timeout(function () {
+                            var chart = new Highcharts.Chart({
+                                chart: {
+                                    renderTo: 'da-offering-curve',
+                                    animation: false,
+        //                            type: 'column'
+                                },
+                                title: {
+                                    text: 'DA offering cirve'
+                                },
+                                credits: {
+                                    enabled: false
+                                },
+                                legend: {
+                                    enabled: false
+                                },
+                                plotOptions: {
+                                    line: {
+                                        animation: false
+                                    },
+                                    marker: {
+                                        enabled: true
+                                    }
+                                },
+                                xAxis: [{
+                                    title: {
+                                        text: 'Volume, MWh'
+                                    }
+                                }],
+                                yAxis: [{
+                                    title: {
+                                        text: 'DA price, €/MWh'
+                                    }
+                                }],
+                                series: [{
+                                        name: 'DA offering cirve',
+                                        data: data,
+                                        animation: false
+                                    }]
+                            });
+                        });
+                        },
+                        function (error) {
+                            alertify.error(error);
+                        });
+            }
+        );
+
         $scope.$on('$destroy', function () {
             if (angular.isDefined(stopRefresh)) {
                 $interval.cancel(stopRefresh);

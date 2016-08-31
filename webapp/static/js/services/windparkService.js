@@ -299,6 +299,24 @@ app.factory('windparkService', ['$http', 'Upload', function ($http, Upload) {
         location.href = $SCRIPT_ROOT + '/windparks/' + windparkId + '/optres_zip';
     };
 
+    var getDaOfferingCurve = function (windparkId, hour) {
+        return $http.get($SCRIPT_ROOT + '/windparks/' + windparkId + '/offering_curve',
+            {
+                params: {
+                    hour: hour
+                }
+            })
+            .then(function (response) {
+                    if ('error' in response.data) {
+                        throw response.data.error;
+                    } else {
+                        return response.data.data;
+                    }
+                },
+                function (error) {
+                    throw error.statusText;
+                });
+    };
 
     return {
         reload: reload,
@@ -319,7 +337,8 @@ app.factory('windparkService', ['$http', 'Upload', function ($http, Upload) {
         optimizationStatus: optimizationStatus,
         optimizationResults: optimizationResults,
         terminateOptimization: terminateOptimization,
-        downloadOptRes: downloadOptRes
+        downloadOptRes: downloadOptRes,
+        getDaOfferingCurve: getDaOfferingCurve
     };
 
 }]);

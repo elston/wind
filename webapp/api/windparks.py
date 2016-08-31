@@ -598,3 +598,28 @@ def optres_zip(wpark_id):
         logger.exception(e)
         js = jsonify({'error': repr(e)})
         return js
+
+
+@app.route('/api/windparks/<wpark_id>/offering_curve')
+def get_da_offering_curve(wpark_id):
+    if not current_user.is_authenticated:
+        return jsonify({'error': 'User unauthorized'})
+    try:
+        windpark = db.session.query(Windpark).filter_by(id=wpark_id).first()
+
+        hour = int(request.values.get('hour'))
+
+        if windpark.optimization_results is None:
+            result = None
+        else:
+            da_price_scenarios = np.array(windpark.optimization_results.input['reduced_lambdaD'])[:, hour]
+            da_volumes = np.array(windpark.optimization_results.Pd)[:, hour]
+            result = np.vstack((da_volumes, da_price_scenarios))
+            result = sorted(result.T.tolist())  # sort by x (a.k.a. volume)
+
+        js = jsonify({'data': result})
+        return js
+    except Exception, e:
+        logger.exception(e)
+        js = jsonify({'error': repr(e)})
+        return js

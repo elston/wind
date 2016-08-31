@@ -25,4 +25,4 @@
 }());
 
 var app = angular.module('app', ['ui.grid', 'ui.grid.selection', 'ui.bootstrap', 'ngLoadingSpinner',
-    'ui.grid.autoResize', 'ngFileUpload']);
+    'ui.grid.autoResize', 'ngFileUpload', 'rzModule']);
