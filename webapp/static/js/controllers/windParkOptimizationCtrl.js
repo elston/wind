@@ -88,7 +88,12 @@ app.controller('WindParkOptimizationCtrl', ['$scope', '$interval', '$timeout', '
                         },
                         yAxis: [{
                             title: {
-                                text: 'Volume'
+                                text: 'Volume, MWh'
+                            }
+                        }],
+                        xAxis: [{
+                            title: {
+                                text: 'Hour'
                             }
                         }],
                         series: Pd_series
@@ -116,7 +121,12 @@ app.controller('WindParkOptimizationCtrl', ['$scope', '$interval', '$timeout', '
                         },
                         yAxis: [{
                             title: {
-                                text: 'Volume'
+                                text: 'Volume, MWh'
+                            }
+                        }],
+                        xAxis: [{
+                            title: {
+                                text: 'Hour'
                             }
                         }],
                         series: Pa_series
@@ -144,7 +154,12 @@ app.controller('WindParkOptimizationCtrl', ['$scope', '$interval', '$timeout', '
                         },
                         yAxis: [{
                             title: {
-                                text: 'Volume'
+                                text: 'Volume, MWh'
+                            }
+                        }],
+                        xAxis: [{
+                            title: {
+                                text: 'Hour'
                             }
                         }],
                         series: Ps_series
