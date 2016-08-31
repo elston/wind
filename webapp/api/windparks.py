@@ -1,8 +1,10 @@
 import calendar
 import logging
 from datetime import datetime
+import cStringIO
+import zipfile
 
-from flask import jsonify, request
+from flask import jsonify, request, make_response
 from flask_login import current_user
 import numpy as np
 import pandas as pd
@@ -13,6 +15,7 @@ from webapp.models import Windpark, Generation, Observation
 from webapp.models.optimization_job import OptimizationJob
 from webapp.models.windpark_turbines import WindparkTurbine
 from webapp.tasks import start_windpark_optimization, windpark_optimization_status, terminate_windpark_optimization
+from werkzeug.utils import secure_filename
 
 logger = logging.getLogger(__name__)
 
@@ -418,14 +421,14 @@ def get_market_simulation(wpark_id):
                                                                                                 n_da_am_price_scenarios,
                                                                                                 n_adj_price_scenarios)
         red_sim_lambdaD, lambdaD_probs, _ = reduce_scenarios(simulated_lambdaD,
-                                                          np.ones(n_da_price_scenarios) / n_da_price_scenarios,
-                                                          n_da_redc_price_scenarios)
+                                                             np.ones(n_da_price_scenarios) / n_da_price_scenarios,
+                                                             n_da_redc_price_scenarios)
         red_sim_MAvsMD, MAvsMD_probs, _ = reduce_scenarios(simulated_MAvsMD,
-                                                        np.ones(n_da_am_price_scenarios) / n_da_am_price_scenarios,
-                                                        n_da_am_redc_price_scenarios)
+                                                           np.ones(n_da_am_price_scenarios) / n_da_am_price_scenarios,
+                                                           n_da_am_redc_price_scenarios)
         red_sim_sqrt_r, sqrt_r_probs, _ = reduce_scenarios(simulated_sqrt_r,
-                                                        np.ones(n_adj_price_scenarios) / n_adj_price_scenarios,
-                                                        n_adj_redc_price_scenarios)
+                                                           np.ones(n_adj_price_scenarios) / n_adj_price_scenarios,
+                                                           n_adj_redc_price_scenarios)
 
         js = jsonify({'data': {'lambdaD': simulated_lambdaD,
                                'MAvsMD': simulated_MAvsMD,
@@ -521,6 +524,76 @@ def terminate_optimization(wpark_id):
         terminate_windpark_optimization(int(wpark_id))
         js = jsonify({'data': 'OK'})
         return js
+    except Exception, e:
+        logger.exception(e)
+        js = jsonify({'error': repr(e)})
+        return js
+
+
+@app.route('/api/windparks/<wpark_id>/optres_zip')
+def optres_zip(wpark_id):
+    if not current_user.is_authenticated:
+        return jsonify({'error': 'User unauthorized'})
+    try:
+        windpark = db.session.query(Windpark).filter_by(id=wpark_id).first()
+
+        zip_file = cStringIO.StringIO()
+        zipf = zipfile.ZipFile(zip_file, 'w')
+
+        if windpark.optimization_job is not None:
+            input_general_csv = windpark.optimization_job.get_csv()
+            zipf.writestr('input_general.csv', input_general_csv)
+
+        if windpark.optimization_results is not None:
+            output_general_csv = windpark.optimization_results.get_general_csv()
+            zipf.writestr('output_general.csv', output_general_csv)
+
+            generation_scenarios_csv = windpark.optimization_results.get_generation_scenarios_csv()
+            zipf.writestr('generation_scenarios.csv', generation_scenarios_csv)
+
+            reduced_generation_scenarios_csv = windpark.optimization_results.get_reduced_generation_scenarios_csv()
+            zipf.writestr('reduced_generation_scenarios.csv', reduced_generation_scenarios_csv)
+
+            da_price_scenarios_csv = windpark.optimization_results.get_da_price_scenarios_csv()
+            zipf.writestr('da_price_scenarios.csv', da_price_scenarios_csv)
+
+            reduced_da_price_scenarios_csv = windpark.optimization_results.get_reduced_da_price_scenarios_csv()
+            zipf.writestr('reduced_da_price_scenarios.csv', reduced_da_price_scenarios_csv)
+
+            da_am_diff_scenarios_csv = windpark.optimization_results.get_da_am_diff_scenarios_csv()
+            zipf.writestr('da_am_diff_scenarios.csv', da_am_diff_scenarios_csv)
+
+            reduced_da_am_diff_scenarios_csv = windpark.optimization_results.get_reduced_da_am_diff_scenarios_csv()
+            zipf.writestr('reduced_da_am_diff_scenarios.csv', reduced_da_am_diff_scenarios_csv)
+
+            imbalance_scenarios_csv = windpark.optimization_results.get_imbalance_scenarios_csv()
+            zipf.writestr('imbalance_scenarios.csv', imbalance_scenarios_csv)
+
+            reduced_imbalance_scenarios_csv = windpark.optimization_results.get_reduced_imbalance_scenarios_csv()
+            zipf.writestr('reduced_imbalance_scenarios.csv', reduced_imbalance_scenarios_csv)
+
+            da_volumes_csv = windpark.optimization_results.get_da_volumes_csv()
+            zipf.writestr('da_volumes.csv', da_volumes_csv)
+
+            am_volumes_csv = windpark.optimization_results.get_am_volumes_csv()
+            zipf.writestr('am_volumes.csv', am_volumes_csv)
+
+            total_volumes_csv = windpark.optimization_results.get_total_volumes_csv()
+            zipf.writestr('total_volumes.csv', total_volumes_csv)
+
+            positive_deviations_csv = windpark.optimization_results.get_positive_deviations_csv()
+            zipf.writestr('positive_deviations.csv', positive_deviations_csv)
+
+            negative_deviations_csv = windpark.optimization_results.get_negative_deviations_csv()
+            zipf.writestr('negative_deviations.csv', negative_deviations_csv)
+
+        zipf.close()
+        zip_data = zip_file.getvalue()
+        response = make_response(zip_data)
+        file_name = 'optimization results %s %s.zip' % (windpark.name, windpark.optimization_results.computing_start)
+        file_name = secure_filename(file_name)
+        response.headers["Content-Disposition"] = "attachment; filename=%s" % file_name
+        return response
     except Exception, e:
         logger.exception(e)
         js = jsonify({'error': repr(e)})

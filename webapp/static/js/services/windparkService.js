@@ -295,6 +295,10 @@ app.factory('windparkService', ['$http', 'Upload', function ($http, Upload) {
                 });
     };
 
+    var downloadOptRes = function (windparkId) {
+        location.href = $SCRIPT_ROOT + '/windparks/' + windparkId + '/optres_zip';
+    };
+
 
     return {
         reload: reload,
@@ -314,7 +318,8 @@ app.factory('windparkService', ['$http', 'Upload', function ($http, Upload) {
         startOptimization: startOptimization,
         optimizationStatus: optimizationStatus,
         optimizationResults: optimizationResults,
-        terminateOptimization: terminateOptimization
+        terminateOptimization: terminateOptimization,
+        downloadOptRes: downloadOptRes
     };
 
 }]);

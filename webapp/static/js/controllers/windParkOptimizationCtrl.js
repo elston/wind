@@ -201,6 +201,10 @@ app.controller('WindParkOptimizationCtrl', ['$scope', '$interval', '$timeout', '
             }, 2000);
         }
 
+        $scope.downloadOptRes = function () {
+            windparkService.downloadOptRes($scope.windpark.id);
+        };
+
         $scope.$on('$destroy', function () {
             if (angular.isDefined(stopRefresh)) {
                 $interval.cancel(stopRefresh);

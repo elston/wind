@@ -118,6 +118,20 @@ class Optimizer(object):
         self.result.Pd = opt_result.variables.Pd.tolist()
         self.result.Pa = opt_result.variables.Pa.tolist()
         self.result.Ps = opt_result.variables.Ps.tolist()
+        self.result.desvP = opt_result.variables.desvP.tolist()
+        self.result.desvN = opt_result.variables.desvN.tolist()
+        self.result.input['simulated_power'] = simulated_power.tolist()
+        self.result.input['reduced_simulated_power'] = red_sim_power.tolist()
+        self.result.input['simulated_power_probs'] = power_probs.tolist()
+        self.result.input['lambdaD'] = lambdaD.tolist()
+        self.result.input['reduced_lambdaD'] = lambdaD_red.tolist()
+        self.result.input['lambdaD_probs'] = lambdaD_prob.tolist()
+        self.result.input['MAvsMD'] = MAvsMD.tolist()
+        self.result.input['reduced_MAvsMD'] = MAvsMD_red.tolist()
+        self.result.input['MAvsMD_probs'] = MAvsMD_prob.tolist()
+        self.result.input['sqrt_r'] = sqrt_r.tolist()
+        self.result.input['reduced_sqrt_r'] = sqrt_r_red.tolist()
+        self.result.input['sqrt_r_probs'] = sqrt_r_prob.tolist()
         return self.result
 
     def start(self):

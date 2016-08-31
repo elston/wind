@@ -1,5 +1,7 @@
+import csv
 from datetime import date, datetime
 import json
+import cStringIO
 
 from sqlalchemy import TypeDecorator, VARCHAR
 
@@ -69,3 +71,31 @@ class OptimizationJob(TypeDecorator):
                     market_start_hour=self.market_start_hour, time_span=self.time_span, date=self.date.isoformat(),
                     dt=self.dt,
                     Pmax=self.Pmax, alpha=self.alpha, beta=self.beta)
+
+    def get_csv(self):
+        fields = ['name', 'value']
+        csv_file = cStringIO.StringIO()
+        writer = csv.writer(csv_file)
+        writer.writerow(fields)
+
+        writer.writerow(('refit_weather', self.refit_weather))
+        writer.writerow(('refit_market', self.refit_market))
+        writer.writerow(('n_wind_scenarios', self.n_wind_scenarios))
+        writer.writerow(('n_redc_wind_scenarios', self.n_redc_wind_scenarios))
+        writer.writerow(('n_da_am_wind_scenarios', self.n_da_am_wind_scenarios))
+        writer.writerow(('n_redc_da_am_wind_scenarios', self.n_redc_da_am_wind_scenarios))
+        writer.writerow(('n_lambdaD_scenarios', self.n_lambdaD_scenarios))
+        writer.writerow(('n_redc_lambdaD_scenarios', self.n_redc_lambdaD_scenarios))
+        writer.writerow(('n_MAvsMD_scenarios', self.n_MAvsMD_scenarios))
+        writer.writerow(('n_redc_MAvsMD_scenarios', self.n_redc_MAvsMD_scenarios))
+        writer.writerow(('n_sqrt_r_scenarios', self.n_sqrt_r_scenarios))
+        writer.writerow(('n_redc_sqrt_r_scenarios', self.n_redc_sqrt_r_scenarios))
+        writer.writerow(('market_start_hour', self.market_start_hour))
+        writer.writerow(('time_span', self.time_span))
+        writer.writerow(('date', self.date.isoformat()))
+        writer.writerow(('dt', self.dt))
+        writer.writerow(('Pmax', self.Pmax))
+        writer.writerow(('alpha', self.alpha))
+        writer.writerow(('beta', self.beta))
+
+        return csv_file.getvalue()

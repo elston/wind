@@ -321,19 +321,22 @@
                                     <input type="number" ng-model="dayStart" id="day-start"
                                            class="form-control input-sm" required>
                                 </div>
-                                <label for="n-da-scenarios" class="col-xs-2 control-label"># DA price scenarios: </label>
+                                <label for="n-da-scenarios" class="col-xs-2 control-label"># DA price
+                                    scenarios: </label>
 
                                 <div class="col-xs-1">
                                     <input type="number" ng-model="nDaPriceScenarios" id="n-da-scenarios"
                                            class="form-control input-sm" required>
                                 </div>
-                                <label for="n-da-am-price-scenarios" class="col-xs-2 control-label"># DA-AM price scenarios: </label>
+                                <label for="n-da-am-price-scenarios" class="col-xs-2 control-label"># DA-AM price
+                                    scenarios: </label>
 
                                 <div class="col-xs-1">
                                     <input type="number" ng-model="nDaAmPriceScenarios" id="n-da-am-price-scenarios"
                                            class="form-control input-sm" required>
                                 </div>
-                                <label for="n-adj-scenarios" class="col-xs-2 control-label"># adj price scenarios: </label>
+                                <label for="n-adj-scenarios" class="col-xs-2 control-label"># adj price
+                                    scenarios: </label>
 
                                 <div class="col-xs-1">
                                     <input type="number" ng-model="nAdjPriceScenarios" id="n-adj-scenarios"
@@ -341,19 +344,23 @@
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label for="n-da-redc-scenarios" class="col-xs-2 control-label"># DA redc price scenarios: </label>
+                                <label for="n-da-redc-scenarios" class="col-xs-2 control-label"># DA redc price
+                                    scenarios: </label>
 
                                 <div class="col-xs-1">
                                     <input type="number" ng-model="nDaRedcPriceScenarios" id="n-da-redc-scenarios"
                                            class="form-control input-sm" required>
                                 </div>
-                                <label for="n-da-am-redc-price-scenarios" class="col-xs-2 control-label"># DA-AM redc price scenarios: </label>
+                                <label for="n-da-am-redc-price-scenarios" class="col-xs-2 control-label"># DA-AM redc
+                                    price scenarios: </label>
 
                                 <div class="col-xs-1">
-                                    <input type="number" ng-model="nDaAmRedcPriceScenarios" id="n-da-am-redc-price-scenarios"
+                                    <input type="number" ng-model="nDaAmRedcPriceScenarios"
+                                           id="n-da-am-redc-price-scenarios"
                                            class="form-control input-sm" required>
                                 </div>
-                                <label for="n-adj-redc-scenarios" class="col-xs-2 control-label"># adj redc price scenarios: </label>
+                                <label for="n-adj-redc-scenarios" class="col-xs-2 control-label"># adj redc price
+                                    scenarios: </label>
 
                                 <div class="col-xs-1">
                                     <input type="number" ng-model="nAdjRedcPriceScenarios" id="n-adj-redc-scenarios"
@@ -419,7 +426,8 @@
                                 <label class="col-xs-2 control-label"># reduced DA-AM wind scenarios: </label>
 
                                 <div class="col-xs-2">
-                                    <input type="number" ng-model="windpark.optimization_job.n_redc_da_am_wind_scenarios"
+                                    <input type="number"
+                                           ng-model="windpark.optimization_job.n_redc_da_am_wind_scenarios"
                                            class="form-control" required>
                                 </div>
 
@@ -543,6 +551,9 @@
                         <dt>cvar:</dt>
                         <dd>{{ optimizationResults.cvar | number:0 }}</dd>
                     </dl>
+                    <button type="button" class="btn btn-secondary btn-xs" ng-click="downloadOptRes()"
+                            tooltip-append-to-body="true" uib-tooltip="Download data">Download data
+                    </button>
                     <div id="da-volumes" style="width:100%; height:300px;"></div>
                     <div id="am-volumes" style="width:100%; height:300px;"></div>
                     <div id="total-volumes" style="width:100%; height:300px;"></div>
