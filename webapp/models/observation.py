@@ -8,7 +8,8 @@ class Observation(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
     location_id = db.Column(db.Integer(), db.ForeignKey('locations.id'), index=True)
     time = db.Column(db.DateTime(), index=True)  # UTC time
-    tempm = db.Column(db.Float())  # Temp in C
+    tempm_raw = db.Column(db.Float())  # Temp in C
+    tempm = db.Column(db.Float())  # Temp in C with outliers filtered
     wspdm_raw = db.Column(db.Float())  # WindSpeed kph
     wspdm = db.Column(db.Float())  # WindSpeed kph with outliers filtered
     wdird = db.Column(db.Integer())  # Wind direction in degrees

@@ -113,7 +113,7 @@ class Location(db.Model):
                     wdird = 0
                 else:
                     wdird = int(wdird_s)
-                obs = Observation(location_id=self.id, time=timestamp, tempm=tempm, wspdm_raw=wspdm, wdird=wdird)
+                obs = Observation(location_id=self.id, time=timestamp, tempm_raw=tempm, wspdm_raw=wspdm, wdird=wdird)
                 db.session.add(obs)
             except Exception, e:
                 logging.warn('Could not parse observation %r: %r', obs_data, e)
@@ -163,16 +163,22 @@ class Location(db.Model):
             .order_by(Observation.time) \
             .all()
 
-        wspdm_raw_values = np.array([x.wspdm_raw for x in observations], dtype=np.float)
         threshold = float(app.config['FILTER_THRESHOLD'])
         kernel_size = int(app.config['FILTER_SIZE'])
+
+        wspdm_raw_values = np.array([x.wspdm_raw for x in observations], dtype=np.float)
         wspdm = self._filter_history(wspdm_raw_values, threshold, kernel_size)
+
+        tempm_raw_values = np.array([x.tempm_raw for x in observations], dtype=np.float)
+        tempm = self._filter_history(tempm_raw_values, threshold, kernel_size)
 
         for idx, observation in enumerate(observations):
             db.session.query(Observation) \
                 .filter(Observation.location_id == self.id) \
                 .filter(Observation.time == observation.time) \
-                .update({Observation.wspdm: wspdm[idx]}, synchronize_session=False)
+                .update({Observation.wspdm: wspdm[idx],
+                         Observation.tempm: tempm[idx]
+                         }, synchronize_session=False)
         db.session.commit()
 
     @staticmethod
