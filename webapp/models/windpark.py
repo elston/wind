@@ -23,7 +23,7 @@ class Windpark(db.Model):
     user_id = db.Column(db.Integer(), db.ForeignKey('user.id'), index=True)
     location_id = db.Column(db.Integer(), db.ForeignKey('locations.id'), index=True)
     market_id = db.Column(db.Integer(), db.ForeignKey('markets.id'))
-    data_source = db.Column(db.String(255))
+    data_source = db.Column(db.String(255), default='turbines')
     optimization_results = db.Column(OptimizationResults())
     optimization_job = db.Column(OptimizationJob())
 
@@ -106,7 +106,10 @@ class Windpark(db.Model):
 
     def get_total_power_curve(self):
         self._calculate_total_power_curve()
-        return [[x[0], x[1] / 1000.0] for x in self.power_curve.values]
+        if self.power_curve is None:
+            return None
+        else:
+            return [[x[0], x[1] / 1000.0] for x in self.power_curve.values]
 
     def _calculate_total_power_curve(self):
         if self.data_source != 'turbines':
