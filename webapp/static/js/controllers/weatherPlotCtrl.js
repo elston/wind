@@ -6,7 +6,7 @@ app.controller('WeatherPlotCtrl', ['$scope', '$q', '$uibModalInstance', 'entity'
 
         var locationId = entity.id;
         $scope.locationName = entity.name;
-        $scope.tempmEnabled = true;
+        $scope.tempmEnabled = false;
         $scope.wspdmEnabled = true;
         $scope.wdirdEnabled = false;
 
