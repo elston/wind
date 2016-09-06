@@ -62,7 +62,8 @@ class Optimizer(object):
         red_sim_power = np.array(red_sim_power_s)
         power_probs = np.array(power_probs_s)
 
-        lambdaD, MAvsMD, sqrt_r = self.windpark.simulate_market(start_hour=job.market_start_hour, time_span=job.time_span,
+        lambdaD, MAvsMD, sqrt_r = self.windpark.simulate_market(start_hour=job.market_start_hour,
+                                                                time_span=job.time_span,
                                                                 n_lambdaD_scenarios=job.n_lambdaD_scenarios,
                                                                 n_MAvsMD_scenarios=job.n_MAvsMD_scenarios,
                                                                 n_sqrt_r_scenarios=job.n_sqrt_r_scenarios)

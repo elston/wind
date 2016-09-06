@@ -464,6 +464,10 @@ def start_optimization(wpark_id):
                 setattr(opt_job, k, v)
 
         windpark = db.session.query(Windpark).filter_by(id=wpark_id).first()
+
+        power_curve = windpark.get_total_power_curve()
+        opt_job.Pmax = max([x[1] for x in power_curve])
+
         windpark.optimization_job = opt_job
         db.session.commit()
 
