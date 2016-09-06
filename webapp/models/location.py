@@ -205,6 +205,9 @@ class Location(db.Model):
             .order_by(Observation.time) \
             .all()
 
+        if len(observations) == 0:
+            raise Exception('Unable to fit model without data')
+
         wspdm_collector = defaultdict(list)
         for obs in observations:
             hour = obs.time.replace(minute=0, second=0, microsecond=0)

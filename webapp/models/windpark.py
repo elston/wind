@@ -127,6 +127,9 @@ class Windpark(db.Model):
         self.power_curve = collected_curves
 
     def simulate_generation(self, time_span, n_scenarios, da_am_time_span, n_da_am_scenarios):
+        if self.location is None:
+            raise Exception('Cannot simulate generation for undefined location')
+
         if self.power_curve is None:
             self._calculate_total_power_curve()
         _, simulated_wind = self.location.simulate_wind_2stage(time_span, n_scenarios, da_am_time_span,
@@ -137,6 +140,9 @@ class Windpark(db.Model):
         return simulated_wind, simulated_power
 
     def simulate_market(self, date, time_span, n_lambdaD_scenarios, n_MAvsMD_scenarios, n_sqrt_r_scenarios):
+        if self.market is None:
+            raise Exception('Cannot simulate market for undefined market')
+
         # use location timezone to synchronize seasonal component of ARIMA
         timezone_name = self.location.tz_long
         start_dt_location_tz = datetime.combine(date, time(0, 0, 0, 0, pytz.timezone(timezone_name)))
