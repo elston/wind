@@ -12,16 +12,25 @@ app.controller('WindParkOptimizationCtrl', ['$scope', '$interval', '$timeout', '
         var stopRefresh;
 
         $scope.optimize = function () {
-            $scope.startDisabled = true;
-            windparkService.startOptimization($scope.windpark.id, $scope.windpark.optimization_job);
+            windparkService.checkRecentPrices($scope.windpark.id, $scope.windpark.optimization_job)
+                .then(function (recent) {
+                        if(!recent) {
+                            alertify.alert('Warning', 'Market data does not have recent prices');
+                        }
+                        $scope.startDisabled = true;
+                        windparkService.startOptimization($scope.windpark.id, $scope.windpark.optimization_job);
 
-            if (angular.isDefined(stopRefresh)) {
-                return;
-            }
+                        if (angular.isDefined(stopRefresh)) {
+                            return;
+                        }
 
-            stopRefresh = $interval(function () {
-                refresh();
-            }, 2000);
+                        stopRefresh = $interval(function () {
+                            refresh();
+                        }, 2000);
+                    },
+                    function (error) {
+                        alertify.error(error);
+                    });
         };
 
         $scope.terminate = function () {

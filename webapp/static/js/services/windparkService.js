@@ -318,6 +318,20 @@ app.factory('windparkService', ['$http', 'Upload', function ($http, Upload) {
                 });
     };
 
+    var checkRecentPrices = function (windparkId, jobParameters) {
+        return $http.post($SCRIPT_ROOT + '/windparks/' + windparkId + '/check_recent_prices', jobParameters)
+            .then(function (response) {
+                    if ('error' in response.data) {
+                        throw response.data.error;
+                    } else {
+                        return response.data.data;
+                    }
+                },
+                function (error) {
+                    throw error.statusText;
+                });
+    };
+
     return {
         reload: reload,
         deleteWindpark: deleteWindpark,
@@ -338,7 +352,8 @@ app.factory('windparkService', ['$http', 'Upload', function ($http, Upload) {
         optimizationResults: optimizationResults,
         terminateOptimization: terminateOptimization,
         downloadOptRes: downloadOptRes,
-        getDaOfferingCurve: getDaOfferingCurve
+        getDaOfferingCurve: getDaOfferingCurve,
+        checkRecentPrices: checkRecentPrices
     };
 
 }]);

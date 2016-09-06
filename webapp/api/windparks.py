@@ -623,3 +623,27 @@ def get_da_offering_curve(wpark_id):
         logger.exception(e)
         js = jsonify({'error': repr(e)})
         return js
+
+
+@app.route('/api/windparks/<wpark_id>/check_recent_prices', methods=['POST', ])
+def check_recent_prices(wpark_id):
+    if not current_user.is_authenticated:
+        return jsonify({'error': 'User unauthorized'})
+    try:
+        job_parameters = request.get_json()
+        date = datetime.strptime(job_parameters['date'], '%Y-%m-%d').date()
+        market_start_hour = int(job_parameters['market_start_hour'])
+
+        windpark = db.session.query(Windpark).filter_by(id=wpark_id).first()
+
+        if windpark.market is None:
+            raise Exception('Cannot check undefined market')
+
+        result = windpark.market.is_recent_prices(date, market_start_hour)
+
+        js = jsonify({'data': result})
+        return js
+    except Exception, e:
+        logger.exception(e)
+        js = jsonify({'error': repr(e)})
+        return js

@@ -3,10 +3,12 @@ import csv
 import logging
 import math
 import cStringIO
+from datetime import datetime, timedelta
 
 import pytz
 import numpy as np
 from sqlalchemy.orm import relationship
+
 
 
 
@@ -135,6 +137,16 @@ class Market(db.Model):
         for prices in self.prices:
             writer.writerow([getattr(prices, name) for name in fields])
         return csv_file.getvalue()
+
+    def is_recent_prices(self, date, start_hour):
+        if len(self.prices) == 0:
+            return False
+        last_prices = self.prices[-1]
+        if last_prices.MAvsMD is None or last_prices.lambdaD is None or last_prices.sqrt_r is None:
+            return False
+        da_start_datetime = datetime(year=date.year, month=date.month, day=date.day, hour=start_hour, tzinfo=pytz.utc)
+        prev_hour = da_start_datetime - timedelta(hours=1)
+        return last_prices.time >= prev_hour
 
     def simulate_prices(self, simulation_start_hour, time_span, n_da_price_scenarios, n_da_am_price_scenarios,
                         n_adj_price_scenarios):
