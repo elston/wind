@@ -24,6 +24,8 @@ app.factory('locationService', ['$http', function ($http) {
             .then(function (response) {
                     if ('error' in response.data) {
                         throw response.data.error;
+                    } else {
+                        return reload();
                     }
                 },
                 function (error) {
@@ -36,6 +38,8 @@ app.factory('locationService', ['$http', function ($http) {
             .then(function (response) {
                     if ('error' in response.data) {
                         throw response.data.error;
+                    } else {
+                        return reload();
                     }
                 },
                 function (error) {

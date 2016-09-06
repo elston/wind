@@ -67,6 +67,7 @@ class Location(db.Model):
                 d[c.name] = getattr(self, c.name).to_dict()
             else:
                 d[c.name] = getattr(self, c.name)
+        d['n_observations'] = len(self.observations)
         return d
 
     def update_from_dict(self, d):
@@ -161,7 +162,7 @@ class Location(db.Model):
         observations = db.session.query(Observation) \
             .filter(Observation.location_id == self.id) \
             .order_by(Observation.time) \
-            .all()
+            .all()  # TODO: use relationship instead
 
         threshold = float(app.config['FILTER_THRESHOLD'])
         kernel_size = int(app.config['FILTER_SIZE'])
@@ -203,7 +204,7 @@ class Location(db.Model):
         observations = db.session.query(Observation) \
             .filter(Observation.location_id == self.id) \
             .order_by(Observation.time) \
-            .all()
+            .all()  # TODO: use relationship instead
 
         if len(observations) == 0:
             raise Exception('Unable to fit model without data')
