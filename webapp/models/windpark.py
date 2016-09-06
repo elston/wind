@@ -139,16 +139,16 @@ class Windpark(db.Model):
         simulated_power = np.interp(simulated_wind, self.power_curve['wind_speed'], self.power_curve['power']) / 1000.0
         return simulated_wind, simulated_power
 
-    def simulate_market(self, date, time_span, n_lambdaD_scenarios, n_MAvsMD_scenarios, n_sqrt_r_scenarios):
+    def simulate_market(self, start_hour, time_span, n_lambdaD_scenarios, n_MAvsMD_scenarios, n_sqrt_r_scenarios):
         if self.market is None:
             raise Exception('Cannot simulate market for undefined market')
 
-        # use location timezone to synchronize seasonal component of ARIMA
-        timezone_name = self.location.tz_long
-        start_dt_location_tz = datetime.combine(date, time(0, 0, 0, 0, pytz.timezone(timezone_name)))
-        start_dt_utc = start_dt_location_tz.astimezone(pytz.UTC)
-        start_hour = start_dt_utc.hour
-        logging.warning('Using windpark timezone %s as market day start (%d:00 UTC)', timezone_name, start_hour)
+        # # use location timezone to synchronize seasonal component of ARIMA
+        # timezone_name = self.location.tz_long
+        # start_dt_location_tz = datetime.combine(date, time(0, 0, 0, 0, pytz.timezone(timezone_name)))
+        # start_dt_utc = start_dt_location_tz.astimezone(pytz.UTC)
+        # start_hour = start_dt_utc.hour
+        # logging.warning('Using windpark timezone %s as market day start (%d:00 UTC)', timezone_name, start_hour)
         simulated_lambdaD, simulated_MAvsMD, simulated_sqrt_r = self.market.simulate_prices(start_hour, time_span,
                                                                                             n_lambdaD_scenarios,
                                                                                             n_MAvsMD_scenarios,

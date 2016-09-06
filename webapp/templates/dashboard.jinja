@@ -391,41 +391,53 @@
                     <div class="container-fluid">
                         <form class="form-horizontal">
                             <div class="form-group form-group-sm">
-                                <div class="col-xs-4">
-                                    <label class="checkbox">
+                                <label class="col-xs-2 control-label">Day-ahead date: </label>
+
+                                <div class="col-xs-2">
+                                    <input type="date" ng-model="optimizationDate"
+                                           class="form-control" required>
+                                </div>
+
+                                <label class="col-xs-2 control-label">Day-ahead start hour: </label>
+
+                                <div class="col-xs-2">
+                                    <input type="number" ng-model="windpark.optimization_job.market_start_hour"
+                                           class="form-control"
+                                           required>
+                                </div>
+
+                            </div>
+                            <hr>
+                            <div class="form-group form-group-sm">
+                                <div class="col-xs-3">
+                                    <label class="checkbox control-label">
                                         <input type="checkbox" ng-model="windpark.optimization_job.refit_weather">Recalculate
                                         wind model</label>
                                 </div>
-                                <div class="col-xs-4">
-                                    <label class="checkbox">
-                                        <input type="checkbox" ng-model="windpark.optimization_job.refit_market">Recalculate
-                                        market model</label>
-                                </div>
-                                <label class="col-xs-2 control-label"># wind scenarios: </label>
+                            </div>
+
+                            <div class="form-group form-group-sm">
+                                <label class="col-xs-3 control-label">DA wind production scenarios: </label>
 
                                 <div class="col-xs-2">
                                     <input type="number" ng-model="windpark.optimization_job.n_wind_scenarios"
                                            class="form-control" required>
                                 </div>
-                            </div>
 
-                            <div class="form-group form-group-sm">
-                                <label class="col-xs-2 control-label"># reduced wind scenarios: </label>
-
-                                <div class="col-xs-2">
+                                <div class="col-xs-1">
                                     <input type="number" ng-model="windpark.optimization_job.n_redc_wind_scenarios"
                                            class="form-control" required>
                                 </div>
 
-                                <label class="col-xs-2 control-label"># DA-AM wind scenarios: </label>
+
+                                <label class="col-xs-3 control-label">Intraday wind production scenarios: </label>
 
                                 <div class="col-xs-2">
                                     <input type="number" ng-model="windpark.optimization_job.n_da_am_wind_scenarios"
                                            class="form-control" required>
                                 </div>
-                                <label class="col-xs-2 control-label"># reduced DA-AM wind scenarios: </label>
 
-                                <div class="col-xs-2">
+                                <div class="col-xs-1">
                                     <input type="number"
                                            ng-model="windpark.optimization_job.n_redc_da_am_wind_scenarios"
                                            class="form-control" required>
@@ -434,87 +446,73 @@
                             </div>
 
                             <div class="form-group form-group-sm">
-                                <label class="col-xs-2 control-label"># DA price scenarios: </label>
-
-                                <div class="col-xs-2">
-                                    <input type="number" ng-model="windpark.optimization_job.n_lambdaD_scenarios"
-                                           class="form-control" required>
-                                </div>
-                                <label class="col-xs-2 control-label"># reduced DA price
-                                    scenarios: </label>
-
-                                <div class="col-xs-2">
-                                    <input type="number" ng-model="windpark.optimization_job.n_redc_lambdaD_scenarios"
-                                           class="form-control"
-                                           required>
-                                </div>
-                                <label class="col-xs-2 control-label"># MAvsMD scenarios: </label>
-
-                                <div class="col-xs-2">
-                                    <input type="number" ng-model="windpark.optimization_job.n_MAvsMD_scenarios"
-                                           class="form-control" required>
+                                <div class="col-xs-3">
+                                    <label class="checkbox control-label">
+                                        <input type="checkbox" ng-model="windpark.optimization_job.refit_market">Recalculate
+                                        market model</label>
                                 </div>
 
                             </div>
 
                             <div class="form-group form-group-sm">
-                                <label class="col-xs-2 control-label"># reduced MAvsMD scenarios: </label>
+                                <label class="col-xs-2 control-label">DA price scenarios: </label>
 
-                                <div class="col-xs-2">
+                                <div class="col-xs-1">
+                                    <input type="number" ng-model="windpark.optimization_job.n_lambdaD_scenarios"
+                                           class="form-control" required>
+                                </div>
+                                <div class="col-xs-1">
+                                    <input type="number" ng-model="windpark.optimization_job.n_redc_lambdaD_scenarios"
+                                           class="form-control"
+                                           required>
+                                </div>
+                                <label class="col-xs-2 control-label">Intraday price scenarios: </label>
+
+                                <div class="col-xs-1">
+                                    <input type="number" ng-model="windpark.optimization_job.n_MAvsMD_scenarios"
+                                           class="form-control" required>
+                                </div>
+
+                                <div class="col-xs-1">
                                     <input type="number" ng-model="windpark.optimization_job.n_redc_MAvsMD_scenarios"
                                            class="form-control"
                                            required>
                                 </div>
-                                <label class="col-xs-2 control-label"># imbalance scenarios: </label>
+                                <label class="col-xs-2 control-label">Imbalance price scenarios: </label>
 
-                                <div class="col-xs-2">
+                                <div class="col-xs-1">
                                     <input type="number" ng-model="windpark.optimization_job.n_sqrt_r_scenarios"
                                            class="form-control" required>
                                 </div>
-
-                                <label class="col-xs-2 control-label"># reduced imbalance scenarios: </label>
-
-                                <div class="col-xs-2">
+                                <div class="col-xs-1">
                                     <input type="number" ng-model="windpark.optimization_job.n_redc_sqrt_r_scenarios"
                                            class="form-control"
                                            required>
                                 </div>
                             </div>
 
+                            <!--
+                                                        <div class="form-group form-group-sm">
+                                                            <label class="col-xs-2 control-label">Maximum power, MW: </label>
+
+                                                            <div class="col-xs-2">
+                                                                <input type="number" ng-model="windpark.optimization_job.Pmax" class="form-control"
+                                                                       required>
+                                                            </div>
+                                                        </div>
+                            -->
+                            <hr>
                             <div class="form-group form-group-sm">
-                                <label class="col-xs-2 control-label">Market start hour: </label>
-
-                                <div class="col-xs-2">
-                                    <input type="number" ng-model="windpark.optimization_job.market_start_hour"
-                                           class="form-control"
-                                           required>
-                                </div>
-                                <label class="col-xs-2 control-label">Date: </label>
-
-                                <div class="col-xs-2">
-                                    <input type="date" ng-model="optimizationDate"
-                                           class="form-control" required>
-                                </div>
-
-                                <label class="col-xs-2 control-label">Maximum power, MW: </label>
-
-                                <div class="col-xs-2">
-                                    <input type="number" ng-model="windpark.optimization_job.Pmax" class="form-control"
-                                           required>
-                                </div>
-                            </div>
-
-                            <div class="form-group form-group-sm">
-                                <label class="col-xs-2 control-label">alpha: </label>
-
-                                <div class="col-xs-2">
-                                    <input type="number" ng-model="windpark.optimization_job.alpha" class="form-control"
-                                           required>
-                                </div>
-                                <label class="col-xs-2 control-label">beta: </label>
+                                <label class="col-xs-2 control-label">Risk aversion: </label>
 
                                 <div class="col-xs-2">
                                     <input type="number" ng-model="windpark.optimization_job.beta" class="form-control"
+                                           required>
+                                </div>
+                                <label class="col-xs-2 control-label">CvaR confidence level: </label>
+
+                                <div class="col-xs-2">
+                                    <input type="number" ng-model="windpark.optimization_job.alpha" class="form-control"
                                            required>
                                 </div>
                             </div>
