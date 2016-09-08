@@ -185,6 +185,292 @@ app.controller('MarketDataCtrl', ['$scope', '$uibModalInstance', 'entity', 'mark
 
         };
 
+        $scope.plotResidualsAcf = function (value) {
+            var model = $scope.summary[value[0] + '_model'];
+            var data = model.residuals_acf;
+            var clim = model.residuals_acf_clim;
+            var series_data = [];
+
+            for (var i = 0; i < data.length; i++) {
+                series_data.push([i, data[i]]);
+            }
+            $scope.chart = new Highcharts.Chart({
+                chart: {
+                    renderTo: 'plot-' + value[0] + '-residuals-acf',
+                    animation: false,
+                    type: 'column'
+                },
+                title: {
+                    text: value[1] + ' residuals ACF'
+                },
+                subtitle : {
+                    text: 'clim=' + clim.toFixed(3)
+                },
+                credits: {
+                    enabled: false
+                },
+                legend: {
+                    enabled: false
+                },
+                yAxis: {
+                    title: {
+                        text: 'ACF'
+                    },
+                    plotLines: [{
+                        color: 'blue',
+                        width: 1,
+                        value: clim,
+                        dashStyle: 'dash'
+                    },{
+                        color: 'blue',
+                        width: 1,
+                        value: -clim,
+                        dashStyle: 'dash'
+                    }],
+                },
+                xAxis: {
+                    title: {
+                        text: 'Lag'
+                    },
+                    allowDecimals: false
+                },
+                series: [{
+                    data: series_data,
+                    animation: false
+                }]
+            });
+
+        };
+
+        $scope.plotResidualsPacf = function (value) {
+            var model = $scope.summary[value[0] + '_model'];
+            var data = model.residuals_pacf;
+            var clim = model.residuals_pacf_clim;
+            var series_data = [];
+
+            for (var i = 0; i < data.length; i++) {
+                series_data.push([i + 1, data[i]]);
+            }
+            $scope.chart = new Highcharts.Chart({
+                chart: {
+                    renderTo: 'plot-' + value[0] + '-residuals-pacf',
+                    animation: false,
+                    type: 'column'
+                },
+                title: {
+                    text: value[1] + ' residuals PACF'
+                },
+                subtitle : {
+                    text: 'clim=' + clim.toFixed(3)
+                },
+                credits: {
+                    enabled: false
+                },
+                legend: {
+                    enabled: false
+                },
+                yAxis: {
+                    title: {
+                        text: 'PACF'
+                    },
+                    plotLines: [{
+                        color: 'blue',
+                        width: 1,
+                        value: clim,
+                        dashStyle: 'dash'
+                    },{
+                        color: 'blue',
+                        width: 1,
+                        value: -clim,
+                        dashStyle: 'dash'
+                    }],
+                },
+                xAxis: {
+                    title: {
+                        text: 'Lag'
+                    },
+                    allowDecimals: false
+                },
+                series: [{
+                    data: series_data,
+                    animation: false
+                }]
+            });
+
+        };
+
+        $scope.plotDataAcf = function (value) {
+            var model = $scope.summary[value[0] + '_model'];
+            var data = model.data_acf;
+            var clim = model.data_acf_clim;
+            var series_data = [];
+
+            for (var i = 0; i < data.length; i++) {
+                series_data.push([i, data[i]]);
+            }
+            $scope.chart = new Highcharts.Chart({
+                chart: {
+                    renderTo: 'plot-' + value[0] + '-data-acf',
+                    animation: false,
+                    type: 'column'
+                },
+                title: {
+                    text: value[1] + ' ACF'
+                },
+                subtitle : {
+                    text: 'clim=' + clim.toFixed(3)
+                },
+                credits: {
+                    enabled: false
+                },
+                legend: {
+                    enabled: false
+                },
+                yAxis: {
+                    title: {
+                        text: 'ACF'
+                    },
+                    plotLines: [{
+                        color: 'blue',
+                        width: 1,
+                        value: clim,
+                        dashStyle: 'dash'
+                    },{
+                        color: 'blue',
+                        width: 1,
+                        value: -clim,
+                        dashStyle: 'dash'
+                    }],
+                },
+                xAxis: {
+                    title: {
+                        text: 'Lag'
+                    },
+                    allowDecimals: false
+                },
+                series: [{
+                    data: series_data,
+                    animation: false
+                }]
+            });
+
+        };
+
+        $scope.plotDataPacf = function (value) {
+            var model = $scope.summary[value[0] + '_model'];
+            var data = model.data_pacf;
+            var clim = model.data_pacf_clim;
+            var series_data = [];
+
+            for (var i = 0; i < data.length; i++) {
+                series_data.push([i + 1, data[i]]);
+            }
+            $scope.chart = new Highcharts.Chart({
+                chart: {
+                    renderTo: 'plot-' + value[0] + '-data-pacf',
+                    animation: false,
+                    type: 'column'
+                },
+                title: {
+                    text: value[1] + ' PACF'
+                },
+                subtitle : {
+                    text: 'clim=' + clim.toFixed(3)
+                },
+                credits: {
+                    enabled: false
+                },
+                legend: {
+                    enabled: false
+                },
+                yAxis: {
+                    title: {
+                        text: 'PACF'
+                    },
+                    plotLines: [{
+                        color: 'blue',
+                        width: 1,
+                        value: clim,
+                        dashStyle: 'dash'
+                    },{
+                        color: 'blue',
+                        width: 1,
+                        value: -clim,
+                        dashStyle: 'dash'
+                    }],
+                },
+                xAxis: {
+                    title: {
+                        text: 'Lag'
+                    },
+                    allowDecimals: false
+                },
+                series: [{
+                    data: series_data,
+                    animation: false
+                }]
+            });
+
+        };
+
+        $scope.plotResidualsQq = function (value) {
+            var data = $scope.summary[value[0] + '_model'].qqplot_data;
+            var series_data = [];
+
+            for (var i = 0; i < data.x.length; i++) {
+                series_data.push([data.x[i], data.y[i]]);
+            }
+
+            var minX = Math.min.apply(null, data.x);
+            var maxX = Math.max.apply(null, data.x);
+            var linePoints = [[minX, data.intercept + minX * data.slope],
+                            [maxX, data.intercept + maxX * data.slope]];
+
+            $scope.chart = new Highcharts.Chart({
+                chart: {
+                    renderTo: 'plot-' + value[0] + '-residuals-qq',
+                    animation: false
+                },
+                title: {
+                    text: value[1] + ' normal Q-Q plot'
+                },
+                subtitle : {
+                    text: 'R<sup>2</sup>=' + data.r2.toFixed(4),
+                    useHTML: true
+                },
+                credits: {
+                    enabled: false
+                },
+                legend: {
+                    enabled: false
+                },
+                yAxis: {
+                    title: {
+                        text: 'Ordered values'
+                    }
+                },
+                xAxis: {
+                    title: {
+                        text: 'Quantiles'
+                    }
+                },
+                series: [{
+                    data: series_data,
+                    animation: false,
+                    type: 'scatter'
+                },
+                {
+                    data: linePoints,
+                    animation: false,
+                    type: 'line',
+                    marker: {
+                        enabled: false
+                    }
+                }]
+            });
+
+        };
+
     }
 
 ]);

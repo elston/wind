@@ -1,6 +1,10 @@
 #library("forecast")
 x <- WWWusage
-
+y <- rnorm(200, sd=5)
+qq<-qqnorm(y)
+acflh=acf(lh)
+a=pacf(x)
+tsdisplay(x)
 arima.object <- Arima(x, order=c(2,0,0))
 arima.object
 

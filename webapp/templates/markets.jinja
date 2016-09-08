@@ -191,11 +191,11 @@
                             <option value="off" selected>Analytic plot: off</option>
                             <option value="prediction">Prediction</option>
                             <option value="residuals">Residuals</option>
-                            <option disabled>Data ACF (not implemented yet)</option>
-                            <option disabled>Data PACF (not implemented yet)</option>
-                            <option disabled>Residuals ACF (not implemented yet)</option>
-                            <option disabled>Residuals PACF (not implemented yet)</option>
-                            <option disabled>Residuals Q-Q (not implemented yet)</option>
+                            <option value="dataAcf">Data ACF</option>
+                            <option value="dataPacf">Data PACF</option>
+                            <option value="residualsAcf">Residuals ACF</option>
+                            <option value="residualsPacf">Residuals PACF</option>
+                            <option value="residualsQq">Residuals Q-Q plot</option>
                         </select>
                     </h4>
                     <div class="container-fluid">
@@ -230,6 +230,41 @@
                          collapsed="cleanResiduals(item)">
                         <div class="well well-lg">
                             <div id="plot-{{ item[0] }}-residuals" style="width:100%; height:400px;"></div>
+                        </div>
+                    </div>
+                    <div uib-collapse="!(summary.selectedAnalyticPlot[item[0]] == 'residualsAcf')"
+                         expanded="plotResidualsAcf(item)"
+                         collapsed="cleanResidualsAcf(item)">
+                        <div class="well well-lg">
+                            <div id="plot-{{ item[0] }}-residuals-acf" style="width:100%; height:400px;"></div>
+                        </div>
+                    </div>
+                    <div uib-collapse="!(summary.selectedAnalyticPlot[item[0]] == 'residualsPacf')"
+                         expanded="plotResidualsPacf(item)"
+                         collapsed="cleanResidualsPacf(item)">
+                        <div class="well well-lg">
+                            <div id="plot-{{ item[0] }}-residuals-pacf" style="width:100%; height:400px;"></div>
+                        </div>
+                    </div>
+                    <div uib-collapse="!(summary.selectedAnalyticPlot[item[0]] == 'dataAcf')"
+                         expanded="plotDataAcf(item)"
+                         collapsed="cleanDataAcf(item)">
+                        <div class="well well-lg">
+                            <div id="plot-{{ item[0] }}-data-acf" style="width:100%; height:400px;"></div>
+                        </div>
+                    </div>
+                    <div uib-collapse="!(summary.selectedAnalyticPlot[item[0]] == 'dataPacf')"
+                         expanded="plotDataPacf(item)"
+                         collapsed="cleanDataPacf(item)">
+                        <div class="well well-lg">
+                            <div id="plot-{{ item[0] }}-data-pacf" style="width:100%; height:400px;"></div>
+                        </div>
+                    </div>
+                    <div uib-collapse="!(summary.selectedAnalyticPlot[item[0]] == 'residualsQq')"
+                         expanded="plotResidualsQq(item)"
+                         collapsed="cleanResidualsQq(item)">
+                        <div class="well well-lg">
+                            <div id="plot-{{ item[0] }}-residuals-qq" style="width:100%; height:400px;"></div>
                         </div>
                     </div>
                 </div>

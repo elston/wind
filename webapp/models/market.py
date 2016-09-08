@@ -7,7 +7,9 @@ from datetime import datetime, timedelta
 
 import pytz
 import numpy as np
+from scipy import stats
 from sqlalchemy.orm import relationship
+
 
 
 
@@ -88,6 +90,17 @@ class Market(db.Model):
             value = getattr(self, name)
             if value is not None:
                 value = value.to_dict()
+                if value.get('residuals') is not None:
+                    residuals = value.get('residuals')
+                    residuals = [x for x in residuals if not math.isnan(x)]
+                    (osm, osr), (slope, intercept, r2) = stats.probplot(residuals, dist='norm', fit=True)
+                    qqplot_data = {'x': list(osm),
+                                   'y': list(osr),
+                                   'slope': slope,
+                                   'intercept': intercept,
+                                   'r2': r2}
+                    value['qqplot_data'] = qqplot_data
+
             result[name] = value
         return result
 

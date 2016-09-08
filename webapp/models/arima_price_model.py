@@ -1,8 +1,10 @@
 import json
+from math import sqrt
 
 import numpy as np
 import rpy2.robjects as ro
 from rpy2.robjects import numpy2ri
+from scipy import stats
 from sqlalchemy import TypeDecorator, VARCHAR
 
 
@@ -34,6 +36,16 @@ class ArimaPriceModel(TypeDecorator):
         self.residuals = None
         self.phi = None
         self.theta = None
+        self._residuals_acf = None
+        self._residuals_pacf = None
+        self.residuals_acf = None
+        self.residuals_pacf = None
+        self.residuals_acf_clim = None
+        self.residuals_pacf_clim = None
+        self.data_acf = None
+        self.data_pacf = None
+        self.data_acf_clim = None
+        self.data_pacf_clim = None
 
     def set_parameters(self, p, d, q, P, D, Q, m, n_ahead=48):
         self.p = p
@@ -67,6 +79,10 @@ class ArimaPriceModel(TypeDecorator):
              (self.p, self.d, self.q, self.P, self.D, self.Q, self.m))
         self._model = ro.r('fit')
         self._predict = ro.r('predict(fit, n.ahead=%d)' % self.n_ahead)
+        self._residuals_acf = ro.r('acf(fit$residuals, plot=FALSE, na.action=na.pass)')
+        self._residuals_pacf = ro.r('pacf(fit$residuals, plot=FALSE, na.action=na.pass)')
+        self._data_acf = ro.r('acf(x, plot=FALSE, na.action=na.pass)')
+        self._data_pacf = ro.r('pacf(x, plot=FALSE, na.action=na.pass)')
 
     def to_dict(self):
         if self._model is not None:
@@ -84,7 +100,19 @@ class ArimaPriceModel(TypeDecorator):
             self.theta = list(self._model.rx2('model')[1])
             self.pred = list(self._predict.rx2('pred'))
             self.pred_se = list(self._predict.rx2('se'))
+            self.residuals_acf = list(self._residuals_acf.rx2('acf'))
+            self.residuals_acf_clim = stats.norm.ppf((1 + 0.95) / 2) / sqrt(self._residuals_acf.rx2('n.used')[0])
+            self.residuals_pacf = list(self._residuals_pacf.rx2('acf'))
+            self.residuals_pacf_clim = stats.norm.ppf((1 + 0.95) / 2) / sqrt(self._residuals_pacf.rx2('n.used')[0])
+            self.data_acf = list(self._data_acf.rx2('acf'))
+            self.data_acf_clim = stats.norm.ppf((1 + 0.95) / 2) / sqrt(self._data_acf.rx2('n.used')[0])
+            self.data_pacf = list(self._data_pacf.rx2('acf'))
+            self.data_pacf_clim = stats.norm.ppf((1 + 0.95) / 2) / sqrt(self._data_pacf.rx2('n.used')[0])
 
         return dict(p=self.p, d=self.d, q=self.q, P=self.P, D=self.D, Q=self.Q, m=self.m,
                     coef=self.coef, s_e=self.s_e, sigma2=self.sigma2, loglik=self.loglik, aic=self.aic,
-                    residuals=self.residuals, phi=self.phi, theta=self.theta, pred=self.pred, pred_se=self.pred_se)
+                    residuals=self.residuals, phi=self.phi, theta=self.theta, pred=self.pred, pred_se=self.pred_se,
+                    residuals_acf=self.residuals_acf, residuals_acf_clim=self.residuals_acf_clim,
+                    residuals_pacf=self.residuals_pacf, residuals_pacf_clim=self.residuals_pacf_clim,
+                    data_acf=self.data_acf, data_acf_clim=self.data_acf_clim,
+                    data_pacf=self.data_pacf, data_pacf_clim=self.data_pacf_clim)
