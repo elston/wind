@@ -1,3 +1,5 @@
+/*global angular*/
+
 (function () {
     'use strict';
 
@@ -12,8 +14,9 @@
             if (tabName === 'locations') {  // update Google map
                 var tabBody = document.querySelector('[ng-controller=LocationsCtrl]');
                 var tabScope = angular.element(tabBody).scope();
-                if (tabScope)
+                if (tabScope) {
                     tabScope.updateMap();
+                }
             }
         }
     );

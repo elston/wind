@@ -2,7 +2,6 @@ import logging
 import signal
 
 import psutil as psutil
-
 import os
 from rq import Queue, get_current_job, Connection, Worker
 from redis import Redis

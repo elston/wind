@@ -34,4 +34,3 @@ def fit(wind, power):
     odr = ODR(data, model, beta0=[v_cutin, v_rated, v_cutout, w_rated])
     output = odr.run()
     return output
-

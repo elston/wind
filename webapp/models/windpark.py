@@ -1,6 +1,4 @@
 import calendar
-from datetime import datetime, time
-import logging
 
 import numpy as np
 import pandas as pd

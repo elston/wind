@@ -8,12 +8,12 @@ app.controller('MainCtrl', ['$scope', '$timeout',
 
         $scope.addTab = function (event, tabData) {
             var tabSelector = $(".nav-tabs a[href='#dyntab-" + tabData.type + '-' + tabData.id + "']");
-            if (tabSelector.length == 0) {
+            if (tabSelector.length === 0) {
                 $scope.tabs.push(tabData);
                 tabSelector.click(function (e) {
-                    e.preventDefault()
-                    $(this).tab('show')
-                })
+                    e.preventDefault();
+                    $(this).tab('show');
+                });
             }
             $timeout(function () {
                 var tabSelector = $(".nav-tabs a[href='#dyntab-" + tabData.type + '-' + tabData.id + "']");

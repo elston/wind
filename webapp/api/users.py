@@ -2,7 +2,6 @@ import logging
 
 from flask import jsonify, request
 from flask_login import current_user
-from flask_security import roles_required
 from flask_security.utils import encrypt_password
 from webapp import app, user_datastore, db, User
 

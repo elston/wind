@@ -14,7 +14,7 @@ app.controller('WindParkOptimizationCtrl', ['$scope', '$interval', '$timeout', '
         $scope.optimize = function () {
             windparkService.checkRecentPrices($scope.windpark.id, $scope.windpark.optimization_job)
                 .then(function (recent) {
-                        if(!recent) {
+                        if (!recent) {
                             alertify.alert('Warning', 'Market data does not have recent prices');
                         }
                         $scope.startDisabled = true;

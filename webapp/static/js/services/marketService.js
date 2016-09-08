@@ -112,7 +112,7 @@ app.factory('marketService', ['$http', 'Upload', function ($http, Upload) {
     var previewPrices = function (format, file) {
         return Upload.upload({
                 url: $SCRIPT_ROOT + '/markets/preview_prices',
-                data: {format: format, file: file},
+                data: {format: format, file: file}
             })
             .then(function (response) {
                     if ('error' in response.data) {
@@ -129,7 +129,7 @@ app.factory('marketService', ['$http', 'Upload', function ($http, Upload) {
     var uploadPrices = function (id, format, file) {
         return Upload.upload({
                 url: $SCRIPT_ROOT + '/markets/prices',
-                data: {format: format, file: file, mkt_id: id},
+                data: {format: format, file: file, mkt_id: id}
             })
             .then(function (response) {
                     if ('error' in response.data) {
