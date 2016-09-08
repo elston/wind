@@ -8,8 +8,36 @@ app.controller('WspdDistributionCtrl', ['$scope', '$uibModalInstance', '$rootSco
         $scope.locationName = entity.name;
         $scope.windModel = null;
 
+        $scope.wspdHistEnabled = true;
+        $scope.wspdModelEnabled = false;
+        $scope.zHistEnabled = false;
+        $scope.zModelEnabled = false;
+
         $scope.close = function () {
             $uibModalInstance.close();
+        };
+
+        $scope.updateSeriesSet = function () {
+            if ($scope.wspdHistEnabled) {
+                $scope.chart.series[0].show();
+            } else {
+                $scope.chart.series[0].hide();
+            }
+            if ($scope.wspdModelEnabled) {
+                $scope.chart.series[1].show();
+            } else {
+                $scope.chart.series[1].hide();
+            }
+            if ($scope.zHistEnabled) {
+                $scope.chart.series[2].show();
+            } else {
+                $scope.chart.series[2].hide();
+            }
+            if ($scope.zModelEnabled) {
+                $scope.chart.series[3].show();
+            } else {
+                $scope.chart.series[3].hide();
+            }
         };
 
         locationService.fitWindDistribution(locationId)
@@ -82,6 +110,7 @@ app.controller('WspdDistributionCtrl', ['$scope', '$uibModalInstance', '$rootSco
                             xAxis: 1
                         }]
                     });
+                    $scope.updateSeriesSet();
                 },
                 function (error) {
                     alertify.error('Error while fitting wind speed model for location "' + $scope.locationName +

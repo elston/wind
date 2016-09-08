@@ -199,6 +199,22 @@
             locationName }}"</h4>
     </div>
     <div class="modal-body">
+        <div style="text-align: center">
+            <div class="btn-group">
+                <label class="btn btn-default btn-xs active">
+                    <input type="checkbox" data-toggle="button" ng-model="wspdHistEnabled"
+                           ng-change="updateSeriesSet()"> Actual histogram</label>
+                <label class="btn btn-default btn-xs active">
+                    <input type="checkbox" data-toggle="button" ng-model="wspdModelEnabled"
+                           ng-change="updateSeriesSet()"> Fitted Weibull distribution</label>
+                <label class="btn btn-default btn-xs">
+                    <input type="checkbox" data-toggle="button" ng-model="zHistEnabled"
+                           ng-change="updateSeriesSet()"> Normalized values histogram</label>
+                <label class="btn btn-default btn-xs">
+                    <input type="checkbox" data-toggle="button" ng-model="zModelEnabled"
+                           ng-change="updateSeriesSet()"> Desired normal distribution</label>
+            </div>
+        </div>
         <div id="wspd-distr-container" style="width:100%; height:450px;"></div>
         <h4>AR(2) model</h4>
 
