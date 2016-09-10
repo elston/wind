@@ -121,6 +121,8 @@ class Optimizer(object):
         self.result.Ps = opt_result.variables.Ps.tolist()
         self.result.desvP = opt_result.variables.desvP.tolist()
         self.result.desvN = opt_result.variables.desvN.tolist()
+        self.result.reduced_simulated_power = red_sim_power.tolist()
+        self.result.power_probs = power_probs.tolist()
         self.result.input['simulated_power'] = simulated_power.tolist()
         self.result.input['reduced_simulated_power'] = red_sim_power.tolist()
         self.result.input['simulated_power_probs'] = power_probs.tolist()

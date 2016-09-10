@@ -537,7 +537,7 @@
                     <pre>{{ statusData.log }}</pre>
                     <pre class="bg-danger" ng-if="statusData.isFailed">{{ statusData.error }}</pre>
                     <!--<pre>{{ optimizationResults }}</pre>-->
-                    <div ng-hide="statusData.status != 'finished'">
+                    <div ng-hide="statusData.status && statusData.status != 'finished'">
                         <dl class="dl-horizontal">
                             <dt>Calculation start:</dt>
                             <dd>{{ optimizationResults.computing_start }}</dd>
@@ -553,6 +553,7 @@
                         <button type="button" class="btn btn-secondary btn-xs" ng-click="downloadOptRes()"
                                 tooltip-append-to-body="true" uib-tooltip="Download data">Download data
                         </button>
+                        <div id="opt-generation" style="width:100%; height:300px;"></div>
                         <div id="da-volumes" style="width:100%; height:300px;"></div>
                         <div id="am-volumes" style="width:100%; height:300px;"></div>
                         <div id="total-volumes" style="width:100%; height:300px;"></div>

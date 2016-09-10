@@ -46,6 +46,18 @@ app.controller('WindParkOptimizationCtrl', ['$scope', '$interval', '$timeout', '
 
         var refreshCharts = function (data) {
             var i, j;
+
+            var red_power_series = [];
+            for (i = 0; i < data.reduced_simulated_power.length; i++) {
+                for (j = 0; j < data.reduced_simulated_power[i].length; j++) {
+                    var p = data.power_probs[i][j];
+                    red_power_series.push({
+                        data: data.reduced_simulated_power[i][j],
+                        name: 'l' + i + ',w' + j + ',p' + p.toFixed(2)
+                    });
+                }
+            }
+
             var Pd_series = [];
             for (i = 0; i < data.Pd.length; i++) {
                 Pd_series.push({
@@ -75,6 +87,47 @@ app.controller('WindParkOptimizationCtrl', ['$scope', '$interval', '$timeout', '
             }
 
             $timeout(function () {
+                    $scope.chart_gen = new Highcharts.Chart({
+                        chart: {
+                            renderTo: 'opt-generation',
+                            animation: false
+                        },
+                        title: {
+                            text: 'Simulated generation'
+                        },
+                        credits: {
+                            enabled: false
+                        },
+                        plotOptions: {
+                            line: {
+                                animation: false,
+                                marker: {
+                                    enabled: false
+                                }
+                            }
+                        },
+                        yAxis: [{
+                            title: {
+                                text: 'Power, MW'
+                            }
+                        }],
+                        xAxis: [{
+                            title: {
+                                text: 'Hour'
+                            },
+                            allowDecimals: false,
+                            labels: {
+                                formatter: function () {
+                                    if (this.value < 12)
+                                        return this.value + 12;
+                                    else
+                                        return this.value - 12;
+                                }
+                            }
+                        }],
+                        series: red_power_series
+                    });
+
                     $scope.chart1 = new Highcharts.Chart({
                         chart: {
                             renderTo: 'da-volumes',
@@ -87,7 +140,7 @@ app.controller('WindParkOptimizationCtrl', ['$scope', '$interval', '$timeout', '
                             enabled: false
                         },
                         plotOptions: {
-                            column: {
+                            line: {
                                 animation: false,
                                 marker: {
                                     enabled: false

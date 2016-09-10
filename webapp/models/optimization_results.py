@@ -26,6 +26,8 @@ class OptimizationResults(TypeDecorator):
         self.desvP = None
         self.desvN = None
         self.input = {}
+        self.reduced_simulated_power = None
+        self.power_probs = None
 
     def set_parameters(self):
         pass
@@ -49,7 +51,8 @@ class OptimizationResults(TypeDecorator):
     def to_dict(self, detailed=False):
         d = dict(computing_start=self.computing_start, computing_finish=self.computing_finish,
                  expected_profit=self.expected_profit, profit_std=self.profit_std, cvar=self.cvar,
-                 Pd=self.Pd, Pa=self.Pa, Ps=self.Ps, desvP=self.desvP, desvN=self.desvN)
+                 Pd=self.Pd, Pa=self.Pa, Ps=self.Ps, desvP=self.desvP, desvN=self.desvN,
+                 reduced_simulated_power=self.reduced_simulated_power, power_probs=self.power_probs)
         if detailed:
             d['input'] = self.input
         return d
