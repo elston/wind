@@ -137,11 +137,11 @@ class Optimizer(object):
 
     def start(self):
         logging.info('Starting optimization for wind park %s', self.windpark.name)
-        self.result.computing_start = datetime.now()
+        self.result.computing_start = datetime.utcnow()
 
     def finish(self):
         logging.info('Finished optimization for wind park %s', self.windpark.name)
-        self.result.computing_finish = datetime.now()
+        self.result.computing_finish = datetime.utcnow()
 
     def start_refit_weather(self):
         logging.info('Starting fitting wind model for location %s', self.windpark.location.name)
