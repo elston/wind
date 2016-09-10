@@ -109,8 +109,14 @@ app.controller('MarketDataCtrl', ['$scope', '$uibModalInstance', 'entity', 'mark
 
             for (var i = 0; i < pred.length; i++) {
                 d.setHours(d.getHours() + 1);
-                pred_data.push([d.getTime(), pred[i]]);
-                pred_data_plus_minus.push([d.getTime(), pred[i] - pred_se[i], pred[i] + pred_se[i]]);
+                if (value[0] === 'lambdaD') {
+                    pred_data.push([d.getTime(), Math.exp(pred[i])]);
+                    pred_data_plus_minus.push([d.getTime(), Math.exp(pred[i] - pred_se[i]),
+                        Math.exp(pred[i] + pred_se[i])]);
+                } else {
+                    pred_data.push([d.getTime(), pred[i]]);
+                    pred_data_plus_minus.push([d.getTime(), pred[i] - pred_se[i], pred[i] + pred_se[i]]);
+                }
             }
             $scope.chart = new Highcharts.StockChart({
                 chart: {
