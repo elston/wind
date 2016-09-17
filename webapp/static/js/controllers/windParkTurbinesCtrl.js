@@ -9,6 +9,8 @@ app.controller('WindparkTurbinesCtrl', ['$scope', '$rootScope', '$timeout', '$ui
             enableRowSelection: true,
             enableFullRowSelection: true,
             multiSelect: true,
+            minRowsToShow: 5,
+            gridMenuShowHideColumns: false,
             gridMenuCustomItems: [
                 {
                     title: 'Add turbine',

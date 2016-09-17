@@ -8,6 +8,7 @@ app.controller('LocationsCtrl', ['$scope', '$uibModal', 'locationService', funct
         enableGridMenu: true,
         enableRowSelection: true,
         multiSelect: true,
+        minRowsToShow: 6,
         gridMenuCustomItems: [
             {
                 title: 'Add location',
