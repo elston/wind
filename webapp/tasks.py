@@ -59,10 +59,13 @@ def terminate_windpark_optimization(windpark_id):
             if w.get_current_job_id() == job_id:
                 host, pid = w.name.split('.')
                 pid = int(pid)
-                w_process = psutil.Process(pid)
-                children = w_process.children()
-                if len(children) > 0:
-                    os.kill(children[0].pid, signal.SIGKILL)
+                try:
+                    w_process = psutil.Process(pid)
+                    children = w_process.children()
+                    if len(children) > 0:
+                        os.kill(children[0].pid, signal.SIGKILL)
+                except Exception, e:
+                    logging.exception("Can't kill worker")
         job = Job.fetch(job_id)
         job.delete()
 

@@ -8,7 +8,7 @@ from webapp.optimizer import Optimizer
 
 class OptimizerTestCase(unittest.TestCase):
     def test_direct(self):
-        windpark_id = 2
+        windpark_id = 1
         optimizer = Optimizer(windpark_id)
         result = optimizer.optimize()
         print result.to_dict()

@@ -26,7 +26,7 @@ class OptimizationJob(TypeDecorator):
         self.n_redc_MAvsMD_scenarios = 4
         self.n_sqrt_r_scenarios = 100
         self.n_redc_sqrt_r_scenarios = 4
-        self.market_start_hour = 22
+        self.market_start_hour = 0
         self.time_span = 24
         self.date = date.today()
         self.dt = 1.0

@@ -224,7 +224,7 @@ class WindparksTestCase(unittest.TestCase):
         n_lambdaD_scenarios = 3
         n_MAvsMD_scenarios = 3
         n_sqrt_r_scenarios = 3
-        simulated_market = test_windpark.simulate_market(0, time_span,
+        simulated_market = test_windpark.simulate_market(date.today(), 0, time_span,
                                                          n_lambdaD_scenarios,
                                                          n_MAvsMD_scenarios,
                                                          n_sqrt_r_scenarios)

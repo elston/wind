@@ -284,7 +284,7 @@ class LocationsTestCase(unittest.TestCase):
         simulated_wind_np = np.array(simulated_wind)
 
         # check size
-        self.assertEqual(simulated_wind_np.shape, (n_scenarios, n_da_am_scenarios, time_span))
+        self.assertEqual(simulated_wind_np.shape, (n_scenarios, n_da_am_scenarios, da_am_time_span + time_span))
 
         shape, location, scale = stats.weibull_min.fit(simulated_wind_np, floc=0)
         # check if distribution parameters differ from expected not more than 10%
