@@ -11,6 +11,8 @@ app.controller('NewLocationCtrl', ['$scope', '$rootScope', '$http', '$timeout', 
             start: new Date(now - 10 * 24 * 3600 * 1000),
             lookback: 10
         };
+        $scope.updateAt11am = true;
+        $scope.updateAt11pm = true;
 //    $scope.lookforward = 10;
 
         $scope.gridOptions = {
@@ -124,6 +126,8 @@ app.controller('NewLocationCtrl', ['$scope', '$rootScope', '$http', '$timeout', 
             $scope.location.lookback = $scope.timeRange.lookback;
             $scope.location.history_start = $scope.timeRange.start.getTime();
             $scope.location.history_end = $scope.timeRange.end.getTime();
+            $scope.location.update_at_11am = $scope.updateAt11am;
+            $scope.location.update_at_11pm = $scope.updateAt11pm;
 //        $scope.location.lookforward = $scope.lookforward;
             locationService.updateLocation($scope.location)
                 .then(function (data) {

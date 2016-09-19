@@ -11,6 +11,8 @@ app.controller('LocationDataCtrl', ['$scope', '$rootScope', '$uibModalInstance',
             start: new Date(entity.history_start),
             lookback: entity.lookback
         };
+        $scope.updateAt11am = entity.update_at_11am;
+        $scope.updateAt11pm = entity.update_at_11pm;
 
         $scope.update = function () {
             locationService.updateLocation({
@@ -19,7 +21,9 @@ app.controller('LocationDataCtrl', ['$scope', '$rootScope', '$uibModalInstance',
                     time_range: $scope.timeRange.type,
                     lookback: $scope.timeRange.lookback,
                     history_start: $scope.timeRange.start.getTime(),
-                    history_end: $scope.timeRange.end.getTime()
+                    history_end: $scope.timeRange.end.getTime(),
+                    update_at_11am: $scope.updateAt11am,
+                    update_at_11pm: $scope.updateAt11pm,
                 })
                 .then(function (data) {
                         alertify.success('OK');

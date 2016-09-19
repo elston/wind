@@ -8,7 +8,7 @@ import re
 from flask import jsonify, request, make_response
 from flask_login import current_user
 from sqlalchemy import func
-from webapp import app, db, wuclient
+from webapp import app, db, wuclient, sch
 from webapp.models import Location, Forecast, HourlyForecast
 from werkzeug.utils import secure_filename
 
@@ -56,6 +56,7 @@ def add_locations():
             db.session.add(location)
         # location.update_history()
         # location.update_forecast()
+        sch.update_weather_schedules()
         db.session.commit()
 
         js = jsonify({'data': 'OK'})

@@ -6,6 +6,7 @@ from .market import Market
 from .observation import Observation
 from .prices import Prices
 from .windpark import Windpark
+from .windpark_turbines import WindparkTurbine
 from .generation import Generation
 from .turbine import Turbine
 from .turbine_power_curve import TurbinePowerCurve

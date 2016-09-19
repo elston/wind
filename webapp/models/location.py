@@ -40,6 +40,8 @@ class Location(db.Model):
     wspd_shape = db.Column(db.Float())  # shape parameter of wind speed Weibull model
     wspd_scale = db.Column(db.Float())  # scale parameter of wind speed Weibull model
     wind_model = db.Column(ArimaPriceModel())
+    update_at_11am = db.Column(db.Boolean())
+    update_at_11pm = db.Column(db.Boolean())
 
     observations = relationship('Observation', back_populates='location', order_by='Observation.time',
                                 cascade='all, delete-orphan')
