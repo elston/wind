@@ -1,9 +1,10 @@
 import calendar
 import logging
-from datetime import datetime
+from datetime import datetime, timedelta
 import cStringIO
 import zipfile
 
+import pytz
 import re
 from flask import jsonify, request, make_response
 from flask_login import current_user
@@ -187,18 +188,77 @@ def get_forecast(loc_id):
     if not current_user.is_authenticated:
         return jsonify({'error': 'User unauthorized'})
     try:
-        subqry = db.session.query(func.max(Forecast.time)).filter(Forecast.location_id == loc_id)
+        location = db.session.query(Location).filter_by(id=loc_id).first()
+        location_tz = pytz.timezone(location.tz_long)
+        location_now = location_tz.localize(datetime.now())
+
+        results = {}
+        last_forecast_utc = db.session.query(func.max(Forecast.time)).filter(Forecast.location_id == loc_id)[0][0]
         qry = db.session.query(HourlyForecast).filter(
             Forecast.location_id == loc_id,
-            Forecast.time == subqry,
+            Forecast.time == last_forecast_utc,
             HourlyForecast.forecast_id == Forecast.id).order_by(
             HourlyForecast.time)
-        result = {'tempm': [], 'wspdm': [], 'wdird': []}
+        result = {'tempm': [], 'wspdm': [], 'wdird': [],
+                  'time': location_tz.localize(last_forecast_utc).strftime('%d %b %Y %I:%M%p %Z')
+                  }
         for obs in qry.all():
             unix_ts = calendar.timegm(obs.time.timetuple())
-            for k in result.iterkeys():
+            for k in ('tempm', 'wspdm', 'wdird'):
                 result[k].append([unix_ts * 1000, getattr(obs, k)])
-        js = jsonify({'data': result})
+        results['last'] = result
+
+        last_11am_location_tz = location_now.replace(hour=11, minute=0, second=0, microsecond=0)
+        if last_11am_location_tz > location_now:
+            last_11am_location_tz = last_11am_location_tz - timedelta(days=1)
+        last_11am_utc = last_11am_location_tz.astimezone(pytz.UTC)
+        from_date = last_11am_utc - timedelta(minutes=10)
+        to_date = last_11am_utc + timedelta(minutes=10)
+        qry = db.session.query(Forecast.id).filter(
+            Forecast.location_id == loc_id,
+            Forecast.time > from_date,
+            Forecast.time <= to_date)
+        forecast_id = qry.first()
+        if forecast_id is not None:
+            forecast_id = forecast_id[0]
+            qry = db.session.query(HourlyForecast).filter(
+                HourlyForecast.forecast_id == forecast_id).order_by(
+                HourlyForecast.time)
+            result = {'tempm': [], 'wspdm': [], 'wdird': [],
+                      'time': last_11am_location_tz.strftime('%d %b %Y %I:%M%p %Z')
+                      }
+            for obs in qry.all():
+                unix_ts = calendar.timegm(obs.time.timetuple())
+                for k in ('tempm', 'wspdm', 'wdird'):
+                    result[k].append([unix_ts * 1000, getattr(obs, k)])
+            results['last_11am'] = result
+
+        last_11pm_location_tz = location_now.replace(hour=23, minute=0, second=0, microsecond=0)
+        if last_11pm_location_tz > location_now:
+            last_11pm_location_tz = last_11pm_location_tz - timedelta(days=1)
+        last_11pm_utc = last_11pm_location_tz.astimezone(pytz.UTC)
+        from_date = last_11pm_utc - timedelta(minutes=10)
+        to_date = last_11pm_utc + timedelta(minutes=10)
+        qry = db.session.query(Forecast.id).filter(
+            Forecast.location_id == loc_id,
+            Forecast.time > from_date,
+            Forecast.time <= to_date)
+        forecast_id = qry.first()
+        if forecast_id is not None:
+            forecast_id = forecast_id[0]
+            qry = db.session.query(HourlyForecast).filter(
+                HourlyForecast.forecast_id == forecast_id).order_by(
+                HourlyForecast.time)
+            result = {'tempm': [], 'wspdm': [], 'wdird': [],
+                      'time': last_11pm_location_tz.strftime('%d %b %Y %I:%M%p %Z')
+                      }
+            for obs in qry.all():
+                unix_ts = calendar.timegm(obs.time.timetuple())
+                for k in ('tempm', 'wspdm', 'wdird'):
+                    result[k].append([unix_ts * 1000, getattr(obs, k)])
+            results['last_11pm'] = result
+
+        js = jsonify({'data': results})
         return js
     except Exception, e:
         logger.exception(e)

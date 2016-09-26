@@ -177,7 +177,12 @@ class LocationsTestCase(unittest.TestCase):
         self.assertEqual(result['data'], 'OK')
 
     def test_get_forecast(self):
-        test_location = Location(user_id=user_id, name=test_name, l='/q/zmw:00000.1.10400', lookback=2)
+        test_location = Location(user_id=user_id, name=test_name, lookback=2, time_range='rolling')
+        rv = self.app.get('/api/locations/geolookup',
+                          data={'query': '/q/zmw:00000.1.10400'})
+        results = json.loads(rv.data)
+        location_data = results['data']['location']
+        test_location.update_from_dict(location_data)
         self.session.add(test_location)
         self.session.commit()
         test_location.update_forecast()

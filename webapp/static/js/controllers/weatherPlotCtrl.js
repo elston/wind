@@ -15,20 +15,22 @@ app.controller('WeatherPlotCtrl', ['$scope', '$q', '$uibModalInstance', 'entity'
         };
 
         $scope.updateSeriesSet = function () {
-            if ($scope.tempmEnabled) {
-                $scope.chart.series[0].show();
-            } else {
-                $scope.chart.series[0].hide();
-            }
-            if ($scope.wspdmEnabled) {
-                $scope.chart.series[1].show();
-            } else {
-                $scope.chart.series[1].hide();
-            }
-            if ($scope.wdirdEnabled) {
-                $scope.chart.series[2].show();
-            } else {
-                $scope.chart.series[2].hide();
+            for (var i = 0; i < $scope.chart.series.length - 1; i += 3) {
+                if ($scope.tempmEnabled) {
+                    $scope.chart.series[i + 0].show();
+                } else {
+                    $scope.chart.series[i + 0].hide();
+                }
+                if ($scope.wspdmEnabled) {
+                    $scope.chart.series[i + 1].show();
+                } else {
+                    $scope.chart.series[i + 1].hide();
+                }
+                if ($scope.wdirdEnabled) {
+                    $scope.chart.series[i + 2].show();
+                } else {
+                    $scope.chart.series[i + 2].hide();
+                }
             }
         };
 
@@ -52,45 +54,166 @@ app.controller('WeatherPlotCtrl', ['$scope', '$q', '$uibModalInstance', 'entity'
             ])
             .then(function () {
                 $('#weather-chart-container').empty();
+                var series = [{
+                    name: 'Temperature, C (observation)',
+                    data: $scope.history_data.tempm,
+                    tooltip: {
+                        valueDecimals: 1
+                    },
+                    color: 'red'
+                }, {
+                    name: 'Wind speed, km/h (observation)',
+                    data: $scope.history_data.wspdm,
+                    tooltip: {
+                        valueDecimals: 1
+                    },
+                    yAxis: 1,
+                    color: 'blue'
+                }, {
+                    name: 'Wind direction, degrees (observation)',
+                    data: $scope.history_data.wdird,
+                    tooltip: {
+                        valueDecimals: 0
+                    },
+                    yAxis: 2,
+                    color: 'darkgrey'
+                }];
+                if ($scope.forecast_data.last_11am && $scope.forecast_data.last_11pm) {
+                    series.push({
+                        name: 'Temperature, C (forecast at ' + $scope.forecast_data.last_11am.time + ')',
+                        data: $scope.forecast_data.last_11am.tempm,
+                        tooltip: {
+                            valueDecimals: 1
+                        },
+                        color: 'red',
+                        dashStyle: 'Dash'
+                    });
+                    series.push({
+                        name: 'Wind speed, km/h (forecast at ' + $scope.forecast_data.last_11am.time + ')',
+                        data: $scope.forecast_data.last_11am.wspdm,
+                        tooltip: {
+                            valueDecimals: 1
+                        },
+                        yAxis: 1,
+                        color: 'blue',
+                        dashStyle: 'Dash'
+                    });
+                    series.push({
+                        name: 'Wind direction, degrees (forecast at ' + $scope.forecast_data.last_11am.time + ')',
+                        data: $scope.forecast_data.last_11am.wdird,
+                        tooltip: {
+                            valueDecimals: 1
+                        },
+                        yAxis: 2,
+                        color: 'darkgrey',
+                        dashStyle: 'Dash'
+                    });
+                    series.push({
+                        name: 'Temperature, C (forecast at ' + $scope.forecast_data.last_11pm.time + ')',
+                        data: $scope.forecast_data.last_11pm.tempm,
+                        tooltip: {
+                            valueDecimals: 1
+                        },
+                        color: 'red',
+                        dashStyle: 'Dot'
+                    });
+                    series.push({
+                        name: 'Wind speed, km/h (forecast at ' + $scope.forecast_data.last_11pm.time + ')',
+                        data: $scope.forecast_data.last_11pm.wspdm,
+                        tooltip: {
+                            valueDecimals: 1
+                        },
+                        yAxis: 1,
+                        color: 'blue',
+                        dashStyle: 'Dot'
+                    });
+                    series.push({
+                        name: 'Wind direction, degrees (forecast at ' + $scope.forecast_data.last_11pm.time + ')',
+                        data: $scope.forecast_data.last_11pm.wdird,
+                        tooltip: {
+                            valueDecimals: 1
+                        },
+                        yAxis: 2,
+                        color: 'darkgrey',
+                        dashStyle: 'Dot'
+                    });
+                } else {
+                    series.push({
+                        name: 'Temperature, C (last forecast at ' + $scope.forecast_data.last.time + ')',
+                        data: $scope.forecast_data.last.tempm,
+                        tooltip: {
+                            valueDecimals: 1
+                        },
+                        color: 'red',
+                        dashStyle: 'DashDot'
+                    });
+                    series.push({
+                        name: 'Wind speed, km/h (forecast at ' + $scope.forecast_data.last.time + ')',
+                        data: $scope.forecast_data.last.wspdm,
+                        tooltip: {
+                            valueDecimals: 1
+                        },
+                        yAxis: 1,
+                        color: 'blue',
+                        dashStyle: 'DashDot'
+                    });
+                    series.push({
+                        name: 'Wind direction, degrees (forecast at ' + $scope.forecast_data.last.time + ')',
+                        data: $scope.forecast_data.last.wdird,
+                        tooltip: {
+                            valueDecimals: 1
+                        },
+                        yAxis: 2,
+                        color: 'darkgrey',
+                        dashStyle: 'DashDot'
+                    });
+                }
                 $scope.chart = new Highcharts.StockChart({
                     chart: {
                         renderTo: 'weather-chart-container',
                         animation: false
                     },
-                    rangeSelector: {
-                        selected: 5,
-                        buttons: [
-                            {
-                                type: 'day',
-                                count: 1,
-                                text: '24h'
-                            }, {
-                                type: 'day',
-                                count: 7,
-                                text: '7d'
-                            }, {
-                                type: 'month',
-                                count: 1,
-                                text: '1m'
-                            }, {
-                                type: 'month',
-                                count: 3,
-                                text: '3m'
-                            }, {
-                                type: 'month',
-                                count: 6,
-                                text: '6m'
-                            }, {
-                                type: 'all',
-                                text: 'All'
-                            }
-                        ]
-                    },
+//                    rangeSelector: {
+//                        selected: 5,
+//                        buttons: [
+//                            {
+//                                type: 'day',
+//                                count: 1,
+//                                text: '24h'
+//                            }, {
+//                                type: 'day',
+//                                count: 7,
+//                                text: '7d'
+//                            }, {
+//                                type: 'month',
+//                                count: 1,
+//                                text: '1m'
+//                            }, {
+//                                type: 'month',
+//                                count: 3,
+//                                text: '3m'
+//                            }, {
+//                                type: 'month',
+//                                count: 6,
+//                                text: '6m'
+//                            }, {
+//                                type: 'all',
+//                                text: 'All'
+//                            }
+//                        ]
+//                    },
                     tooltip: {
                         xDateFormat: '%b %e, %Y, %H:%M'
                     },
                     credits: {
                         enabled: false
+                    },
+                    legend: {
+                        enabled: true,
+                    },
+                    xAxis: {
+                        min: $scope.history_data.tempm[$scope.history_data.tempm.length - 1][0] - 24 * 3600000,
+                        max: $scope.history_data.tempm[$scope.history_data.tempm.length - 1][0] + 36 * 3600000
                     },
                     yAxis: [{
                         title: {
@@ -105,48 +228,7 @@ app.controller('WeatherPlotCtrl', ['$scope', '$q', '$uibModalInstance', 'entity'
                             text: 'Wind direction, degrees'
                         }
                     }],
-                    series: [{
-                        name: 'Temperature, C',
-                        data: $scope.history_data.tempm.concat($scope.forecast_data.tempm),
-                        zoneAxis: 'x',
-                        zones: [{
-                            value: $scope.forecast_data.tempm[0][0]
-                        }, {
-                            dashStyle: 'dot'
-                        }],
-                        tooltip: {
-                            valueDecimals: 1
-                        },
-                        color: 'red'
-                    }, {
-                        name: 'Wind speed, km/h',
-                        data: $scope.history_data.wspdm.concat($scope.forecast_data.wspdm),
-                        zoneAxis: 'x',
-                        zones: [{
-                            value: $scope.forecast_data.wspdm[0][0]
-                        }, {
-                            dashStyle: 'dot'
-                        }],
-                        tooltip: {
-                            valueDecimals: 1
-                        },
-                        yAxis: 1,
-                        color: 'blue'
-                    }, {
-                        name: 'Wind direction, degrees',
-                        data: $scope.history_data.wdird.concat($scope.forecast_data.wdird),
-                        zoneAxis: 'x',
-                        zones: [{
-                            value: $scope.forecast_data.wdird[0][0]
-                        }, {
-                            dashStyle: 'dot'
-                        }],
-                        tooltip: {
-                            valueDecimals: 0
-                        },
-                        yAxis: 2,
-                        color: 'darkgrey'
-                    }]
+                    series: series
                 });
 
                 $scope.updateSeriesSet();
