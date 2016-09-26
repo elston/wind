@@ -306,7 +306,7 @@ app.controller('WindParkOptimizationCtrl', ['$scope', '$interval', '$timeout', '
                                         animation: false
                                     },
                                     title: {
-                                        text: 'DA offering cirve'
+                                        text: 'DA offering curve'
                                     },
                                     credits: {
                                         enabled: false
@@ -316,26 +316,35 @@ app.controller('WindParkOptimizationCtrl', ['$scope', '$interval', '$timeout', '
                                     },
                                     plotOptions: {
                                         line: {
-                                            animation: false
+                                            animation: false,
+                                            marker: {
+                                                enabled: true
+                                            }
                                         },
-                                        marker: {
-                                            enabled: true
-                                        }
                                     },
                                     xAxis: [{
                                         title: {
                                             text: 'Volume, MWh'
-                                        }
+                                        },
+                                        max: Math.max.apply(null, data.map(function(x) { return x[0]})) + 1,
+                                        min: Math.min.apply(null, data.map(function(x) { return x[0]})) - 1
                                     }],
                                     yAxis: [{
                                         title: {
                                             text: 'DA price, €/MWh'
-                                        }
+                                        },
+                                        max: Math.max.apply(null, data.map(function(x) { return x[1]})) + 1,
+                                        min: Math.min.apply(null, data.map(function(x) { return x[1]})) - 1
                                     }],
                                     series: [{
-                                        name: 'DA offering cirve',
+                                        name: 'DA price, €/MWh',
                                         data: data,
-                                        animation: false
+                                        animation: false,
+                                        tooltip: {
+                                            headerFormat: 'Volume, MWh: <b>{point.x}</b><br/>',
+                                            pointFormat: '{series.name}: <b>{point.y}</b><br/>',
+                                            valueDecimals: 1
+                                        }
                                     }]
                                 });
                             });
