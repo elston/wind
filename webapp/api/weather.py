@@ -200,7 +200,7 @@ def get_forecast(loc_id):
             HourlyForecast.forecast_id == Forecast.id).order_by(
             HourlyForecast.time)
         result = {'tempm': [], 'wspdm': [], 'wdird': [],
-                  'time': location_tz.localize(last_forecast_utc).strftime('%d %b %Y %I:%M%p %Z')
+                  'time': last_forecast_utc.replace(tzinfo=pytz.UTC).astimezone(location_tz).strftime('%d %b %Y %I:%M%p %Z')
                   }
         for obs in qry.all():
             unix_ts = calendar.timegm(obs.time.timetuple())
