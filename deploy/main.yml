@@ -15,10 +15,12 @@
     when: ansible_os_family == "RedHat"
 
   - name: add R repository for fresh packages
+    sudo: yes
     apt_repository: repo='deb https://cloud.r-project.org/bin/linux/ubuntu trusty/' state=present
 
   - name: install packages
-    apt: name={{ item }} state=installed update_cache=yes
+    sudo: yes
+    apt: name={{ item }} state=installed update_cache=yes force=yes
     with_items:
       - python-virtualenv
       - python-numpy
@@ -35,6 +37,7 @@
     when: ansible_os_family == "Debian"
 
   - name: install packages
+    sudo: yes
     yum: name={{ item }} state=installed
     with_items:
       - python-virtualenv
@@ -77,21 +80,32 @@
   - name: unpack lpsolve
     command: tar xvfz lp_solve_5.5.2.0_source.tar.gz creates=lp_solve_5.5 chdir=/tmp
 
+  - name: patch lpsolve
+    lineinfile: dest=/tmp/lp_solve_5.5/lpsolve55/ccc regexp='isnan\(0\)' line='echo \'main(){isnan(0.0);}\'>>/tmp/isnan.c'
+
   - name: build lpsolve
     command: sh ccc chdir=/tmp/lp_solve_5.5/lpsolve55 creates=bin/ux64/liblpsolve55.so
 
   - name: install lpsolve
-    command: install lp_solve_5.5/lpsolve55/bin/ux64/{{ item }} /usr/local/lib
+    sudo: yes
+    command: install lp_solve_5.5/lpsolve55/bin/ux64/liblpsolve55.so /usr/local/lib
     args:
       chdir: /tmp
       creates: /usr/local/lib/liblpsolve55.so
-    with_items:
-      - liblpsolve55.so
-      - liblpsolve55.a
     register: install_lpsolve
     when: ansible_os_family == "Debian"
 
   - name: install lpsolve
+    sudo: yes
+    command: install lp_solve_5.5/lpsolve55/bin/ux64/liblpsolve55.a /usr/local/lib
+    args:
+      chdir: /tmp
+      creates: /usr/local/lib/liblpsolve55.so
+    register: install_lpsolve
+    when: ansible_os_family == "Debian"
+
+  - name: install lpsolve
+    sudo: yes
     command: install lp_solve_5.5/lpsolve55/bin/ux64/{{ item }} /usr/lib64
     args:
       chdir: /tmp
@@ -103,6 +117,7 @@
     when: ansible_os_family == "RedHat"
 
   - name: update ldconfig
+    sudo: yes
     command: ldconfig
     when: install_lpsolve|success
 
