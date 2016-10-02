@@ -26,7 +26,7 @@ r_source('webapp/models/arima_condsim.R')
 
 from webapp import db
 from .prices import Prices
-from .arima_price_model import ArimaPriceModel
+from .arima_model import ArimaModel
 
 
 class Market(db.Model):
@@ -35,9 +35,9 @@ class Market(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
     name = db.Column(db.String(255))
     user_id = db.Column(db.Integer(), db.ForeignKey('user.id'), index=True)
-    lambdaD_model = db.Column(ArimaPriceModel())
-    MAvsMD_model = db.Column(ArimaPriceModel())
-    sqrt_r_model = db.Column(ArimaPriceModel())
+    lambdaD_model = db.Column(ArimaModel())
+    MAvsMD_model = db.Column(ArimaModel())
+    sqrt_r_model = db.Column(ArimaModel())
 
     prices = relationship('Prices', back_populates='market', order_by='Prices.time',
                           cascade='all, delete-orphan')
@@ -126,19 +126,19 @@ class Market(db.Model):
 
         lambdaD = np.array(lambdaD, dtype=np.float)
         values = np.log(lambdaD)  # [np.isfinite(lambdaD)])
-        self.lambdaD_model = ArimaPriceModel()
+        self.lambdaD_model = ArimaModel()
         self.lambdaD_model.set_parameters(p=2, d=0, q=1, P=1, D=1, Q=1, m=24)
         self.lambdaD_model.fit(values)
 
         MAvsMD = np.array(MAvsMD, dtype=np.float)
         # MAvsMD = MAvsMD[np.isfinite(MAvsMD)]
-        self.MAvsMD_model = ArimaPriceModel()
+        self.MAvsMD_model = ArimaModel()
         self.MAvsMD_model.set_parameters(p=1, d=0, q=11, P=1, D=0, Q=1, m=24)
         self.MAvsMD_model.fit(MAvsMD)
 
         sqrt_r = np.array(sqrt_r, dtype=np.float)
         # sqrt_r = sqrt_r[np.isfinite(sqrt_r)]
-        self.sqrt_r_model = ArimaPriceModel()
+        self.sqrt_r_model = ArimaModel()
         self.sqrt_r_model.set_parameters(p=2, d=0, q=1, P=1, D=0, Q=1, m=24)
         self.sqrt_r_model.fit(sqrt_r)
 

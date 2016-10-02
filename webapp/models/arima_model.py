@@ -8,14 +8,14 @@ from scipy import stats
 from sqlalchemy import TypeDecorator, VARCHAR
 
 
-class ArimaPriceModel(TypeDecorator):
+class ArimaModel(TypeDecorator):
     """Represents an immutable structure as a json-encoded string.
     """
 
     impl = VARCHAR
 
     def __init__(self, *args, **kwargs):
-        super(ArimaPriceModel, self).__init__(*args, **kwargs)
+        super(ArimaModel, self).__init__(*args, **kwargs)
         self.p = None
         self.d = None
         self.q = None
@@ -67,7 +67,7 @@ class ArimaPriceModel(TypeDecorator):
         if value is None:
             return None
         else:
-            model = ArimaPriceModel()
+            model = ArimaModel()
             d = json.loads(value)
             for k, v in d.iteritems():
                 setattr(model, k, v)

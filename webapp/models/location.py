@@ -20,7 +20,7 @@ from .observation import Observation
 from .history_download_status import HistoryDownloadStatus
 from .forecast import Forecast
 from .hourly_forecast import HourlyForecast
-from .arima_price_model import ArimaPriceModel
+from .arima_model import ArimaModel
 
 
 class Location(db.Model):
@@ -44,10 +44,10 @@ class Location(db.Model):
     lookforward = db.Column(db.Integer())
     wspd_shape = db.Column(db.Float())  # shape parameter of wind speed Weibull model
     wspd_scale = db.Column(db.Float())  # scale parameter of wind speed Weibull model
-    wind_model = db.Column(ArimaPriceModel())
+    wind_model = db.Column(ArimaModel())
     update_at_11am = db.Column(db.Boolean())
     update_at_11pm = db.Column(db.Boolean())
-    forecast_error_model = db.Column(ArimaPriceModel())
+    forecast_error_model = db.Column(ArimaModel())
 
     observations = relationship('Observation', back_populates='location', order_by='Observation.time',
                                 cascade='all, delete-orphan')
@@ -266,7 +266,7 @@ class Location(db.Model):
         z_bin_centers = 0.5 * (z_bin_edges[1:] + z_bin_edges[:-1])
         z_pdf = stats.norm.pdf(z_bin_centers, 0, 1)
 
-        wind_model = ArimaPriceModel()
+        wind_model = ArimaModel()
         wind_model.set_parameters(p=2, d=0, q=0, P=0, D=0, Q=0, m=0)
         wind_model.fit(z)
 
@@ -362,7 +362,7 @@ class Location(db.Model):
         if len(series_to_fit) > 0:
             series_to_fit = np.array(series_to_fit, dtype=np.float)
 
-            self.forecast_error_model = ArimaPriceModel()
+            self.forecast_error_model = ArimaModel()
             self.forecast_error_model.set_parameters(p=1, d=0, q=2, P=0, D=0, Q=0, m=0)
             self.forecast_error_model.fit(series_to_fit)
 
