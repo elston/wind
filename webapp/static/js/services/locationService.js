@@ -149,6 +149,64 @@ app.factory('locationService', ['$http', function ($http) {
 
     };
 
+    var getErrorsChunked = function (id) {
+        return $http.get($SCRIPT_ROOT + '/locations/' + id + '/errors_chunked')
+            .then(function (response) {
+                    if ('error' in response.data) {
+                        throw response.data.error;
+                    } else {
+                        return response.data.data;
+                    }
+                },
+                function (error) {
+                    throw error.statusText;
+                });
+
+    };
+
+    var getErrorsMerged = function (id) {
+        return $http.get($SCRIPT_ROOT + '/locations/' + id + '/errors_merged')
+            .then(function (response) {
+                    if ('error' in response.data) {
+                        throw response.data.error;
+                    } else {
+                        return response.data.data;
+                    }
+                },
+                function (error) {
+                    throw error.statusText;
+                });
+
+    };
+
+    var fitErrorModel = function (id) {
+        return $http.post($SCRIPT_ROOT + '/locations/' + id + '/fit_error_model')
+            .then(function (response) {
+                    if ('error' in response.data) {
+                        throw response.data.error;
+                    } else {
+                        return reload();
+                    }
+                },
+                function (error) {
+                    throw error.statusText;
+                });
+    };
+
+    var getModelData = function (id) {
+        return $http.get($SCRIPT_ROOT + '/locations/' + id + '/model_data')
+            .then(function (response) {
+                    if ('error' in response.data) {
+                        throw response.data.error;
+                    } else {
+                        return response.data.data;
+                    }
+                },
+                function (error) {
+                    throw error.statusText;
+                });
+    };
+
     return {
         reload: reload,
         updateHistory: updateHistory,
@@ -159,7 +217,11 @@ app.factory('locationService', ['$http', function ($http) {
         geoLookup: geoLookup,
         getHistory: getHistory,
         getForecast: getForecast,
-        fitWindDistribution: fitWindDistribution
+        fitWindDistribution: fitWindDistribution,
+        getErrorsChunked: getErrorsChunked,
+        getErrorsMerged: getErrorsMerged,
+        fitErrorModel: fitErrorModel,
+        getModelData: getModelData
     };
 
 }]);

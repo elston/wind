@@ -64,7 +64,10 @@ app.controller('LocationsCtrl', ['$scope', '$uibModal', 'locationService', funct
                 '<span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>' +
                 '<button type="button" class="btn btn-info btn-xs" ng-disabled="row.entity.n_observations==0" ng-click="$emit(\'viewDistribution\')" ' +
                 'tooltip-append-to-body="true" uib-tooltip="Fit and view wind speed distribution">' +
-                '<span class="glyphicon glyphicon-stats" aria-hidden="true"></span></button>' +
+                '<span class="glyphicon glyphicon-stats" aria-hidden="true"></span> 1</button>' +
+                '<button type="button" class="btn btn-info btn-xs" ng-disabled="row.entity.n_observations==0" ng-click="$emit(\'viewErrorModel\')" ' +
+                'tooltip-append-to-body="true" uib-tooltip="View forecast error model">' +
+                '<span class="glyphicon glyphicon-stats" aria-hidden="true"></span> 2</button>' +
                 '<button type="button" class="btn btn-secondary btn-xs" ng-click="$emit(\'downloadData\')" ' +
                 'tooltip-append-to-body="true" uib-tooltip="Download data">' +
                 '<span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span></button>',
@@ -150,6 +153,21 @@ app.controller('LocationsCtrl', ['$scope', '$uibModal', 'locationService', funct
 
     });
 
+
+    $scope.$on('viewErrorModel', function ($event) {
+        var modalInstance = $uibModal.open({
+            animation: false,
+            templateUrl: 'forecast-error-modal.html',
+            controller: 'ForecastErrorModelCtrl',
+            size: 'lg',
+            resolve: {
+                entity: function () {
+                    return $event.targetScope.row.entity;
+                }
+            }
+        });
+
+    });
 
     $scope.updateMap = function () {
         var mapOptions = {

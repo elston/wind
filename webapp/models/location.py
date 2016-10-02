@@ -1,15 +1,20 @@
 from collections import defaultdict
 import csv
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, time
 import logging
 import cStringIO
 
+import pytz
 from scipy import signal
 import numpy as np
 from scipy import stats
 from sqlalchemy.orm import relationship
 import rpy2.robjects as ro
 from rpy2.robjects import numpy2ri
+from rpy2.robjects.packages import importr
+
+forecast = importr("forecast")
+
 from webapp import db, wuclient, app
 from .observation import Observation
 from .history_download_status import HistoryDownloadStatus
@@ -42,6 +47,7 @@ class Location(db.Model):
     wind_model = db.Column(ArimaPriceModel())
     update_at_11am = db.Column(db.Boolean())
     update_at_11pm = db.Column(db.Boolean())
+    forecast_error_model = db.Column(ArimaPriceModel())
 
     observations = relationship('Observation', back_populates='location', order_by='Observation.time',
                                 cascade='all, delete-orphan')
@@ -65,7 +71,7 @@ class Location(db.Model):
     def to_dict(self):
         d = {}
         for c in self.__table__.columns:
-            if c.name == 'wind_model' and getattr(self, c.name) is not None:
+            if c.name in ('wind_model', 'forecast_error_model') and getattr(self, c.name) is not None:
                 d[c.name] = getattr(self, c.name).to_dict()
             else:
                 d[c.name] = getattr(self, c.name)
@@ -345,3 +351,98 @@ class Location(db.Model):
         simulated_wind = stats.weibull_min.ppf(stats.norm.cdf(simulated_z), self.wspd_shape, 0, self.wspd_scale)
 
         return simulated_z, simulated_wind
+
+    def fit_error_model(self):
+
+        if len(self.observations) == 0 or len(self.forecasts) == 0:
+            raise Exception('Unable to fit model without data')
+
+        series_to_fit = self.errors_merged()
+
+        if len(series_to_fit) > 0:
+            series_to_fit = np.array(series_to_fit, dtype=np.float)
+
+            self.forecast_error_model = ArimaPriceModel()
+            self.forecast_error_model.set_parameters(p=1, d=0, q=2, P=0, D=0, Q=0, m=0)
+            self.forecast_error_model.fit(series_to_fit)
+
+            # print(self.forecast_error_model.to_dict())
+
+    def errors_merged(self):
+        errors_chunked = self.errors_chunked()
+        errors_merged = []
+        for chunk in errors_chunked:
+            for point in chunk['errors']:
+                errors_merged.append(point[1])
+            errors_merged.extend([None] * 36)
+        return errors_merged
+
+    def errors_chunked(self):
+        location_tz = pytz.timezone(self.tz_long)
+        last_observation_time = self.observations[-1].time.replace(tzinfo=pytz.UTC).astimezone(
+            location_tz)  # location aware
+        allowed_forecast_time_diff = timedelta(minutes=5)
+        forecasts_to_fit = []
+        for forecast in self.forecasts:
+            forecast_time = forecast.time.replace(tzinfo=pytz.UTC).astimezone(location_tz)  # location aware
+            if forecast_time > last_observation_time - timedelta(hours=36):  # too fresh
+                continue
+            if forecast_time < last_observation_time - timedelta(days=30, hours=36):  # too old
+                continue
+            if (forecast_time + allowed_forecast_time_diff).time() < time(hour=11,
+                                                                          tzinfo=location_tz):  # before 11am - delta
+                continue
+            if (forecast_time - allowed_forecast_time_diff).time() > time(hour=11, tzinfo=location_tz) and \
+                            (forecast_time + allowed_forecast_time_diff).time() < time(hour=23,
+                                                                                       tzinfo=location_tz):  # between 11am + delta and 11pm - delta
+                continue
+            if (forecast_time - allowed_forecast_time_diff).time() > time(hour=23, tzinfo=location_tz):
+                continue
+            if Location.is_close_forecast(forecast, forecasts_to_fit):
+                continue
+            forecasts_to_fit.append(forecast)
+
+        errors_chunked = []
+
+        logging.info('Using %d forecasts', len(forecasts_to_fit))
+        for forecast in forecasts_to_fit:
+            logging.info('%s', forecast.time.replace(tzinfo=pytz.UTC).astimezone(location_tz))
+
+            forecast_errors = []
+            forecast_data_prepared = []
+
+            qry = db.session.query(HourlyForecast).filter(
+                HourlyForecast.forecast_id == forecast.id).order_by(
+                HourlyForecast.time)
+
+            forecast_data = qry.all()[:36]
+            for forecast_point in forecast_data:
+
+                qry = db.session.query(Observation).filter(
+                    Observation.time == forecast_point.time,
+                    Observation.location_id == self.id
+                )
+
+                observation_point = qry.first()
+
+                if observation_point is not None and observation_point.wspdm is not None and forecast_point.wspdm is not None:
+                    error = observation_point.wspdm - forecast_point.wspdm
+                    forecast_errors.append([forecast_point.time, error])
+                    forecast_data_prepared.append([forecast_point.time, forecast_point.wspdm])
+                else:
+                    forecast_errors.append([forecast_point.time, None])
+                    forecast_data_prepared.append([forecast_point.time, None])
+
+            errors_chunked.append(
+                {'timestamp': forecast.time, 'errors': forecast_errors, 'forecasts': forecast_data_prepared})
+
+        return errors_chunked
+
+    @staticmethod
+    def is_close_forecast(forecast, forecasts_to_fit):
+        if len(forecasts_to_fit) == 0:
+            return False
+        for fut in forecasts_to_fit:
+            if abs((forecast.time - fut.time).total_seconds()) < 5 * 60:
+                return True
+        return False

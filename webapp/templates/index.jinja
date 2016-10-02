@@ -70,6 +70,7 @@
 <script src="{{ url_for('.static', filename='js/controllers/windParkOptimizationCtrl.js') }}"></script>
 <script src="{{ url_for('.static', filename='js/controllers/locationDataCtrl.js') }}"></script>
 <script src="{{ url_for('.static', filename='js/controllers/addTurbineCtrl.js') }}"></script>
+<script src="{{ url_for('.static', filename='js/controllers/forecastErrorModelCtrl.js') }}"></script>
 <script src="{{ url_for('.static', filename='js/services/locationService.js') }}"></script>
 <script src="{{ url_for('.static', filename='js/services/marketService.js') }}"></script>
 <script src="{{ url_for('.static', filename='js/services/windparkService.js') }}"></script>
@@ -102,8 +103,8 @@
         {% endif %}
         {% raw %}  <!--start angular templating-->
         <li role="presentation" class="ng-cloak" ng-repeat="tab in tabs"><a href="#dyntab-{{tab.type}}-{{tab.id}}"
-                                                           aria-controls="symbols" role="tab"
-                                                           data-toggle="tab">{{tab.title}}&nbsp;
+                                                                            aria-controls="symbols" role="tab"
+                                                                            data-toggle="tab">{{tab.title}}&nbsp;
             <button type="button" class="close" aria-label="Close" ng-click="deleteTab(tab)"><span
                     aria-hidden="true">&times;</span></button>
         </a>

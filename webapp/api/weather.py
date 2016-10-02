@@ -4,10 +4,12 @@ from datetime import datetime, timedelta
 import cStringIO
 import zipfile
 
+import numpy as np
 import pytz
 import re
 from flask import jsonify, request, make_response
 from flask_login import current_user
+from scipy import stats
 from sqlalchemy import func
 from webapp import app, db, wuclient, sch
 from webapp.models import Location, Forecast, HourlyForecast
@@ -200,7 +202,8 @@ def get_forecast(loc_id):
             HourlyForecast.forecast_id == Forecast.id).order_by(
             HourlyForecast.time)
         result = {'tempm': [], 'wspdm': [], 'wdird': [],
-                  'time': last_forecast_utc.replace(tzinfo=pytz.UTC).astimezone(location_tz).strftime('%d %b %Y %I:%M%p %Z')
+                  'time': last_forecast_utc.replace(tzinfo=pytz.UTC).astimezone(location_tz).strftime(
+                      '%d %b %Y %I:%M%p %Z')
                   }
         for obs in qry.all():
             unix_ts = calendar.timegm(obs.time.timetuple())
@@ -273,6 +276,98 @@ def fit_get_wspd_model(loc_id):
     try:
         location = db.session.query(Location).filter_by(id=loc_id).first()
         result = location.fit_get_wspd_model()
+        js = jsonify({'data': result})
+        return js
+    except Exception, e:
+        logger.exception(e)
+        js = jsonify({'error': repr(e)})
+        return js
+
+
+@app.route('/api/locations/<loc_id>/errors_chunked')
+def get_errors_chunked(loc_id):
+    if not current_user.is_authenticated:
+        return jsonify({'error': 'User unauthorized'})
+    try:
+        location = db.session.query(Location).filter_by(id=loc_id).first()
+        result = location.errors_chunked()
+        start_time = result[0]['timestamp']
+        end_time = result[-1]['timestamp'] + timedelta(hours=36)
+        for chunk in result:
+            chunk['timestamp'] = calendar.timegm(chunk['timestamp'].timetuple()) * 1000.0
+            for point in chunk['errors']:
+                point[0] = calendar.timegm(point[0].timetuple()) * 1000.0
+            for point in chunk['forecasts']:
+                point[0] = calendar.timegm(point[0].timetuple()) * 1000.0
+        observations = []
+        for obs in location.observations:
+            if obs.time < start_time or obs.time > end_time:
+                continue
+            unix_ts = calendar.timegm(obs.time.timetuple())
+            observations.append([unix_ts * 1000, obs.wspdm])
+        js = jsonify({'data': {'observations': observations, 'errors': result}})
+        return js
+    except Exception, e:
+        logger.exception(e)
+        js = jsonify({'error': repr(e)})
+        return js
+
+
+@app.route('/api/locations/<loc_id>/errors_merged')
+def get_errors_merged(loc_id):
+    if not current_user.is_authenticated:
+        return jsonify({'error': 'User unauthorized'})
+    try:
+        location = db.session.query(Location).filter_by(id=loc_id).first()
+        errors = location.errors_merged()
+        x = np.array(errors, dtype=np.float)
+        min = np.nanmin(x)
+        max = np.nanmax(x)
+        mean = np.nanmean(x)
+        std = np.nanstd(x)
+        js = jsonify({'data': {'min': min, 'max': max, 'mean': mean, 'std': std, 'errors': errors}})
+        return js
+    except Exception, e:
+        logger.exception(e)
+        js = jsonify({'error': repr(e)})
+        return js
+
+
+@app.route('/api/locations/<loc_id>/fit_error_model', methods=['POST', ])
+def fit_error_model(loc_id):
+    if not current_user.is_authenticated:
+        return jsonify({'error': 'User unauthorized'})
+    try:
+        location = db.session.query(Location).filter_by(id=loc_id).first()
+        result = location.fit_error_model()
+        db.session.commit()
+        js = jsonify({'data': result})
+        return js
+    except Exception, e:
+        logger.exception(e)
+        js = jsonify({'error': repr(e)})
+        return js
+
+
+@app.route('/api/locations/<loc_id>/model_data')
+def get_model_data(loc_id):
+    if not current_user.is_authenticated:
+        return jsonify({'error': 'User unauthorized'})
+    try:
+        location = db.session.query(Location).filter_by(id=loc_id).first()
+        result = location.to_dict()
+
+        if location.forecast_error_model is not None:
+            residuals = location.forecast_error_model.residuals
+            residuals = [x for x in residuals if not np.isnan(x)]
+            (osm, osr), (slope, intercept, r2) = stats.probplot(residuals, dist='norm', fit=True)
+            qqplot_data = {'x': list(osm),
+                           'y': list(osr),
+                           'slope': slope,
+                           'intercept': intercept,
+                           'r2': r2}
+
+            result['forecast_error_model']['qqplot_data'] = qqplot_data
         js = jsonify({'data': result})
         return js
     except Exception, e:

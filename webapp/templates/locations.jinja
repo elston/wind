@@ -349,4 +349,159 @@
         <button type="button" class="btn btn-default" ng-click="close()">Close</button>
     </div>
 </script>
+
+<script type="text/ng-template" id="forecast-error-modal.html">
+    <div class="modal-header">
+        <h4 class="modal-title" id="forecast-error-modal-label">Wind speed forecast error model for location "{{
+            locationName }}"</h4>
+    </div>
+    <div class="modal-body">
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-xs-4">
+                            <span class="data-label"><b>Forecasts used</b></span>{{ errorsChunked.length }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-3">
+                            <span class="data-label"><b>Min error</b></span>{{ errorsMerged.min | number:2 }}
+                        </div>
+                        <div class="col-xs-3">
+                            <span class="data-label"><b>Max error</b></span>{{ errorsMerged.max | number:2 }}
+                        </div>
+                        <div class="col-xs-3">
+                            <span class="data-label"><b>Mean error</b></span>{{ errorsMerged.mean | number:2 }}
+                        </div>
+                        <div class="col-xs-3">
+                            <span class="data-label"><b>Error std</b></span>{{ errorsMerged.std | number:2 }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <select class="form-control" id="forecast-error-plot-select" ng-model="selectedDataPlot">
+            <option value="off" selected>Data plot: off</option>
+            <option value="errors-chunked" selected>Errors chunked</option>
+            <option value="errors-merged" selected>Errors merged</option>
+        </select>
+
+        <div uib-collapse="selectedDataPlot != 'errors-chunked'" expanded="plotErrorsChunked()"
+             collapsed="cleanErrorsChunked()">
+            <div class="well well-lg">
+                <div id="plot-value-errors-chunked" style="width:100%; height:600px;"></div>
+            </div>
+        </div>
+        <div uib-collapse="selectedDataPlot != 'errors-merged'" expanded="plotErrorsMerged()"
+             collapsed="cleanErrorsMerged()">
+            <div class="well well-lg">
+                <div id="plot-value-errors-merged" style="width:100%; height:400px;"></div>
+            </div>
+        </div>
+        <p>&nbsp;</p>
+
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-xs-4 col-xs-offset-3">
+                    <button class="btn btn-warning" style="width:100%" ng-click="fitErrorModel()">Fit model</button>
+                </div>
+            </div>
+        </div>
+
+        <p></p>
+
+        <div class="panel panel-default" ng-if="modelData.forecast_error_model">
+            <div class="panel-heading"><h4 class="panel-title">Error model</h4></div>
+            <div class="panel-body">
+                <select class="pull-right input-sm" id="analytic-plot" ng-model="selectedAnalyticPlot">
+                    <option value="off" selected>Analytic plot: off</option>
+                    <option value="prediction">Prediction</option>
+                    <option value="residuals">Residuals</option>
+                    <option value="dataAcf">Data ACF</option>
+                    <option value="dataPacf">Data PACF</option>
+                    <option value="residualsAcf">Residuals ACF</option>
+                    <option value="residualsPacf">Residuals PACF</option>
+                    <option value="residualsQq">Residuals Q-Q plot</option>
+                </select>
+
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-xs-1">
+                            <br><br>s.e.
+                        </div>
+                        <div class="col-xs-1" ng-repeat="(key, value) in modelData.forecast_error_model.coef">
+                            <b>{{ key }}</b><br>
+                            {{ value | number: 4 }}<br>
+                            {{ modelData.forecast_error_model.s_e[key] | number:4 }}
+                        </div>
+                    </div>
+                    <dl class="dl-horizontal">
+                        <dt>sigma<sup>2</sup></dt>
+                        <dd>{{ modelData.forecast_error_model.sigma2 | number:4 }}</dd>
+                        <dt>log likelihood</dt>
+                        <dd>{{ modelData.forecast_error_model.loglik | number:4 }}</dd>
+                        <dt>AIC</dt>
+                        <dd>{{ modelData.forecast_error_model.aic | number:4 }}</dd>
+                    </dl>
+                </div>
+                <div uib-collapse="!(selectedAnalyticPlot == 'prediction')"
+                     expanded="plotPrediction()"
+                     collapsed="cleanPrediction()">
+                    <div class="well well-lg">
+                        <div id="plot-error-pred" style="width:100%; height:400px;"></div>
+                    </div>
+                </div>
+                <div uib-collapse="!(selectedAnalyticPlot == 'residuals')"
+                     expanded="plotResiduals()"
+                     collapsed="cleanResiduals()">
+                    <div class="well well-lg">
+                        <div id="plot-error-residuals" style="width:100%; height:400px;"></div>
+                    </div>
+                </div>
+                <div uib-collapse="!(selectedAnalyticPlot == 'residualsAcf')"
+                     expanded="plotResidualsAcf()"
+                     collapsed="cleanResidualsAcf()">
+                    <div class="well well-lg">
+                        <div id="plot-error-residuals-acf" style="width:100%; height:400px;"></div>
+                    </div>
+                </div>
+                <div uib-collapse="!(selectedAnalyticPlot == 'residualsPacf')"
+                     expanded="plotResidualsPacf()"
+                     collapsed="cleanResidualsPacf()">
+                    <div class="well well-lg">
+                        <div id="plot-error-residuals-pacf" style="width:100%; height:400px;"></div>
+                    </div>
+                </div>
+                <div uib-collapse="!(selectedAnalyticPlot == 'dataAcf')"
+                     expanded="plotDataAcf()"
+                     collapsed="cleanDataAcf()">
+                    <div class="well well-lg">
+                        <div id="plot-error-data-acf" style="width:100%; height:400px;"></div>
+                    </div>
+                </div>
+                <div uib-collapse="!(selectedAnalyticPlot == 'dataPacf')"
+                     expanded="plotDataPacf()"
+                     collapsed="cleanDataPacf()">
+                    <div class="well well-lg">
+                        <div id="plot-error-data-pacf" style="width:100%; height:400px;"></div>
+                    </div>
+                </div>
+                <div uib-collapse="!(selectedAnalyticPlot == 'residualsQq')"
+                     expanded="plotResidualsQq()"
+                     collapsed="cleanResidualsQq()">
+                    <div class="well well-lg">
+                        <div id="plot-error-residuals-qq" style="width:100%; height:400px;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-default" ng-click="close()">Close</button>
+    </div>
+</script>
+
 {% endraw %}
