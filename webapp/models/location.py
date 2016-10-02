@@ -11,9 +11,6 @@ from scipy import stats
 from sqlalchemy.orm import relationship
 import rpy2.robjects as ro
 from rpy2.robjects import numpy2ri
-from rpy2.robjects.packages import importr
-
-forecast = importr("forecast")
 
 from webapp import db, wuclient, app
 from .observation import Observation
