@@ -89,11 +89,21 @@ app.controller('WindParkSimulationCtrl', ['$scope', '$timeout', 'windparkService
                             });
                         });
 
+                        wind_series.push({
+                            data: data.forecasted_wind,
+                            color: 'rgba(255, 0, 0, 1)'
+                        });
+
                         var power_series = [];
                         data.power.forEach(function (sample) {
                             power_series.push({
                                 data: sample
                             });
+                        });
+
+                        power_series.push({
+                            data: data.forecasted_power,
+                            color: 'rgba(255, 0, 0, 1)'
                         });
 
                         var max_p, min_p, p, h, alpha, color;
@@ -157,6 +167,9 @@ app.controller('WindParkSimulationCtrl', ['$scope', '$timeout', 'windparkService
                                         text: 'Wind speed, m/s'
                                     }
                                 }],
+                                xAxis: {
+                                    type: 'datetime'
+                                },
                                 series: wind_series
                             });
 
@@ -188,6 +201,9 @@ app.controller('WindParkSimulationCtrl', ['$scope', '$timeout', 'windparkService
                                         text: 'Power, MW'
                                     }
                                 }],
+                                xAxis: {
+                                    type: 'datetime'
+                                },
                                 series: power_series
                             });
 
@@ -215,6 +231,9 @@ app.controller('WindParkSimulationCtrl', ['$scope', '$timeout', 'windparkService
                                         text: 'Wind speed, m/s'
                                     }
                                 }],
+                                xAxis: {
+                                    type: 'datetime'
+                                },
                                 series: red_wind_series
                             });
 
@@ -242,6 +261,9 @@ app.controller('WindParkSimulationCtrl', ['$scope', '$timeout', 'windparkService
                                         text: 'Power, MW'
                                     }
                                 }],
+                                xAxis: {
+                                    type: 'datetime'
+                                },
                                 series: red_power_series
                             });
 

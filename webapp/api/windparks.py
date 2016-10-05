@@ -324,7 +324,8 @@ def get_wind_simulation(wpark_id):
         n_da_am_scenarios = int(request.values.get('n_da_am_scenarios'))
         n_da_am_reduced_scenarios = int(request.values.get('n_da_am_reduced_scenarios'))
 
-        simulated_wind, simulated_power = windpark.simulate_generation(time_span, n_scenarios, 12, n_da_am_scenarios)
+        simulated_wind, simulated_power, forecasted_wind, forecasted_power, dates = \
+            windpark.simulate_generation(time_span, n_scenarios, 12, n_da_am_scenarios)
 
         da_am_wind_scenarios = simulated_wind[:, 0, :12]
 
@@ -386,12 +387,23 @@ def get_wind_simulation(wpark_id):
         simulated_power = simulated_power.reshape(simulated_power.shape[0] * simulated_power.shape[1],
                                                   simulated_power.shape[2])
 
-        js = jsonify({'data': {'wind_speed': simulated_wind.tolist(),
-                               'power': simulated_power.tolist(),
-                               'reduced_wind_speed': red_sim_wind.tolist(),
+        dates = [calendar.timegm(x.timetuple()) * 1000 for x in dates]
+
+        simulated_wind = [zip(dates, x) for x in simulated_wind]
+        simulated_power = [zip(dates, x) for x in simulated_power]
+        red_sim_wind = [zip(dates, x) for x in red_sim_wind]
+        red_sim_power = [zip(dates, x) for x in red_sim_power]
+        forecasted_wind = zip(dates, forecasted_wind)
+        forecasted_power = zip(dates, forecasted_power)
+
+        js = jsonify({'data': {'wind_speed': simulated_wind,
+                               'power': simulated_power,
+                               'reduced_wind_speed': red_sim_wind,
                                'wind_probs': wind_probs.tolist(),
-                               'reduced_power': red_sim_power.tolist(),
-                               'power_probs': power_probs.tolist()}})
+                               'reduced_power': red_sim_power,
+                               'power_probs': power_probs.tolist(),
+                               'forecasted_wind': forecasted_wind,
+                               'forecasted_power': forecasted_power}})
         return js
     except Exception, e:
         logger.exception(e)

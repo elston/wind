@@ -131,12 +131,17 @@ class Windpark(db.Model):
 
         if self.power_curve is None:
             self._calculate_total_power_curve()
-        _, simulated_wind = self.location.simulate_wind_2stage(time_span, n_scenarios, da_am_time_span,
-                                                               n_da_am_scenarios)
+        # _, simulated_wind = self.location.simulate_wind_2stage(time_span, n_scenarios, da_am_time_span,
+        #                                                        n_da_am_scenarios)
+        forecasted_wind, simulated_wind, dates = self.location.simulate_wind_with_forecast(time_span, n_scenarios,
+                                                                                           da_am_time_span,
+                                                                                           n_da_am_scenarios)
         simulated_wind = np.array(simulated_wind) / 3.6
-        # simulated_wind = [x / 3.6 for x in simulated_wind]  # km/h to m/s
         simulated_power = np.interp(simulated_wind, self.power_curve['wind_speed'], self.power_curve['power']) / 1000.0
-        return simulated_wind, simulated_power
+        forecasted_wind = np.array(forecasted_wind) / 3.6
+        forecasted_power = np.interp(forecasted_wind, self.power_curve['wind_speed'],
+                                     self.power_curve['power']) / 1000.0
+        return simulated_wind, simulated_power, forecasted_wind, forecasted_power, dates
 
     def simulate_market(self, date, start_hour, time_span, n_lambdaD_scenarios, n_MAvsMD_scenarios, n_sqrt_r_scenarios):
         if self.market is None:

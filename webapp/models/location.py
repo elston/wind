@@ -11,7 +11,6 @@ from scipy import stats
 from sqlalchemy.orm import relationship
 import rpy2.robjects as ro
 from rpy2.robjects import numpy2ri
-
 from webapp import db, wuclient, app
 from .observation import Observation
 from .history_download_status import HistoryDownloadStatus
@@ -348,6 +347,58 @@ class Location(db.Model):
         simulated_wind = stats.weibull_min.ppf(stats.norm.cdf(simulated_z), self.wspd_shape, 0, self.wspd_scale)
 
         return simulated_z, simulated_wind
+
+    def simulate_wind_with_forecast(self, time_span, n_scenarios, da_am_time_span, n_da_am_scenarios):
+        if self.forecast_error_model is None:
+            raise Exception('Unable to simulate wind without model')
+
+        # p q P Q s d D
+        model = self.forecast_error_model
+        long_command = 'error.model <- list(arma=c(%d,%d,%d,%d,%d,%d,%d), coef=list(%s), sigma2=%f, model=list(phi=c(%s), theta=c(%s)))' % \
+                       (model.p, model.q, model.P, model.Q, 0, model.d, model.D,
+                        ','.join(['%s=%.20f' % (name, value) for name, value in model.coef.iteritems()]),
+                        model.sigma2,
+                        ','.join(['%.20f' % x for x in model.phi]),
+                        ','.join(['%.20f' % x for x in model.theta]),
+                        )
+        logging.debug(long_command)
+
+        location_tz = pytz.timezone(self.tz_long)
+        location_now = location_tz.localize(datetime.now())
+        next_12pm_location_tz = location_now.replace(hour=12, minute=0, second=0, microsecond=0)
+        if next_12pm_location_tz > location_now:
+            next_12pm_location_tz = next_12pm_location_tz - timedelta(days=1)
+        next_12pm_utc_naive = next_12pm_location_tz.astimezone(pytz.UTC).replace(tzinfo=None)
+
+        last_forecast = self.forecasts[-1]
+        relevant_forecasts = [x for x in last_forecast.hourly_forecasts
+                              if next_12pm_utc_naive <= x.time < next_12pm_utc_naive + timedelta(hours=36)]
+        forecasted_wind = [x.wspdm for x in relevant_forecasts]
+        dates = [x.time for x in relevant_forecasts]
+
+        ro.r(long_command)
+        seed = np.ones(3) * model.coef['intercept']
+        ro.r.assign('error.seed.da.am', numpy2ri.numpy2ri(seed))
+
+        simulated_da_am_error = ro.r(
+            'arima.condsim(error.model, error.seed.da.am, %d, %d)' % (da_am_time_span + 2, n_da_am_scenarios))
+        simulated_da_am_error = numpy2ri.ri2py(simulated_da_am_error).transpose()[:, :da_am_time_span]
+
+        simulated_errors = []
+
+        for da_am_error in simulated_da_am_error:
+            ro.r.assign('error.seed', numpy2ri.numpy2ri(da_am_error))
+            simulated_error = ro.r('arima.condsim(error.model, error.seed, %d, %d)' % (time_span + 2, n_scenarios))
+            simulated_error = numpy2ri.ri2py(simulated_error).transpose()[:, :time_span]
+            x = np.tile(da_am_error, (simulated_error.shape[0], 1))
+            simulated_error = np.concatenate((x, simulated_error), axis=1)
+            simulated_errors.append(simulated_error)
+
+        simulated_error = np.array(simulated_errors)
+
+        simulated_wind = forecasted_wind + simulated_error
+
+        return forecasted_wind, simulated_wind, dates
 
     def fit_error_model(self):
 
