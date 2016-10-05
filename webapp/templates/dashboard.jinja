@@ -414,6 +414,10 @@
                                         <input type="checkbox" ng-model="windpark.optimization_job.refit_weather">Recalculate
                                         wind model</label>
                                 </div>
+                                <div class="col-xs-3">
+                                    <label class="checkbox control-label">
+                                        <input type="checkbox" ng-model="windpark.optimization_job.use_wind_forecast">Use wind forecast instead of simulation</label>
+                                </div>
                             </div>
 
                             <div class="form-group form-group-sm">
@@ -421,11 +425,13 @@
 
                                 <div class="col-xs-2">
                                     <input type="number" ng-model="windpark.optimization_job.n_wind_scenarios"
+                                           ng-disabled="windpark.optimization_job.use_wind_forecast"
                                            class="form-control" required>
                                 </div>
 
                                 <div class="col-xs-1">
                                     <input type="number" ng-model="windpark.optimization_job.n_redc_wind_scenarios"
+                                           ng-disabled="windpark.optimization_job.use_wind_forecast"
                                            class="form-control" required>
                                 </div>
 
@@ -434,12 +440,14 @@
 
                                 <div class="col-xs-2">
                                     <input type="number" ng-model="windpark.optimization_job.n_da_am_wind_scenarios"
+                                           ng-disabled="windpark.optimization_job.use_wind_forecast"
                                            class="form-control" required>
                                 </div>
 
                                 <div class="col-xs-1">
                                     <input type="number"
                                            ng-model="windpark.optimization_job.n_redc_da_am_wind_scenarios"
+                                           ng-disabled="windpark.optimization_job.use_wind_forecast"
                                            class="form-control" required>
                                 </div>
 
