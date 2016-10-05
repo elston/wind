@@ -125,7 +125,7 @@ class Windpark(db.Model):
                 collected_curves['power'] += curve['power']
         self.power_curve = collected_curves
 
-    def simulate_generation(self, time_span, n_scenarios, da_am_time_span, n_da_am_scenarios):
+    def simulate_generation(self, date, time_span, n_scenarios, da_am_time_span, n_da_am_scenarios):
         if self.location is None:
             raise Exception('Cannot simulate generation for undefined location')
 
@@ -133,7 +133,7 @@ class Windpark(db.Model):
             self._calculate_total_power_curve()
         # _, simulated_wind = self.location.simulate_wind_2stage(time_span, n_scenarios, da_am_time_span,
         #                                                        n_da_am_scenarios)
-        forecasted_wind, simulated_wind, dates = self.location.simulate_wind_with_forecast(time_span, n_scenarios,
+        forecasted_wind, simulated_wind, dates = self.location.simulate_wind_with_forecast(date, time_span, n_scenarios,
                                                                                            da_am_time_span,
                                                                                            n_da_am_scenarios)
         simulated_wind = np.array(simulated_wind) / 3.6

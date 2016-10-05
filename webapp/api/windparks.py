@@ -1,6 +1,6 @@
 import calendar
 import logging
-from datetime import datetime
+from datetime import datetime, date
 import cStringIO
 import zipfile
 
@@ -325,7 +325,7 @@ def get_wind_simulation(wpark_id):
         n_da_am_reduced_scenarios = int(request.values.get('n_da_am_reduced_scenarios'))
 
         simulated_wind, simulated_power, forecasted_wind, forecasted_power, dates = \
-            windpark.simulate_generation(time_span, n_scenarios, 12, n_da_am_scenarios)
+            windpark.simulate_generation(date.today(), time_span, n_scenarios, 12, n_da_am_scenarios)
 
         da_am_wind_scenarios = simulated_wind[:, 0, :12]
 
@@ -523,7 +523,16 @@ def optimization_results(wpark_id):
         return jsonify({'error': 'User unauthorized'})
     try:
         windpark = db.session.query(Windpark).filter_by(id=wpark_id).first()
-        result = None if windpark.optimization_results is None else windpark.optimization_results.to_dict()
+        if windpark.optimization_results is None:
+            result = None
+        else:
+            result = windpark.optimization_results.to_dict()
+            dates = [calendar.timegm(datetime.strptime(x, '%a, %d %b %Y %H:%M:%S %Z').timetuple()) * 1000 for x in
+                     result['dates']]
+            result['reduced_simulated_power'] = [[zip(dates, x) for x in y] for y in result['reduced_simulated_power']]
+            result['Pa'] = [[zip(dates, x) for x in y] for y in result['Pa']]
+            result['Ps'] = [[zip(dates, x) for x in y] for y in result['Ps']]
+            result['Pd'] = [zip(dates, x) for x in result['Pd']]
         js = jsonify({'data': result})
         return js
     except Exception, e:

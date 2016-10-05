@@ -348,7 +348,7 @@ class Location(db.Model):
 
         return simulated_z, simulated_wind
 
-    def simulate_wind_with_forecast(self, time_span, n_scenarios, da_am_time_span, n_da_am_scenarios):
+    def simulate_wind_with_forecast(self, date, time_span, n_scenarios, da_am_time_span, n_da_am_scenarios):
         if self.forecast_error_model is None:
             raise Exception('Unable to simulate wind without model')
 
@@ -364,15 +364,12 @@ class Location(db.Model):
         logging.debug(long_command)
 
         location_tz = pytz.timezone(self.tz_long)
-        location_now = location_tz.localize(datetime.now())
-        next_12pm_location_tz = location_now.replace(hour=12, minute=0, second=0, microsecond=0)
-        if next_12pm_location_tz > location_now:
-            next_12pm_location_tz = next_12pm_location_tz - timedelta(days=1)
-        next_12pm_utc_naive = next_12pm_location_tz.astimezone(pytz.UTC).replace(tzinfo=None)
+        location_12pm = location_tz.localize(datetime.combine(date, time(hour=12)))
+        utc_naive_location_12pm = location_12pm.astimezone(pytz.UTC).replace(tzinfo=None)
 
         last_forecast = self.forecasts[-1]
         relevant_forecasts = [x for x in last_forecast.hourly_forecasts
-                              if next_12pm_utc_naive <= x.time < next_12pm_utc_naive + timedelta(hours=36)]
+                              if utc_naive_location_12pm <= x.time < utc_naive_location_12pm + timedelta(hours=36)]
         forecasted_wind = [x.wspdm for x in relevant_forecasts]
         dates = [x.time for x in relevant_forecasts]
 

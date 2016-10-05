@@ -32,10 +32,12 @@ class Optimizer(object):
 
         self.start_scenarios_generation()
 
-        _, simulated_power = self.windpark.simulate_generation(time_span=job.time_span,
-                                                               n_scenarios=job.n_wind_scenarios,
-                                                               da_am_time_span=12,
-                                                               n_da_am_scenarios=job.n_da_am_wind_scenarios)
+        simulated_wind, simulated_power, forecasted_wind, forecasted_power, dates = self.windpark.simulate_generation(
+            date=job.date,
+            time_span=job.time_span,
+            n_scenarios=job.n_wind_scenarios,
+            da_am_time_span=12,
+            n_da_am_scenarios=job.n_da_am_wind_scenarios)
 
         da_am_power_scenarios = simulated_power[:, 0, :12]
 
@@ -136,6 +138,7 @@ class Optimizer(object):
         self.result.input['sqrt_r'] = sqrt_r.tolist()
         self.result.input['reduced_sqrt_r'] = sqrt_r_red.tolist()
         self.result.input['sqrt_r_probs'] = sqrt_r_prob.tolist()
+        self.result.dates = dates
         return self.result
 
     def start(self):

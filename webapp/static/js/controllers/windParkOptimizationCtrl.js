@@ -12,6 +12,7 @@ app.controller('WindParkOptimizationCtrl', ['$scope', '$interval', '$timeout', '
         var stopRefresh;
 
         $scope.optimize = function () {
+            $scope.windpark.optimization_job.date = $scope.optimizationDate.toISOString().split('T')[0];
             windparkService.checkRecentPrices($scope.windpark.id, $scope.windpark.optimization_job)
                 .then(function (recent) {
                         if (!recent) {
@@ -112,17 +113,9 @@ app.controller('WindParkOptimizationCtrl', ['$scope', '$interval', '$timeout', '
                             }
                         }],
                         xAxis: [{
+                            type: 'datetime',
                             title: {
-                                text: 'Hour'
-                            },
-                            allowDecimals: false,
-                            labels: {
-                                formatter: function () {
-                                    if (this.value < 12)
-                                        return this.value + 12;
-                                    else
-                                        return this.value - 12;
-                                }
+                                text: 'Time, UTC'
                             }
                         }],
                         series: red_power_series
@@ -153,8 +146,9 @@ app.controller('WindParkOptimizationCtrl', ['$scope', '$interval', '$timeout', '
                             }
                         }],
                         xAxis: [{
+                            type: 'datetime',
                             title: {
-                                text: 'Hour'
+                                text: 'Time, UTC'
                             }
                         }],
                         series: Pd_series
@@ -185,8 +179,9 @@ app.controller('WindParkOptimizationCtrl', ['$scope', '$interval', '$timeout', '
                             }
                         }],
                         xAxis: [{
+                            type: 'datetime',
                             title: {
-                                text: 'Hour'
+                                text: 'Time, UTC'
                             }
                         }],
                         series: Pa_series
@@ -217,9 +212,7 @@ app.controller('WindParkOptimizationCtrl', ['$scope', '$interval', '$timeout', '
                             }
                         }],
                         xAxis: [{
-                            title: {
-                                text: 'Hour'
-                            }
+                            type: 'datetime'
                         }],
                         series: Ps_series
                     });
