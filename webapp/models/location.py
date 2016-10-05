@@ -367,9 +367,21 @@ class Location(db.Model):
         location_12pm = location_tz.localize(datetime.combine(date, time(hour=12)))
         utc_naive_location_12pm = location_12pm.astimezone(pytz.UTC).replace(tzinfo=None)
 
-        last_forecast = self.forecasts[-1]
+        last_forecast = None
+        for try_forecast in reversed(self.forecasts):
+            if try_forecast.time < utc_naive_location_12pm:
+                last_forecast = try_forecast
+                break
+
+        if last_forecast is None:
+            raise Exception("Not enough forecasts")
+
         relevant_forecasts = [x for x in last_forecast.hourly_forecasts
                               if utc_naive_location_12pm <= x.time < utc_naive_location_12pm + timedelta(hours=36)]
+
+        if len(relevant_forecasts) < 36:
+            raise Exception("Not enough forecasts")
+
         forecasted_wind = [x.wspdm for x in relevant_forecasts]
         dates = [x.time for x in relevant_forecasts]
 
