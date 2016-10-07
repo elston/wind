@@ -78,7 +78,8 @@ app.controller('WeatherPlotCtrl', ['$scope', '$q', '$uibModalInstance', 'entity'
                     yAxis: 2,
                     color: 'darkgrey'
                 }];
-                if ($scope.forecast_data.last_11am && $scope.forecast_data.last_11pm) {
+
+                if ($scope.forecast_data.last_11am) {
                     series.push({
                         name: 'Temperature, C (forecast at ' + $scope.forecast_data.last_11am.time + ')',
                         data: $scope.forecast_data.last_11am.tempm,
@@ -108,6 +109,9 @@ app.controller('WeatherPlotCtrl', ['$scope', '$q', '$uibModalInstance', 'entity'
                         color: 'darkgrey',
                         dashStyle: 'Dash'
                     });
+                }
+
+                if ($scope.forecast_data.last_11pm) {
                     series.push({
                         name: 'Temperature, C (forecast at ' + $scope.forecast_data.last_11pm.time + ')',
                         data: $scope.forecast_data.last_11pm.tempm,
@@ -137,7 +141,9 @@ app.controller('WeatherPlotCtrl', ['$scope', '$q', '$uibModalInstance', 'entity'
                         color: 'darkgrey',
                         dashStyle: 'Dot'
                     });
-                } else {
+                }
+
+                if ($scope.forecast_data.last) {
                     series.push({
                         name: 'Temperature, C (last forecast at ' + $scope.forecast_data.last.time + ')',
                         data: $scope.forecast_data.last.tempm,
@@ -168,40 +174,37 @@ app.controller('WeatherPlotCtrl', ['$scope', '$q', '$uibModalInstance', 'entity'
                         dashStyle: 'DashDot'
                     });
                 }
+
                 $scope.chart = new Highcharts.StockChart({
                     chart: {
                         renderTo: 'weather-chart-container',
                         animation: false
                     },
-//                    rangeSelector: {
-//                        selected: 5,
-//                        buttons: [
-//                            {
-//                                type: 'day',
-//                                count: 1,
-//                                text: '24h'
-//                            }, {
-//                                type: 'day',
-//                                count: 7,
-//                                text: '7d'
-//                            }, {
-//                                type: 'month',
-//                                count: 1,
-//                                text: '1m'
-//                            }, {
-//                                type: 'month',
-//                                count: 3,
-//                                text: '3m'
-//                            }, {
-//                                type: 'month',
-//                                count: 6,
-//                                text: '6m'
-//                            }, {
-//                                type: 'all',
-//                                text: 'All'
-//                            }
-//                        ]
-//                    },
+                   rangeSelector: {
+                       selected: 0,
+                       buttons: [
+                           {
+                               type: 'hour',
+                               count: 24,
+                               text: '24h'
+
+                           }, {
+                               type: 'hour',
+                               count: 36,
+                               text: '36h'
+                           }, {
+                               type: 'month',
+                               count: 1,
+                               text: '1m'
+                           }, {
+                               type: 'all',
+                               text: 'All'
+                           }
+                       ],
+                       inputDateFormat: '%b %e, %Y %H:%M',
+                       inputEditDateFormat: '%Y-%m-%d %H:%M',
+                       inputBoxWidth: 150,
+                   },
                     tooltip: {
                         xDateFormat: '%b %e, %Y, %H:%M'
                     },
@@ -212,8 +215,35 @@ app.controller('WeatherPlotCtrl', ['$scope', '$q', '$uibModalInstance', 'entity'
                         enabled: true,
                     },
                     xAxis: {
-                        min: $scope.history_data.tempm[$scope.history_data.tempm.length - 1][0] - 24 * 3600000,
-                        max: $scope.history_data.tempm[$scope.history_data.tempm.length - 1][0] + 36 * 3600000
+                        min: new Date().setHours(3, 0, 0, 0),
+                        max: new Date().setHours(3, 0, 0, 0) + 24 * 3600000,
+                        events : {
+                            afterSetExtremes: function(e) {
+                                if (e.trigger == "rangeSelectorButton" &&
+                                    e.rangeSelectorButton.text == "24h"){
+                                    setTimeout(function(){
+                                        $scope.chart.xAxis[0].setExtremes(
+                                            new Date().setHours(3, 0, 0, 0),
+                                            new Date().setHours(3, 0, 0, 0) + 24 * 3600000);
+                                    }, 1);
+                                } else if (e.trigger == "rangeSelectorButton" &&
+                                    e.rangeSelectorButton.text == "36h"){
+                                    setTimeout(function(){
+                                        $scope.chart.xAxis[0].setExtremes(
+                                            new Date().setHours(15, 0, 0, 0),
+                                            new Date().setHours(15, 0, 0, 0) + 36 * 3600000);
+                                    }, 1);
+                                } else if (e.trigger == "rangeSelectorButton" &&
+                                    e.rangeSelectorButton.text == "1m") {
+                                    setTimeout(function(){
+                                        $scope.chart.xAxis[0].setExtremes(
+                                            new Date().setHours(3, 0, 0, 0),
+                                            new Date(new Date().setHours(3, 0, 0, 0))
+                                                .setMonth(new Date().getMonth()+1));
+                                    }, 1);
+                                }
+                            }
+                        }
                     },
                     yAxis: [{
                         title: {
