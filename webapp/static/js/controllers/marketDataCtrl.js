@@ -9,7 +9,7 @@ app.controller('MarketDataCtrl', ['$scope', '$uibModalInstance', 'entity', 'mark
         $scope.chartsMetadata = [
             ['lambdaD', 'Day ahead prices'],
             ['lambdaA', 'Adjustment market prices'],
-            ['MAvsMD', 'Difference between DA and AM prices'],
+            ['MAvsMD', 'Difference between AM and DA prices'],
             ['lambdaPlus', 'Upward imbalance prices (lambdaPlus)'],
             ['lambdaMinus', 'Downward imbalance prices (lambdaMinus)'],
             ['r_pos', 'r+'],
@@ -19,7 +19,7 @@ app.controller('MarketDataCtrl', ['$scope', '$uibModalInstance', 'entity', 'mark
 
         $scope.modelsMetadata = [
             ['lambdaD', 'Day ahead prices'],
-            ['MAvsMD', 'Difference between DA and AM prices'],
+            ['MAvsMD', 'Difference between AM and DA prices'],
             ['sqrt_r', 'sqrt(r)']
         ];
 
