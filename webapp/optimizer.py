@@ -23,7 +23,7 @@ class Optimizer(object):
         self.start()
         if job.refit_weather:
             self.start_refit_weather()
-            self.windpark.location.fit_get_wspd_model()
+            self.windpark.location.fit_error_model()
             self.finish_refit_weather()
         if job.refit_market:
             self.start_refit_market()
