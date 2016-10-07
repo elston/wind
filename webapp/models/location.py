@@ -416,14 +416,13 @@ class Location(db.Model):
 
         series_to_fit = self.errors_merged()
 
-        if len(series_to_fit) > 0:
-            series_to_fit = np.array(series_to_fit, dtype=np.float)
+        series_to_fit = np.array(series_to_fit, dtype=np.float)
+        if np.all(np.isnan(series_to_fit)):
+            raise Exception('No forecasts overlapping with observations within last 30 days')
 
-            self.forecast_error_model = ArimaModel()
-            self.forecast_error_model.set_parameters(p=1, d=0, q=2, P=0, D=0, Q=0, m=0)
-            self.forecast_error_model.fit(series_to_fit)
-
-            # print(self.forecast_error_model.to_dict())
+        self.forecast_error_model = ArimaModel()
+        self.forecast_error_model.set_parameters(p=1, d=0, q=2, P=0, D=0, Q=0, m=0)
+        self.forecast_error_model.fit(series_to_fit)
 
     def errors_merged(self):
         errors_chunked = self.errors_chunked()

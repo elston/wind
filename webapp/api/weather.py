@@ -291,6 +291,8 @@ def get_errors_chunked(loc_id):
     try:
         location = db.session.query(Location).filter_by(id=loc_id).first()
         result = location.errors_chunked()
+        if len(result) == 0:
+            raise Exception('No forecasts overlapping with observations within last 30 days')
         start_time = result[0]['timestamp']
         end_time = result[-1]['timestamp'] + timedelta(hours=36)
         for chunk in result:
@@ -320,6 +322,8 @@ def get_errors_merged(loc_id):
     try:
         location = db.session.query(Location).filter_by(id=loc_id).first()
         errors = location.errors_merged()
+        if len(errors) == 0:
+            raise Exception('No forecasts overlapping with observations within last 30 days')
         x = np.array(errors, dtype=np.float)
         min = np.nanmin(x)
         max = np.nanmax(x)
