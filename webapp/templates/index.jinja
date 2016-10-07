@@ -82,48 +82,56 @@
 
 {% block content %}
 <div ng-controller="MainCtrl">
-    <ul class="nav">
-        <li role="presentation" class="logo-in-tabs">
-            <img src="{{ url_for('static', filename='img/TISLogoWeb-h30.png') }}"/>
-        </li>
-        <li role="presentation" class="button-in-tabs"><a href="{{ url_for('security.logout') }}" class="btn btn-secondary">Logout</a>
-        </li>
-    </ul>
-    <!-- Nav tabs -->
-    <ul class="nav nav-tabs" role="tablist">
-        <li role="presentation" class="active"><a href="#dashboard" aria-controls="symbols" role="tab"
-                                                  data-toggle="tab">Dashboard</a>
-        </li>
-        <li role="presentation"><a href="#locations" aria-controls="symbols" role="tab" data-toggle="tab">Locations</a>
-        </li>
-        <li role="presentation"><a href="#markets" aria-controls="symbols" role="tab" data-toggle="tab">Markets</a>
-        </li>
-        {% if current_user.has_role('admin') %}
-        <li role="presentation"><a href="#admin" aria-controls="admin" role="tab" data-toggle="tab">Admin</a></li>
-        {% endif %}
-        {% raw %}  <!--start angular templating-->
-        <li role="presentation" class="ng-cloak" ng-repeat="tab in tabs"><a href="#dyntab-{{tab.type}}-{{tab.id}}"
-                                                                            aria-controls="symbols" role="tab"
-                                                                            data-toggle="tab">{{tab.title}}&nbsp;
-            <button type="button" class="close" aria-label="Close" ng-click="deleteTab(tab)"><span
-                    aria-hidden="true">&times;</span></button>
-        </a>
-        </li>
-        {% endraw %}  <!--return to jinja templating-->
-    </ul>
-    <!-- Tab panes -->
-    <div class="tab-content">
-        <div role="tabpanel" class="tab-pane active" id="dashboard">{% include "dashboard.jinja" %}</div>
-        <div role="tabpanel" class="tab-pane" id="locations">{% include "locations.jinja" %}</div>
-        <div role="tabpanel" class="tab-pane" id="markets">{% include "markets.jinja" %}</div>
-        {% if current_user.has_role('admin') %}
-        <div role="tabpanel" class="tab-pane" id="admin">{% include "admin.jinja" %}</div>
-        {% endif %}
-        {% raw %}  <!--start angular templating-->
-        <div role="tabpanel" class="tab-pane" ng-repeat="tab in tabs" id="dyntab-{{tab.type}}-{{tab.id}}">
-            <div class="ng-cloak" ng-if="tab.type=='windpark'" ng-include="'windpark-data.html'"></div>
+    <div class="card">
+        <div class="navbar-brand hidden-xs">
+            <img class="brand-img" src="{{ url_for('static', filename='img/TISLogoWeb-h60.png') }}"/>
         </div>
-        {% endraw %}  <!--return to jinja templating-->
+        <ul class="nav">
+            <li role="presentation" class="logo-in-tabs visible-xs">
+                <img src="{{ url_for('static', filename='img/TISLogoWeb-h30.png') }}"/>
+            </li>
+            <li role="presentation" class="button-in-tabs">
+                <a href="{{ url_for('security.logout') }}" class="btn btn-primary btn-primary">
+                    <span class="glyphicon glyphicon-log-out"></span> Logout
+                </a>
+            </li>
+        </ul>
+        <!-- Nav tabs -->
+        <ul class="nav nav-tabs" role="tablist">
+            <li role="presentation" class="active"><a href="#dashboard" aria-controls="symbols" role="tab"
+                                                      data-toggle="tab">Dashboard</a>
+            </li>
+            <li role="presentation"><a href="#locations" aria-controls="symbols" role="tab" data-toggle="tab">Locations</a>
+            </li>
+            <li role="presentation"><a href="#markets" aria-controls="symbols" role="tab" data-toggle="tab">Markets</a>
+            </li>
+            {% if current_user.has_role('admin') %}
+            <li role="presentation"><a href="#admin" aria-controls="admin" role="tab" data-toggle="tab">Admin</a></li>
+            {% endif %}
+            {% raw %}  <!--start angular templating-->
+            <li role="presentation" class="ng-cloak" ng-repeat="tab in tabs"><a href="#dyntab-{{tab.type}}-{{tab.id}}"
+                                                                                aria-controls="symbols" role="tab"
+                                                                                data-toggle="tab">{{tab.title}}&nbsp;
+                <button type="button" class="close" aria-label="Close" ng-click="deleteTab(tab)"><span
+                        aria-hidden="true">&times;</span></button>
+            </a>
+            </li>
+            {% endraw %}  <!--return to jinja templating-->
+        </ul>
+        <!-- Tab panes -->
+        <div class="tab-content">
+            <div role="tabpanel" class="tab-pane active" id="dashboard">{% include "dashboard.jinja" %}</div>
+            <div role="tabpanel" class="tab-pane" id="locations">{% include "locations.jinja" %}</div>
+            <div role="tabpanel" class="tab-pane" id="markets">{% include "markets.jinja" %}</div>
+            {% if current_user.has_role('admin') %}
+            <div role="tabpanel" class="tab-pane" id="admin">{% include "admin.jinja" %}</div>
+            {% endif %}
+            {% raw %}  <!--start angular templating-->
+            <div role="tabpanel" class="tab-pane" ng-repeat="tab in tabs" id="dyntab-{{tab.type}}-{{tab.id}}">
+                <div class="ng-cloak" ng-if="tab.type=='windpark'" ng-include="'windpark-data.html'"></div>
+            </div>
+            {% endraw %}  <!--return to jinja templating-->
+        </div>
     </div>
 
 </div>

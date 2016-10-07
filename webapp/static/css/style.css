@@ -4,7 +4,7 @@ ul.nav li.logo-in-tabs {
 }
 
 ul.nav li.button-in-tabs {
-    padding: 6px 15px;
+    padding: 13px 75px;
     float: right;
 }
 
@@ -13,10 +13,16 @@ ul.nav li.button-in-tabs a {
     margin-right: inherit;
     margin-top: inherit;
     position: inherit;
-    padding: 3px 12px;
+    padding: 5px 12px;
     border: 1px solid transparent;
     border-radius: 4px;
     line-height: inherit;
+}
+
+ul.nav li.button-in-tabs a:focus, ul.nav li.button-in-tabs a:hover, ul.nav li.button-in-tabs a:active {
+    color: #fff;
+    background-color: #286090;
+    border-color: #122b40;
 }
 
 #ajax_loader {
@@ -72,4 +78,69 @@ input[type='number'] {
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
     -webkit-appearance: none;
+}
+
+.nav-tabs {
+    border-bottom: 2px solid #DDD;
+}
+.nav-tabs > li.active > a, .nav-tabs > li.active > a:focus, .nav-tabs > li.active > a:hover {
+    border-width: 0;
+}
+.nav-tabs > li > a {
+    border: none;
+    color: #666;
+}
+.nav-tabs > li.active > a, .nav-tabs > li > a:hover {
+    border: none;
+    color: #2E6DA4 !important;
+    background: transparent;
+}
+.nav-tabs > li > a::after {
+    content: "";
+    background: #2E6DA4;
+    height: 2px;
+    position: absolute;
+    width: 100%;
+    left: 0px;
+    bottom: -1px;
+    -webkit-transition: all 250ms ease 0s;
+    transition: all 250ms ease 0s;
+    -webkit-transform: scale(0);
+    -ms-transform: scale(0);
+    transform: scale(0);
+}
+
+.nav-tabs > li.active > a::after, .nav-tabs > li:hover > a::after {
+    -webkit-transform: scale(1);
+    -ms-transform: scale(1);
+    transform: scale(1);
+}
+.tab-nav > li > a::after {
+    background: #173B7D none repeat scroll 0% 0%;
+    color: #fff;
+}
+.tab-pane {
+    padding: 15px 0;
+}
+
+.card {
+    background: #FFF none repeat scroll 0% 0%;
+    box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.3);
+    -moz-box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.3);
+    -webkit-box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.3);
+    margin-bottom: 30px;
+}
+
+.navbar-brand {
+    position: absolute;
+    width: 100%;
+    left: 0;
+    top: -10px;
+    text-align: center;
+    margin: auto;
+}
+
+.navbar-brand > img.brand-img {
+    display: inline-block;
+    height: 45px;
 }
