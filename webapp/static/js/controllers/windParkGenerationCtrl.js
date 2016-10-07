@@ -114,6 +114,7 @@ app.controller('WindparkGenerationCtrl', ['$scope', 'windparkService',
                     },
                     function (error) {
                         alertify.error(error);
+                        $scope.summary.showWindVsPower = false;
                     });
         };
 

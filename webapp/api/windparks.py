@@ -219,6 +219,9 @@ def get_wind_vs_power(wpark_id):
             .filter(Observation.time == Generation.time) \
             .all()
 
+        if len(wind_vs_power) == 0:
+            raise Exception('No overlapping wind and generation data available')
+
         wind = np.array([x[0] for x in wind_vs_power])
         power = np.array([x[1] for x in wind_vs_power])
 
