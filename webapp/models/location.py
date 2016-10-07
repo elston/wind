@@ -105,6 +105,10 @@ class Location(db.Model):
         if dls is not None and dls.full:
             return
         data = wuclient.history(date, self.l)
+        if ('response' in data and 'error' in data['response']) or 'history' not in data or 'observations' not in data[
+            'history']:
+            raise Exception('Cannot get observations because of %s', data['response']['error'])
+
         observations = data['history']['observations']
         for obs_data in observations:
             try:
@@ -141,6 +145,9 @@ class Location(db.Model):
     def update_forecast(self):
         now = datetime.utcnow()
         data = wuclient.hourly_forecast_10days(self.l)
+        if ('response' in data and 'error' in data['response']) or 'hourly_forecast' not in data:
+            raise Exception('Cannot get forecast because of %s', data['response']['error'])
+
         forecast = Forecast(location_id=self.id, time=now)
         db.session.add(forecast)
         db.session.flush()
