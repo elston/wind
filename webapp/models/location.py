@@ -475,19 +475,24 @@ class Location(db.Model):
             for forecast_point in forecast_data:
 
                 qry = db.session.query(Observation).filter(
-                    Observation.time == forecast_point.time,
+                    Observation.time >= forecast_point.time - timedelta(minutes=30),
+                    Observation.time < forecast_point.time + timedelta(minutes=30),
                     Observation.location_id == self.id
                 )
 
-                observation_point = qry.first()
+                observation_points = qry.all()
 
-                if observation_point is not None and observation_point.wspdm is not None and forecast_point.wspdm is not None:
-                    error = observation_point.wspdm - forecast_point.wspdm
-                    forecast_errors.append([forecast_point.time, error])
-                    forecast_data_prepared.append([forecast_point.time, forecast_point.wspdm])
-                else:
+                if len(observation_points) == 0:
                     forecast_errors.append([forecast_point.time, None])
-                    forecast_data_prepared.append([forecast_point.time, None])
+                else:
+                    average_wspdm = np.average([x.wspdm for x in observation_points])
+                    if np.isnan(average_wspdm):
+                        forecast_errors.append([forecast_point.time, None])
+                    else:
+                        error = average_wspdm - forecast_point.wspdm
+                        forecast_errors.append([forecast_point.time, error])
+
+                forecast_data_prepared.append([forecast_point.time, forecast_point.wspdm])
 
             errors_chunked.append(
                 {'timestamp': forecast.time, 'errors': forecast_errors, 'forecasts': forecast_data_prepared})
