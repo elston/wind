@@ -59,7 +59,7 @@ app.controller('UploadGenerationCtrl', ['$scope', '$uibModalInstance', 'entity',
         $scope.uploadGeneration = function () {
             windparkService.uploadGeneration(entity.id, $scope.fileFormat, $scope.generationFile)
                 .then(function () {
-                        alertify.alert('Generation upload', 'Done');
+                        alertify.notify('Uploading of generation is successful!', 'success', 5);
                     },
                     function (error) {
                         alertify.error(error);
