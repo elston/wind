@@ -20,7 +20,8 @@ app.controller('WindParksCtrl', ['$scope', '$uibModal', 'windparkService',
                             size: 'lg'
                         });
                     },
-                    order: 210
+                    order: 210,
+                    icon: 'grid-icon-add'
                 },
                 {
                     title: 'Delete selected wind parks',
@@ -32,7 +33,8 @@ app.controller('WindParksCtrl', ['$scope', '$uibModal', 'windparkService',
                             }
                         });
                     },
-                    order: 211
+                    order: 211,
+                    icon: 'grid-icon-remove'
                 }
             ],
             columnDefs: [
@@ -50,6 +52,19 @@ app.controller('WindParksCtrl', ['$scope', '$uibModal', 'windparkService',
                     width: 200
                 }
             ]
+        };
+
+        $scope.autoGridSize = function () {
+            if ($scope.gridOptions && $scope.gridOptions.data.length > 0) {
+                var rowHeight = $scope.gridOptions.rowHeight;
+                var headerHeight = $scope.gridOptions.headerRowHeight;
+                var marginHeight = 20;
+
+                var newHeight = $scope.gridOptions.data.length * rowHeight + headerHeight + marginHeight;
+
+                angular.element(document.getElementsByClassName('grid-windparks')[0]).css('height', newHeight + 'px');
+            }
+
         };
 
         $scope.$on('uploadGeneration', function ($event) {
@@ -92,6 +107,7 @@ app.controller('WindParksCtrl', ['$scope', '$uibModal', 'windparkService',
             var windparks = windparkService.getWindparks();
             $scope.gridOptions.data = windparks;
             $scope.noWindParks = windparks.length === 0;
+            $scope.autoGridSize();
         };
 
         windparkService.reload().then(function () {

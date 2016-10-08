@@ -15,7 +15,8 @@ app.controller('MarketsCtrl', ['$scope', '$uibModal', 'marketService',
                     action: function ($event) {
                         $('#new-market-dialog').modal('show');
                     },
-                    order: 210
+                    order: 210,
+                    icon: 'grid-icon-add'
                 },
                 {
                     title: 'Delete selected markets',
@@ -27,7 +28,8 @@ app.controller('MarketsCtrl', ['$scope', '$uibModal', 'marketService',
                             }
                         });
                     },
-                    order: 211
+                    order: 211,
+                    icon: 'grid-icon-remove'
                 }
             ],
             columnDefs: [
@@ -48,6 +50,19 @@ app.controller('MarketsCtrl', ['$scope', '$uibModal', 'marketService',
                     width: 200
                 }
             ]
+        };
+
+        $scope.autoGridSize = function () {
+            if ($scope.gridOptions && $scope.gridOptions.data.length > 0) {
+                var rowHeight = $scope.gridOptions.rowHeight;
+                var headerHeight = $scope.gridOptions.headerRowHeight;
+                var marginHeight = 20;
+
+                var newHeight = $scope.gridOptions.data.length * rowHeight + headerHeight + marginHeight;
+
+                angular.element(document.getElementsByClassName('grid-market')[0]).css('height', newHeight + 'px');
+            }
+
         };
 
         $scope.$on('uploadPrices', function ($event) {
@@ -99,6 +114,7 @@ app.controller('MarketsCtrl', ['$scope', '$uibModal', 'marketService',
             var markets = marketService.getMarkets();
             $scope.gridOptions.data = markets;
             $scope.noMarkets = markets.length === 0;
+            $scope.autoGridSize();
         };
 
         marketService.reload().then(function () {
