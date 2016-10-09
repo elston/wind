@@ -144,3 +144,54 @@ input::-webkit-inner-spin-button {
     display: inline-block;
     height: 45px;
 }
+
+#markets-grid .ui-grid-menu-button .ui-grid-menu .ui-grid-menu-mid {
+    overflow: initial;
+    border: 1px solid #d4d4d4;
+}
+
+#windparks-grid .ui-grid-menu-button .ui-grid-menu .ui-grid-menu-mid {
+    overflow: initial;
+    border: 1px solid #d4d4d4;
+}
+
+.ui-grid-icon-container{
+    color: #337AB7;
+}
+
+.ui-grid-icon-ok::before {
+    color: #12155A;
+}
+
+
+.ui-grid-icon-cancel::before {
+    color: #12155A;
+}
+
+.ui-grid-icon-menu:before {
+    content:"\e236";
+    font-family:"Glyphicons Halflings";
+    line-height:1;
+    margin-top: 3px;
+    display:inline-block;
+
+}
+
+.grid-icon-remove:before {
+    content: '\e020';
+    color: #D9534F;
+    font-family:"Glyphicons Halflings";
+    font-style: normal;
+    display: inline-block;
+    margin-top: 5px;
+}
+
+.grid-icon-add:before {
+    content: '\e081';
+    color: #5CB85C;
+    font-family:"Glyphicons Halflings";
+    font-style: normal;
+    display: inline-block;
+    margin-top: 5px;
+}
+
