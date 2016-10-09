@@ -168,7 +168,10 @@ app.controller('WindParkSimulationCtrl', ['$scope', '$timeout', 'windparkService
                                     }
                                 }],
                                 xAxis: {
-                                    type: 'datetime'
+                                    type: 'datetime',
+                                    title: {
+                                        text: 'Time (' + data.tzinfo + ')'
+                                    }
                                 },
                                 series: wind_series
                             });
@@ -202,7 +205,10 @@ app.controller('WindParkSimulationCtrl', ['$scope', '$timeout', 'windparkService
                                     }
                                 }],
                                 xAxis: {
-                                    type: 'datetime'
+                                    type: 'datetime',
+                                    title: {
+                                        text: 'Time (' + data.tzinfo + ')'
+                                    }
                                 },
                                 series: power_series
                             });
@@ -232,7 +238,10 @@ app.controller('WindParkSimulationCtrl', ['$scope', '$timeout', 'windparkService
                                     }
                                 }],
                                 xAxis: {
-                                    type: 'datetime'
+                                    type: 'datetime',
+                                    title: {
+                                        text: 'Time (' + data.tzinfo + ')'
+                                    }
                                 },
                                 series: red_wind_series
                             });
@@ -262,7 +271,10 @@ app.controller('WindParkSimulationCtrl', ['$scope', '$timeout', 'windparkService
                                     }
                                 }],
                                 xAxis: {
-                                    type: 'datetime'
+                                    type: 'datetime',
+                                    title: {
+                                        text: 'Time (' + data.tzinfo + ')'
+                                    }
                                 },
                                 series: red_power_series
                             });

@@ -8,6 +8,7 @@ from flask import jsonify, request, make_response
 from flask_login import current_user
 import numpy as np
 import pandas as pd
+import pytz
 from webapp import app, db
 from .math.reduce_scenarios import reduce_scenarios
 from .math.wind_vs_power_model import fit, model_function
@@ -15,6 +16,7 @@ from webapp.models import Windpark, Generation, Observation
 from webapp.models.optimization_job import OptimizationJob
 from webapp.models.windpark_turbines import WindparkTurbine
 from webapp.tasks import start_windpark_optimization, windpark_optimization_status, terminate_windpark_optimization
+from webapp.tz_utils import utc_naive_to_shifted_ts, shift_ts, ts_to_tz_name, utc_naive_to_tz_name
 from werkzeug.utils import secure_filename
 
 logger = logging.getLogger(__name__)
@@ -390,7 +392,9 @@ def get_wind_simulation(wpark_id):
         simulated_power = simulated_power.reshape(simulated_power.shape[0] * simulated_power.shape[1],
                                                   simulated_power.shape[2])
 
-        dates = [calendar.timegm(x.timetuple()) * 1000 for x in dates]
+        location_tz = pytz.timezone(windpark.location.tz_long)
+        tzinfo = ts_to_tz_name(dates[0], location_tz)
+        dates = [shift_ts(x, location_tz) for x in dates]
 
         simulated_wind = [zip(dates, x) for x in simulated_wind]
         simulated_power = [zip(dates, x) for x in simulated_power]
@@ -406,7 +410,8 @@ def get_wind_simulation(wpark_id):
                                'reduced_power': red_sim_power,
                                'power_probs': power_probs.tolist(),
                                'forecasted_wind': forecasted_wind,
-                               'forecasted_power': forecasted_power}})
+                               'forecasted_power': forecasted_power,
+                               'tzinfo': tzinfo}})
         return js
     except Exception, e:
         logger.exception(e)
@@ -500,7 +505,10 @@ def optimization_status(wpark_id):
     if not current_user.is_authenticated:
         return jsonify({'error': 'User unauthorized'})
     try:
-        job = windpark_optimization_status(int(wpark_id))
+        try:
+            job = windpark_optimization_status(int(wpark_id))
+        except:
+            return jsonify({'data': None})
         if job is None:
             return jsonify({'data': None})
         else:
@@ -526,17 +534,20 @@ def optimization_results(wpark_id):
         return jsonify({'error': 'User unauthorized'})
     try:
         windpark = db.session.query(Windpark).filter_by(id=wpark_id).first()
+        location_tz = pytz.timezone(windpark.location.tz_long)
         if windpark.optimization_results is None:
-            result = None
+            charts_data = None
         else:
-            result = windpark.optimization_results.to_dict()
-            dates = [calendar.timegm(datetime.strptime(x, '%a, %d %b %Y %H:%M:%S %Z').timetuple()) * 1000 for x in
-                     result['dates']]
-            result['reduced_simulated_power'] = [[zip(dates, x) for x in y] for y in result['reduced_simulated_power']]
-            result['Pa'] = [[zip(dates, x) for x in y] for y in result['Pa']]
-            result['Ps'] = [[zip(dates, x) for x in y] for y in result['Ps']]
-            result['Pd'] = [zip(dates, x) for x in result['Pd']]
-        js = jsonify({'data': result})
+            charts_data = windpark.optimization_results.to_dict()
+            tzinfo = ts_to_tz_name(charts_data['dates'][0], location_tz)
+            dates = [shift_ts(x, location_tz) for x in charts_data['dates']]
+            charts_data['reduced_simulated_power'] = [[zip(dates, x) for x in y] for y in
+                                                      charts_data['reduced_simulated_power']]
+            charts_data['Pa'] = [[zip(dates[12:], x) for x in y] for y in charts_data['Pa']]
+            charts_data['Ps'] = [[zip(dates[12:], x) for x in y] for y in charts_data['Ps']]
+            charts_data['Pd'] = [zip(dates[12:], x) for x in charts_data['Pd']]
+            charts_data['tzinfo'] = tzinfo
+        js = jsonify({'data': charts_data})
         return js
     except Exception, e:
         logger.exception(e)

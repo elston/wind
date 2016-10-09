@@ -43,7 +43,7 @@ app.controller('ForecastErrorModelCtrl', ['$scope', '$uibModalInstance', 'entity
                         }];
                         result.errors.forEach(function (elem) {
                             series.push({
-                                name: 'error ' + new Date(elem.timestamp).toISOString(),
+                                name: 'error ' + elem.timestamp,
                                 data: elem.errors,
                                 animation: false,
                                 marker: {
@@ -51,7 +51,7 @@ app.controller('ForecastErrorModelCtrl', ['$scope', '$uibModalInstance', 'entity
                                 }
                             });
                             series.push({
-                                name: 'forecast ' + new Date(elem.timestamp).toISOString(),
+                                name: 'forecast ' + elem.timestamp,
                                 data: elem.forecasts,
                                 animation: false,
                                 marker: {
@@ -81,7 +81,7 @@ app.controller('ForecastErrorModelCtrl', ['$scope', '$uibModalInstance', 'entity
                             }],
                             xAxis: [{
                                 title: {
-                                    text: 'Time'
+                                    text: 'Time (' + result.tzinfo + ')'
                                 },
                                 type: 'datetime'
                             }],
@@ -151,14 +151,12 @@ app.controller('ForecastErrorModelCtrl', ['$scope', '$uibModalInstance', 'entity
             var pred_se = $scope.modelData.forecast_error_model.pred_se;
             var pred_data = [];
             var pred_data_plus_minus = [];
-            var d = new Date();
 
             for (var i = 0; i < pred.length; i++) {
-                d.setHours(d.getHours() + 1);
-                pred_data.push([d.getTime(), pred[i]]);
-                pred_data_plus_minus.push([d.getTime(), pred[i] - pred_se[i], pred[i] + pred_se[i]]);
+                pred_data.push([i, pred[i]]);
+                pred_data_plus_minus.push([i, pred[i] - pred_se[i], pred[i] + pred_se[i]]);
             }
-            $scope.chart = new Highcharts.StockChart({
+            $scope.chart = new Highcharts.Chart({
                 chart: {
                     renderTo: 'plot-error-pred',
                     animation: false
@@ -175,7 +173,9 @@ app.controller('ForecastErrorModelCtrl', ['$scope', '$uibModalInstance', 'entity
                     }
                 }],
                 xAxis: [{
-                    type: 'datetime'
+                    title: {
+                        text: 'Hours after forecast'
+                    }
                 }],
                 series: [
                     {
@@ -198,13 +198,11 @@ app.controller('ForecastErrorModelCtrl', ['$scope', '$uibModalInstance', 'entity
         $scope.plotResiduals = function () {
             var residuals = $scope.modelData.forecast_error_model.residuals;
             var residuals_data = [];
-            var d = new Date();
 
             for (var i = 0; i < residuals.length; i++) {
-                d.setHours(d.getHours() + 1);
-                residuals_data.push([d.getTime(), residuals[i]]);
+                residuals_data.push(residuals[i]);
             }
-            $scope.chart = new Highcharts.StockChart({
+            $scope.chart = new Highcharts.Chart({
                 chart: {
                     renderTo: 'plot-error-residuals',
                     animation: false
@@ -221,7 +219,9 @@ app.controller('ForecastErrorModelCtrl', ['$scope', '$uibModalInstance', 'entity
                     }
                 }],
                 xAxis: [{
-                    type: 'datetime'
+                    title: {
+                        text: 'Hours'
+                    }
                 }],
                 series: [{
                     data: residuals_data,

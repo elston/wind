@@ -56,14 +56,14 @@ app.controller('WeatherPlotCtrl', ['$scope', '$q', '$uibModalInstance', 'entity'
                 $('#weather-chart-container').empty();
                 var series = [{
                     name: 'Temperature, C (observation)',
-                    data: $scope.history_data.tempm,
+                    data: $scope.history_data.data.tempm,
                     tooltip: {
                         valueDecimals: 1
                     },
                     color: 'red'
                 }, {
                     name: 'Wind speed, km/h (observation)',
-                    data: $scope.history_data.wspdm,
+                    data: $scope.history_data.data.wspdm,
                     tooltip: {
                         valueDecimals: 1
                     },
@@ -71,7 +71,7 @@ app.controller('WeatherPlotCtrl', ['$scope', '$q', '$uibModalInstance', 'entity'
                     color: 'blue'
                 }, {
                     name: 'Wind direction, degrees (observation)',
-                    data: $scope.history_data.wdird,
+                    data: $scope.history_data.data.wdird,
                     tooltip: {
                         valueDecimals: 0
                     },
@@ -215,6 +215,9 @@ app.controller('WeatherPlotCtrl', ['$scope', '$q', '$uibModalInstance', 'entity'
                         enabled: true,
                     },
                     xAxis: {
+                        title: {
+                            text: 'Time (' + $scope.history_data.tzinfo + ')'
+                        },
                         min: new Date().setHours(3, 0, 0, 0),
                         max: new Date().setHours(3, 0, 0, 0) + 24 * 3600000,
                         events : {
