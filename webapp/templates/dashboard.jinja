@@ -71,7 +71,10 @@
 </script>
 
 <script type="text/ng-template" id="upload-generation-modal.html">
-    <div class="modal-header">
+    <div class="modal-header dialog-custom-header">
+        <div class="dialog-close-button">
+            <button class="close" ng-click="close()"><span class="glyphicon glyphicon-remove"></span></button>
+        </div>
         <h4 class="modal-title" id="generation-upload-modal-label">Generation upload for wind park "{{ windParkName
             }}"</h4>
     </div>
@@ -114,7 +117,7 @@
             </form>
         </div>
 
-        <div id="generation-upload-chart-container" style="width:100%; height:400px;"></div>
+        <div id="generation-upload-chart-container" style="width:100%;"></div>
     </div>
     <div class="modal-footer">
         <button type="button" class="btn btn-default" ng-click="close()">Close</button>
