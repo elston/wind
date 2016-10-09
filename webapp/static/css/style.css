@@ -144,3 +144,8 @@ input::-webkit-inner-spin-button {
     display: inline-block;
     height: 45px;
 }
+
+#locations_map {
+    margin-bottom: 75px;
+    border: 1px solid #d4d4d4;
+}
