@@ -193,6 +193,7 @@ input::-webkit-inner-spin-button {
     font-style: normal;
     display: inline-block;
     margin-top: 5px;
+}
 
 .dialog-custom-header {
     background-color: #337ab7;
