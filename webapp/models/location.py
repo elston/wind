@@ -457,11 +457,7 @@ class Location(db.Model):
             if (forecast_time + allowed_forecast_time_diff).time() < time(hour=11,
                                                                           tzinfo=location_tz):  # before 11am - delta
                 continue
-            if (forecast_time - allowed_forecast_time_diff).time() > time(hour=11, tzinfo=location_tz) and \
-                            (forecast_time + allowed_forecast_time_diff).time() < time(hour=23,
-                                                                                       tzinfo=location_tz):  # between 11am + delta and 11pm - delta
-                continue
-            if (forecast_time - allowed_forecast_time_diff).time() > time(hour=23, tzinfo=location_tz):
+            if (forecast_time - allowed_forecast_time_diff).time() > time(hour=11, tzinfo=location_tz):
                 continue
             if Location.is_close_forecast(forecast, forecasts_to_fit):
                 continue
