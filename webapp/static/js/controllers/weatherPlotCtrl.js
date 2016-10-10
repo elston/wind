@@ -18,18 +18,111 @@ app.controller('WeatherPlotCtrl', ['$scope', '$q', '$uibModalInstance', 'entity'
             for (var i = 0; i < $scope.chart.series.length - 1; i += 3) {
                 if ($scope.tempmEnabled) {
                     $scope.chart.series[i + 0].show();
+
+                    $scope.chart.series[i + 0].options.showInLegend = true;
+                    $scope.chart.legend.renderItem($scope.chart.series[i + 0]);
+                    $scope.chart.legend.render();
+
+                    if($scope.chart.yAxis[i + 0]){
+                        $scope.chart.yAxis[i + 0].update({
+                            labels: {
+                                enabled: true
+                            },
+                            title: {
+                                text: 'Temperature, C'
+                            }
+                        });
+                    }
                 } else {
                     $scope.chart.series[i + 0].hide();
+
+                    $scope.chart.series[i + 0].options.showInLegend = false;
+                    $scope.chart.series[i + 0].legendItem = null;
+                    $scope.chart.legend.destroyItem($scope.chart.series[i + 0]);
+                    $scope.chart.legend.render();
+
+                    if ($scope.chart.yAxis[i + 0]) {
+                        $scope.chart.yAxis[i + 0].update({
+                            labels: {
+                                enabled: false
+                            },
+                            title: {
+                                text: null
+                            }
+                        });
+                    }
                 }
                 if ($scope.wspdmEnabled) {
                     $scope.chart.series[i + 1].show();
+
+                    $scope.chart.series[i + 1].options.showInLegend = true;
+                    $scope.chart.legend.renderItem($scope.chart.series[i + 1]);
+                    $scope.chart.legend.render();
+
+                    if ($scope.chart.yAxis[i + 1]){
+                        $scope.chart.yAxis[i + 1].update({
+                            labels: {
+                                enabled: true
+                            },
+                            title: {
+                                text: 'Wind speed, km/h'
+                            }
+                        });
+                    }
                 } else {
                     $scope.chart.series[i + 1].hide();
+
+                    $scope.chart.series[i + 1].options.showInLegend = false;
+                    $scope.chart.series[i + 1].legendItem = null;
+                    $scope.chart.legend.destroyItem($scope.chart.series[i + 1]);
+                    $scope.chart.legend.render();
+
+                    if ($scope.chart.yAxis[i + 1]) {
+                        $scope.chart.yAxis[i + 1].update({
+                            labels: {
+                                enabled: false
+                            },
+                            title: {
+                                text: null
+                            }
+                        });
+                    }
                 }
                 if ($scope.wdirdEnabled) {
                     $scope.chart.series[i + 2].show();
+
+                    $scope.chart.series[i + 2].options.showInLegend = true;
+                    $scope.chart.legend.renderItem($scope.chart.series[i + 2]);
+                    $scope.chart.legend.render();
+
+                    if ($scope.chart.yAxis[i + 2]) {
+                        $scope.chart.yAxis[i + 2].update({
+                            labels: {
+                                enabled: true
+                            },
+                            title: {
+                                text: 'Wind direction, degrees'
+                            }
+                        });
+                    }
                 } else {
                     $scope.chart.series[i + 2].hide();
+
+                    $scope.chart.series[i + 2].options.showInLegend = false;
+                    $scope.chart.series[i + 2].legendItem = null;
+                    $scope.chart.legend.destroyItem($scope.chart.series[i + 2]);
+                    $scope.chart.legend.render();
+
+                    if ($scope.chart.yAxis[i + 2]) {
+                        $scope.chart.yAxis[i + 2].update({
+                            labels: {
+                                enabled: false
+                            },
+                            title: {
+                                text: null
+                            }
+                        });
+                    }
                 }
             }
         };
