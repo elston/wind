@@ -401,25 +401,32 @@
                                            class="form-control" required>
                                 </div>
 
-                                <!--<label class="col-xs-2 control-label">Day-ahead start hour: </label>-->
-
-                                <!--<div class="col-xs-2">-->
-                                    <!--<input type="number" ng-model="windpark.optimization_job.market_start_hour"-->
-                                           <!--class="form-control"-->
-                                           <!--required>-->
-                                <!--</div>-->
-
-                            </div>
-                            <hr>
-                            <div class="form-group form-group-sm">
                                 <div class="col-xs-3">
                                     <label class="checkbox control-label">
-                                        <input type="checkbox" ng-model="windpark.optimization_job.refit_weather">Recalculate
+                                        <input type="checkbox" ng-model="windpark.optimization_job.refit_weather">Re-calibrate
                                         wind model</label>
                                 </div>
+
                                 <div class="col-xs-3">
                                     <label class="checkbox control-label">
-                                        <input type="checkbox" ng-model="windpark.optimization_job.use_wind_forecast">Use wind forecast instead of simulation</label>
+                                        <input type="checkbox" ng-model="windpark.optimization_job.refit_market">Re-calibrate
+                                        market model</label>
+                                </div>
+                            </div>
+
+                            <div class="form-group form-group-sm">
+                                <label class="col-xs-3 control-label">Optimization method: </label>
+                                <div class="col-xs-3">
+                                    <label class="radio control-label">
+                                        <input type="radio" ng-model="windpark.optimization_job.mode" value="stochastic">Stochastic</label>
+                                </div>
+                                <div class="col-xs-3">
+                                    <label class="radio control-label">
+                                        <input type="radio" ng-model="windpark.optimization_job.mode" value="deterministic">Deterministic optimization</label>
+                                </div>
+                                <div class="col-xs-3">
+                                    <label class="radio control-label">
+                                        <input type="radio" ng-model="windpark.optimization_job.mode" value="adjusted">Adjusted deterministic optimization</label>
                                 </div>
                             </div>
 
@@ -428,13 +435,13 @@
 
                                 <div class="col-xs-2">
                                     <input type="number" ng-model="windpark.optimization_job.n_wind_scenarios"
-                                           ng-disabled="windpark.optimization_job.use_wind_forecast"
+                                           ng-disabled="windpark.optimization_job.mode != 'stochastic'"
                                            class="form-control" required>
                                 </div>
 
                                 <div class="col-xs-1">
                                     <input type="number" ng-model="windpark.optimization_job.n_redc_wind_scenarios"
-                                           ng-disabled="windpark.optimization_job.use_wind_forecast"
+                                           ng-disabled="windpark.optimization_job.mode != 'stochastic'"
                                            class="form-control" required>
                                 </div>
 
@@ -443,24 +450,15 @@
 
                                 <div class="col-xs-2">
                                     <input type="number" ng-model="windpark.optimization_job.n_da_am_wind_scenarios"
-                                           ng-disabled="windpark.optimization_job.use_wind_forecast"
+                                           ng-disabled="windpark.optimization_job.mode != 'stochastic'"
                                            class="form-control" required>
                                 </div>
 
                                 <div class="col-xs-1">
                                     <input type="number"
                                            ng-model="windpark.optimization_job.n_redc_da_am_wind_scenarios"
-                                           ng-disabled="windpark.optimization_job.use_wind_forecast"
+                                           ng-disabled="windpark.optimization_job.mode != 'stochastic'"
                                            class="form-control" required>
-                                </div>
-
-                            </div>
-
-                            <div class="form-group form-group-sm">
-                                <div class="col-xs-3">
-                                    <label class="checkbox control-label">
-                                        <input type="checkbox" ng-model="windpark.optimization_job.refit_market">Recalculate
-                                        market model</label>
                                 </div>
 
                             </div>

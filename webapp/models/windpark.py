@@ -125,7 +125,7 @@ class Windpark(db.Model):
                 collected_curves['power'] += curve['power']
         self.power_curve = collected_curves
 
-    def simulate_generation(self, date, time_span, n_scenarios, da_am_time_span, n_da_am_scenarios):
+    def simulate_generation(self, date, time_span, n_scenarios, da_am_time_span, n_da_am_scenarios, adjusted=False):
         if self.location is None:
             raise Exception('Cannot simulate generation for undefined location')
 
@@ -138,9 +138,14 @@ class Windpark(db.Model):
                                                                                            n_da_am_scenarios)
         simulated_wind = np.array(simulated_wind) / 3.6
         simulated_power = np.interp(simulated_wind, self.power_curve['wind_speed'], self.power_curve['power']) / 1000.0
-        forecasted_wind = np.array(forecasted_wind) / 3.6
+
+        if adjusted:
+            forecasted_wind = (np.array(forecasted_wind) + self.location.forecast_error_model.coef['intercept']) / 3.6
+        else:
+            forecasted_wind = np.array(forecasted_wind) / 3.6
         forecasted_power = np.interp(forecasted_wind, self.power_curve['wind_speed'],
                                      self.power_curve['power']) / 1000.0
+
         return simulated_wind, simulated_power, forecasted_wind, forecasted_power, dates
 
     def simulate_market(self, date, start_hour, time_span, n_lambdaD_scenarios, n_MAvsMD_scenarios, n_sqrt_r_scenarios):

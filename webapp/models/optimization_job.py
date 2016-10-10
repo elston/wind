@@ -33,7 +33,7 @@ class OptimizationJob(TypeDecorator):
         self.Pmax = 1.0
         self.alpha = 0.95
         self.beta = 0
-        self.use_wind_forecast = False
+        self.mode = 'stochastic'
 
     def set_parameters(self):
         pass
@@ -72,7 +72,7 @@ class OptimizationJob(TypeDecorator):
                     market_start_hour=self.market_start_hour, time_span=self.time_span, date=self.date.isoformat(),
                     dt=self.dt,
                     Pmax=self.Pmax, alpha=self.alpha, beta=self.beta,
-                    use_wind_forecast=self.use_wind_forecast)
+                    mode=self.mode)
 
     def get_csv(self):
         fields = ['name', 'value']
