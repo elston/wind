@@ -1,6 +1,6 @@
 import calendar
 import logging
-from datetime import datetime, date
+from datetime import datetime
 import cStringIO
 import zipfile
 
@@ -16,7 +16,7 @@ from webapp.models import Windpark, Generation, Observation
 from webapp.models.optimization_job import OptimizationJob
 from webapp.models.windpark_turbines import WindparkTurbine
 from webapp.tasks import start_windpark_optimization, windpark_optimization_status, terminate_windpark_optimization
-from webapp.tz_utils import utc_naive_to_shifted_ts, shift_ts, ts_to_tz_name, utc_naive_to_tz_name
+from webapp.tz_utils import shift_ts, ts_to_tz_name
 from werkzeug.utils import secure_filename
 
 logger = logging.getLogger(__name__)
@@ -323,14 +323,14 @@ def get_wind_simulation(wpark_id):
     try:
         windpark = db.session.query(Windpark).filter_by(id=wpark_id).first()
 
-        time_span = int(request.values.get('time_span'))
+        simulation_date = datetime.strptime(request.values.get('simulation_date'), "%Y-%m-%dT%H:%M:%S.%fZ").date()
         n_scenarios = int(request.values.get('n_scenarios'))
         n_reduced_scenarios = int(request.values.get('n_reduced_scenarios'))
         n_da_am_scenarios = int(request.values.get('n_da_am_scenarios'))
         n_da_am_reduced_scenarios = int(request.values.get('n_da_am_reduced_scenarios'))
 
         simulated_wind, simulated_power, forecasted_wind, forecasted_power, dates = \
-            windpark.simulate_generation(date.today(), time_span, n_scenarios, 12, n_da_am_scenarios)
+            windpark.simulate_generation(simulation_date, 24, n_scenarios, 12, n_da_am_scenarios)
 
         da_am_wind_scenarios = simulated_wind[:, 0, :12]
 
@@ -426,8 +426,6 @@ def get_market_simulation(wpark_id):
     try:
         windpark = db.session.query(Windpark).filter_by(id=wpark_id).first()
 
-        day_start = int(request.values.get('day_start'))
-        time_span = int(request.values.get('time_span'))
         n_da_price_scenarios = int(request.values.get('n_da_price_scenarios'))
         n_da_redc_price_scenarios = int(request.values.get('n_da_redc_price_scenarios'))
         n_da_am_price_scenarios = int(request.values.get('n_da_am_price_scenarios'))
@@ -435,8 +433,8 @@ def get_market_simulation(wpark_id):
         n_adj_price_scenarios = int(request.values.get('n_adj_price_scenarios'))
         n_adj_redc_price_scenarios = int(request.values.get('n_adj_redc_price_scenarios'))
 
-        simulated_lambdaD, simulated_MAvsMD, simulated_sqrt_r = windpark.market.simulate_prices(day_start,
-                                                                                                time_span,
+        simulated_lambdaD, simulated_MAvsMD, simulated_sqrt_r = windpark.market.simulate_prices(0,
+                                                                                                24,
                                                                                                 n_da_price_scenarios,
                                                                                                 n_da_am_price_scenarios,
                                                                                                 n_adj_price_scenarios)
