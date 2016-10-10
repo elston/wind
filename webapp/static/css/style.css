@@ -235,3 +235,7 @@ input::-webkit-inner-spin-button {
     -webkit-box-shadow: none;
     box-shadow: none;
 }
+
+.summary-model-row {
+    padding-top: 30px;
+}

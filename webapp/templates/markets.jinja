@@ -202,30 +202,39 @@
                         </select>
                     </h4>
                     <div class="container-fluid">
-                        <div class="row">
-                            <div class="col-xs-1">
-                                <div class="column-se">s.e.</div>
+                        <div class="row summary-model-row">
+                            <div class="col-xs-4">
+                                <ul class="list-group">
+                                  <li class="list-group-item" ng-repeat="(key, value) in summary[item[0] + '_model'].coef" ng-if="$index < 5">
+                                    <strong>{{ key }}</strong> = {{ value | number: 4 }} ± {{ summary[item[0] + '_model'].s_e[key] | number:4 }}
+                                  </li>
+                                </ul>
                             </div>
 
-                            <table class="table table-bordered table-striped table-condensed table-responsive">
-                            	<tbody>
-                            	    <tr>
-                            	        <td ng-repeat="(key, value) in summary[item[0] + '_model'].coef" class="text-center">
-                            	            <strong>{{ key }}</strong>
-                            	        </td>
-                            	    </tr>
-                            		<tr>
-                            			<td ng-repeat="(key, value) in summary[item[0] + '_model'].coef" class="text-center">
-                            				{{ value | number: 4 }}
-                            			</td>
-                            		</tr>
-                            		<tr>
-                            			<td ng-repeat="(key, value) in summary[item[0] + '_model'].coef" class="text-center">
-                            				{{ summary[item[0] + '_model'].s_e[key] | number:4 }}
-                            			</td>
-                            		</tr>
-                            	</tbody>
-                            </table>
+                            <div class="col-xs-4">
+                                <ul class="list-group">
+                                  <li class="list-group-item" ng-repeat="(key, value) in summary[item[0] + '_model'].coef" ng-if="$index >= 5 && $index < 10">
+                                    <strong>{{ key }}</strong> = {{ value | number: 4 }} ± {{ summary[item[0] + '_model'].s_e[key] | number:4 }}
+                                  </li>
+                                </ul>
+                            </div>
+
+                            <div class="col-xs-4">
+                                <ul class="list-group">
+                                  <li class="list-group-item" ng-repeat="(key, value) in summary[item[0] + '_model'].coef" ng-if="$index >= 10 && $index < 15">
+                                    <strong>{{ key }}</strong> = {{ value | number: 4 }} ± {{ summary[item[0] + '_model'].s_e[key] | number:4 }}
+                                  </li>
+                                </ul>
+                            </div>
+                            <div class="col-xs-4">
+                                <ul class="list-group">
+                                  <li class="list-group-item" ng-repeat="(key, value) in summary[item[0] + '_model'].coef" ng-if="$index >= 15 && $index < 20">
+                                    <strong>{{ key }}</strong> = {{ value | number: 4 }} ± {{ summary[item[0] + '_model'].s_e[key] | number:4 }}
+                                  </li>
+                                </ul>
+                            </div>
+
+
                         </div>
                         <div class="col-xs-12 col-lg-5">
                         <dl class="dl-horizontal">
