@@ -4,7 +4,7 @@ ul.nav li.logo-in-tabs {
 }
 
 ul.nav li.button-in-tabs {
-    padding: 13px 75px;
+    padding: 17px 75px 10px 75px;
     float: right;
 }
 
@@ -142,7 +142,11 @@ input::-webkit-inner-spin-button {
 
 .navbar-brand > img.brand-img {
     display: inline-block;
-    height: 45px;
+    height: 55px;
+}
+
+.brand-img-xs {
+    height: 40px;
 }
 
 #markets-grid .ui-grid-menu-button .ui-grid-menu .ui-grid-menu-mid {
@@ -153,6 +157,15 @@ input::-webkit-inner-spin-button {
 #windparks-grid .ui-grid-menu-button .ui-grid-menu .ui-grid-menu-mid {
     overflow: initial;
     border: 1px solid #d4d4d4;
+}
+
+.ui-grid-menu-button {
+    height: 30px;
+    border-bottom: none;
+}
+
+.ui-grid-menu-button .ui-grid-icon-container {
+    margin-top: 1px;
 }
 
 .ui-grid-icon-container{
@@ -168,13 +181,22 @@ input::-webkit-inner-spin-button {
     color: #12155A;
 }
 
+.ui-grid-icon-menu {
+    padding: 2px;
+}
+
 .ui-grid-icon-menu:before {
     content:"\e236";
     font-family:"Glyphicons Halflings";
-    line-height:1;
-    margin-top: 3px;
-    display:inline-block;
+    margin-top: calc(2% + 3px);
+    font-size: 20px;
+    padding-left: 2px;
 
+}
+
+.ui-grid-menu-inner {
+    color: #fff;
+    background-color: #337ab7 !important;
 }
 
 .grid-icon-remove:before {
@@ -217,4 +239,29 @@ input::-webkit-inner-spin-button {
 #locations_map {
     margin-bottom: 75px;
     border: 1px solid #d4d4d4;
+}
+
+.column-se {
+    padding-top: 20px;
+}
+
+.metadata-block {
+    margin-bottom: 40px;
+    border-bottom: 1px solid #ddd;
+    -webkit-box-shadow: 0 1px 1px rgba(0,0,0,.05);
+    box-shadow: 0 1px 1px rgba(0,0,0,.05);
+}
+
+.metadata-block-last {
+    border: none;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+}
+
+.summary-model-row {
+    padding-top: 30px;
+}
+
+.ui-datepicker {
+    z-index:9999 !important;
 }

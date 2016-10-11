@@ -18,18 +18,111 @@ app.controller('WeatherPlotCtrl', ['$scope', '$q', '$uibModalInstance', 'entity'
             for (var i = 0; i < $scope.chart.series.length - 1; i += 3) {
                 if ($scope.tempmEnabled) {
                     $scope.chart.series[i + 0].show();
+
+                    $scope.chart.series[i + 0].options.showInLegend = true;
+                    $scope.chart.legend.renderItem($scope.chart.series[i + 0]);
+                    $scope.chart.legend.render();
+
+                    if($scope.chart.yAxis[i + 0]){
+                        $scope.chart.yAxis[i + 0].update({
+                            labels: {
+                                enabled: true
+                            },
+                            title: {
+                                text: 'Temperature, C'
+                            }
+                        });
+                    }
                 } else {
                     $scope.chart.series[i + 0].hide();
+
+                    $scope.chart.series[i + 0].options.showInLegend = false;
+                    $scope.chart.series[i + 0].legendItem = null;
+                    $scope.chart.legend.destroyItem($scope.chart.series[i + 0]);
+                    $scope.chart.legend.render();
+
+                    if ($scope.chart.yAxis[i + 0]) {
+                        $scope.chart.yAxis[i + 0].update({
+                            labels: {
+                                enabled: false
+                            },
+                            title: {
+                                text: null
+                            }
+                        });
+                    }
                 }
                 if ($scope.wspdmEnabled) {
                     $scope.chart.series[i + 1].show();
+
+                    $scope.chart.series[i + 1].options.showInLegend = true;
+                    $scope.chart.legend.renderItem($scope.chart.series[i + 1]);
+                    $scope.chart.legend.render();
+
+                    if ($scope.chart.yAxis[i + 1]){
+                        $scope.chart.yAxis[i + 1].update({
+                            labels: {
+                                enabled: true
+                            },
+                            title: {
+                                text: 'Wind speed, km/h'
+                            }
+                        });
+                    }
                 } else {
                     $scope.chart.series[i + 1].hide();
+
+                    $scope.chart.series[i + 1].options.showInLegend = false;
+                    $scope.chart.series[i + 1].legendItem = null;
+                    $scope.chart.legend.destroyItem($scope.chart.series[i + 1]);
+                    $scope.chart.legend.render();
+
+                    if ($scope.chart.yAxis[i + 1]) {
+                        $scope.chart.yAxis[i + 1].update({
+                            labels: {
+                                enabled: false
+                            },
+                            title: {
+                                text: null
+                            }
+                        });
+                    }
                 }
                 if ($scope.wdirdEnabled) {
                     $scope.chart.series[i + 2].show();
+
+                    $scope.chart.series[i + 2].options.showInLegend = true;
+                    $scope.chart.legend.renderItem($scope.chart.series[i + 2]);
+                    $scope.chart.legend.render();
+
+                    if ($scope.chart.yAxis[i + 2]) {
+                        $scope.chart.yAxis[i + 2].update({
+                            labels: {
+                                enabled: true
+                            },
+                            title: {
+                                text: 'Wind direction, degrees'
+                            }
+                        });
+                    }
                 } else {
                     $scope.chart.series[i + 2].hide();
+
+                    $scope.chart.series[i + 2].options.showInLegend = false;
+                    $scope.chart.series[i + 2].legendItem = null;
+                    $scope.chart.legend.destroyItem($scope.chart.series[i + 2]);
+                    $scope.chart.legend.render();
+
+                    if ($scope.chart.yAxis[i + 2]) {
+                        $scope.chart.yAxis[i + 2].update({
+                            labels: {
+                                enabled: false
+                            },
+                            title: {
+                                text: null
+                            }
+                        });
+                    }
                 }
             }
         };
@@ -81,7 +174,7 @@ app.controller('WeatherPlotCtrl', ['$scope', '$q', '$uibModalInstance', 'entity'
 
                 if ($scope.forecast_data.last_11am) {
                     series.push({
-                        name: 'Temperature, C (forecast at ' + $scope.forecast_data.last_11am.time + ')',
+                        name: 'Temperature, C (forecast values from ' + $scope.forecast_data.last_11am.time.replace(/:00.*$/, 'am') + ')',
                         data: $scope.forecast_data.last_11am.tempm,
                         tooltip: {
                             valueDecimals: 1
@@ -90,7 +183,7 @@ app.controller('WeatherPlotCtrl', ['$scope', '$q', '$uibModalInstance', 'entity'
                         dashStyle: 'Dash'
                     });
                     series.push({
-                        name: 'Wind speed, km/h (forecast at ' + $scope.forecast_data.last_11am.time + ')',
+                        name: 'Wind speed, km/h (forecast values from ' + $scope.forecast_data.last_11am.time.replace(/:00.*$/, 'am') + ')',
                         data: $scope.forecast_data.last_11am.wspdm,
                         tooltip: {
                             valueDecimals: 1
@@ -100,7 +193,7 @@ app.controller('WeatherPlotCtrl', ['$scope', '$q', '$uibModalInstance', 'entity'
                         dashStyle: 'Dash'
                     });
                     series.push({
-                        name: 'Wind direction, degrees (forecast at ' + $scope.forecast_data.last_11am.time + ')',
+                        name: 'Wind direction, degrees (forecast values from ' + $scope.forecast_data.last_11am.time.replace(/:00.*$/, 'am') + ')',
                         data: $scope.forecast_data.last_11am.wdird,
                         tooltip: {
                             valueDecimals: 1
@@ -113,7 +206,7 @@ app.controller('WeatherPlotCtrl', ['$scope', '$q', '$uibModalInstance', 'entity'
 
                 if ($scope.forecast_data.last_11pm) {
                     series.push({
-                        name: 'Temperature, C (forecast at ' + $scope.forecast_data.last_11pm.time + ')',
+                        name: 'Temperature, C (forecast values from ' + $scope.forecast_data.last_11pm.time.replace(/:00.*$/, 'pm') + ')',
                         data: $scope.forecast_data.last_11pm.tempm,
                         tooltip: {
                             valueDecimals: 1
@@ -122,7 +215,7 @@ app.controller('WeatherPlotCtrl', ['$scope', '$q', '$uibModalInstance', 'entity'
                         dashStyle: 'Dot'
                     });
                     series.push({
-                        name: 'Wind speed, km/h (forecast at ' + $scope.forecast_data.last_11pm.time + ')',
+                        name: 'Wind speed, km/h (forecast values from ' + $scope.forecast_data.last_11pm.time.replace(/:00.*$/, 'pm') + ')',
                         data: $scope.forecast_data.last_11pm.wspdm,
                         tooltip: {
                             valueDecimals: 1
@@ -132,7 +225,7 @@ app.controller('WeatherPlotCtrl', ['$scope', '$q', '$uibModalInstance', 'entity'
                         dashStyle: 'Dot'
                     });
                     series.push({
-                        name: 'Wind direction, degrees (forecast at ' + $scope.forecast_data.last_11pm.time + ')',
+                        name: 'Wind direction, degrees (forecast values from ' + $scope.forecast_data.last_11pm.time.replace(/:00.*$/, 'pm') + ')',
                         data: $scope.forecast_data.last_11pm.wdird,
                         tooltip: {
                             valueDecimals: 1
@@ -145,7 +238,7 @@ app.controller('WeatherPlotCtrl', ['$scope', '$q', '$uibModalInstance', 'entity'
 
                 if ($scope.forecast_data.last) {
                     series.push({
-                        name: 'Temperature, C (last forecast at ' + $scope.forecast_data.last.time + ')',
+                        name: 'Temperature, C (latest forecast by ' + $scope.forecast_data.last.time + ')',
                         data: $scope.forecast_data.last.tempm,
                         tooltip: {
                             valueDecimals: 1
@@ -154,7 +247,7 @@ app.controller('WeatherPlotCtrl', ['$scope', '$q', '$uibModalInstance', 'entity'
                         dashStyle: 'DashDot'
                     });
                     series.push({
-                        name: 'Wind speed, km/h (forecast at ' + $scope.forecast_data.last.time + ')',
+                        name: 'Wind speed, km/h (latest forecast by ' + $scope.forecast_data.last.time + ')',
                         data: $scope.forecast_data.last.wspdm,
                         tooltip: {
                             valueDecimals: 1
@@ -164,7 +257,7 @@ app.controller('WeatherPlotCtrl', ['$scope', '$q', '$uibModalInstance', 'entity'
                         dashStyle: 'DashDot'
                     });
                     series.push({
-                        name: 'Wind direction, degrees (forecast at ' + $scope.forecast_data.last.time + ')',
+                        name: 'Wind direction, degrees (latest forecast by ' + $scope.forecast_data.last.time + ')',
                         data: $scope.forecast_data.last.wdird,
                         tooltip: {
                             valueDecimals: 1
@@ -218,31 +311,30 @@ app.controller('WeatherPlotCtrl', ['$scope', '$q', '$uibModalInstance', 'entity'
                         title: {
                             text: 'Time (' + $scope.history_data.tzinfo + ')'
                         },
-                        min: new Date().setHours(3, 0, 0, 0),
-                        max: new Date().setHours(3, 0, 0, 0) + 24 * 3600000,
+                        min: new Date(Date.UTC(new Date().getUTCFullYear(), new Date().getUTCMonth(), new Date().getUTCDate())).setUTCHours(0, 0, 0, 0),
+                        max: new Date(Date.UTC(new Date().getUTCFullYear(), new Date().getUTCMonth(), new Date().getUTCDate())).setUTCHours(0, 0, 0, 0) + 24 * 3600000,
                         events : {
                             afterSetExtremes: function(e) {
                                 if (e.trigger == "rangeSelectorButton" &&
                                     e.rangeSelectorButton.text == "24h"){
                                     setTimeout(function(){
                                         $scope.chart.xAxis[0].setExtremes(
-                                            new Date().setHours(3, 0, 0, 0),
-                                            new Date().setHours(3, 0, 0, 0) + 24 * 3600000);
+                                            new Date(Date.UTC(new Date().getUTCFullYear(), new Date().getUTCMonth(), new Date().getUTCDate())).setUTCHours(0, 0, 0, 0),
+                                            new Date(Date.UTC(new Date().getUTCFullYear(), new Date().getUTCMonth(), new Date().getUTCDate())).setUTCHours(0, 0, 0, 0) + 24 * 3600000);
                                     }, 1);
                                 } else if (e.trigger == "rangeSelectorButton" &&
                                     e.rangeSelectorButton.text == "36h"){
                                     setTimeout(function(){
                                         $scope.chart.xAxis[0].setExtremes(
-                                            new Date().setHours(15, 0, 0, 0),
-                                            new Date().setHours(15, 0, 0, 0) + 36 * 3600000);
+                                            new Date(Date.UTC(new Date().getUTCFullYear(), new Date().getUTCMonth(), new Date().getUTCDate())).setUTCHours(12, 0, 0, 0),
+                                            new Date(Date.UTC(new Date().getUTCFullYear(), new Date().getUTCMonth(), new Date().getUTCDate())).setUTCHours(12, 0, 0, 0) + 36 * 3600000);
                                     }, 1);
                                 } else if (e.trigger == "rangeSelectorButton" &&
                                     e.rangeSelectorButton.text == "1m") {
                                     setTimeout(function(){
                                         $scope.chart.xAxis[0].setExtremes(
-                                            new Date().setHours(3, 0, 0, 0),
-                                            new Date(new Date().setHours(3, 0, 0, 0))
-                                                .setMonth(new Date().getMonth()+1));
+                                            new Date(Date.UTC(new Date().getUTCFullYear(), new Date().getUTCMonth(), new Date().getUTCDate())).setUTCHours(0, 0, 0, 0),
+                                            new Date(new Date(Date.UTC(new Date().getUTCFullYear(), new Date().getUTCMonth(), new Date().getUTCDate())).setUTCHours(0, 0, 0, 0)).setUTCMonth(new Date().getMonth()+1));
                                     }, 1);
                                 }
                             }
@@ -262,6 +354,23 @@ app.controller('WeatherPlotCtrl', ['$scope', '$q', '$uibModalInstance', 'entity'
                         }
                     }],
                     series: series
+                }, function (chart) {
+                    setTimeout(function () {
+                        $('input.highcharts-range-selector', $($scope.chart.container).parent())
+                            .datepicker();
+                    }, 1);
+                });
+
+                $.datepicker.setDefaults({
+                    dateFormat: 'yy-mm-dd',
+                    onSelect: function (dateText) {
+                        $(this).trigger('change');
+                        $(this).trigger('blur');
+                    },
+                    onClose: function () {
+                        $(this).trigger('change');
+                        $(this).trigger('blur');
+                    }
                 });
 
                 $scope.updateSeriesSet();

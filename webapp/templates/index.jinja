@@ -6,6 +6,8 @@
 
 {% block styles %}
 {{ super() }}
+<link type="text/css" href="{{ url_for('.static', filename='bower_components/jquery-ui/themes/base/jquery-ui.min.css') }}"
+      rel='stylesheet'/>
 <link type="text/css"
       href="{{ url_for('.static', filename='bower_components/alertify-js/build/css/alertify.min.css') }}"
       rel='stylesheet'/>
@@ -34,6 +36,7 @@
 {% endif %}
 </script>
 <script src='https://maps.googleapis.com/maps/api/js?v=3.exp&key={{ gmap_api_key }}'></script>
+<script src="{{ url_for('.static', filename='bower_components/jquery-ui/jquery-ui.min.js') }}"></script>
 <script src="{{ url_for('.static', filename='bower_components/highcharts/highstock.js') }}"></script>
 <script src="{{ url_for('.static', filename='bower_components/highcharts/highcharts-more.js') }}"></script>
 <script src="{{ url_for('.static', filename='bower_components/alertify-js/build/alertify.min.js') }}"></script>
@@ -84,11 +87,11 @@
 <div ng-controller="MainCtrl">
     <div class="card">
         <div class="navbar-brand hidden-xs">
-            <img class="brand-img" src="{{ url_for('static', filename='img/TISLogoWeb-h60.png') }}"/>
+            <img class="brand-img" src="{{ url_for('static', filename='img/TIS-Stan-logo.svg') }}"/>
         </div>
         <ul class="nav">
             <li role="presentation" class="logo-in-tabs visible-xs">
-                <img src="{{ url_for('static', filename='img/TISLogoWeb-h30.png') }}"/>
+                <img class="brand-img-xs" src="{{ url_for('static', filename='img/TIS-Stan-logo.svg') }}"/>
             </li>
             <li role="presentation" class="button-in-tabs">
                 <a href="{{ url_for('security.logout') }}" class="btn btn-primary btn-primary">
