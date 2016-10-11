@@ -159,6 +159,15 @@ input::-webkit-inner-spin-button {
     border: 1px solid #d4d4d4;
 }
 
+.ui-grid-menu-button {
+    height: 30px;
+    border-bottom: none;
+}
+
+.ui-grid-menu-button .ui-grid-icon-container {
+    margin-top: 1px;
+}
+
 .ui-grid-icon-container{
     color: #337AB7;
 }
@@ -172,13 +181,22 @@ input::-webkit-inner-spin-button {
     color: #12155A;
 }
 
+.ui-grid-icon-menu {
+    padding: 2px;
+}
+
 .ui-grid-icon-menu:before {
     content:"\e236";
     font-family:"Glyphicons Halflings";
-    line-height:1;
-    margin-top: 3px;
-    display:inline-block;
+    margin-top: calc(2% + 3px);
+    font-size: 20px;
+    padding-left: 2px;
 
+}
+
+.ui-grid-menu-inner {
+    color: #fff;
+    background-color: #337ab7 !important;
 }
 
 .grid-icon-remove:before {
