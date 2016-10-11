@@ -355,6 +355,23 @@ app.controller('WeatherPlotCtrl', ['$scope', '$q', '$uibModalInstance', 'entity'
                         }
                     }],
                     series: series
+                }, function (chart) {
+                    setTimeout(function () {
+                        $('input.highcharts-range-selector', $($scope.chart.container).parent())
+                            .datepicker();
+                    }, 1);
+                });
+
+                $.datepicker.setDefaults({
+                    dateFormat: 'yy-mm-dd',
+                    onSelect: function (dateText) {
+                        $(this).trigger('change');
+                        $(this).trigger('blur');
+                    },
+                    onClose: function () {
+                        $(this).trigger('change');
+                        $(this).trigger('blur');
+                    }
                 });
 
                 $scope.updateSeriesSet();

@@ -239,3 +239,7 @@ input::-webkit-inner-spin-button {
 .summary-model-row {
     padding-top: 30px;
 }
+
+.ui-datepicker {
+    z-index:9999 !important;
+}
