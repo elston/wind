@@ -45,7 +45,7 @@ app.controller('WindParksCtrl', ['$scope', '$uibModal', 'windparkService',
                     field: 'action',
                     headerCellTemplate: ' ',
                     enableHiding: false,
-                    cellTemplate: '<button type="button" class="btn btn-info btn-xs" ng-click="$emit(\'uploadGeneration\')" ' +
+                    cellTemplate: '<button type="button" class="btn btn-warning btn-xs" ng-click="$emit(\'uploadGeneration\')" ' +
                     'tooltip-append-to-body="true" uib-tooltip="Upload generation data">' +
                     '<span class="glyphicon glyphicon-upload" aria-hidden="true"></span></button>' +
                     '<button type="button" class="btn btn-primary btn-xs" ng-click="$emit(\'openInTab\')">Open</button>',
