@@ -4,7 +4,7 @@ ul.nav li.logo-in-tabs {
 }
 
 ul.nav li.button-in-tabs {
-    padding: 13px 75px;
+    padding: 17px 75px 10px 75px;
     float: right;
 }
 
@@ -142,5 +142,9 @@ input::-webkit-inner-spin-button {
 
 .navbar-brand > img.brand-img {
     display: inline-block;
-    height: 45px;
+    height: 55px;
+}
+
+.brand-img-xs {
+    height: 40px;
 }
