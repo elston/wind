@@ -1,4 +1,3 @@
-import calendar
 import logging
 from datetime import datetime, timedelta
 import cStringIO
@@ -13,6 +12,7 @@ from scipy import stats
 from sqlalchemy import func
 from webapp import app, db, wuclient, sch
 from webapp.models import Location, Forecast, HourlyForecast
+from webapp.tz_utils import utc_naive_to_ts, utc_naive_to_tz_name, utc_naive_to_shifted_ts, utc_naive_to_location_aware
 from werkzeug.utils import secure_filename
 
 logger = logging.getLogger(__name__)
@@ -31,7 +31,7 @@ def get_locations():
                 dt = table_data[-1].get(key)
                 if dt is None:
                     dt = datetime.utcfromtimestamp(0)
-                table_data[-1][key] = calendar.timegm(dt.timetuple()) * 1000.0
+                table_data[-1][key] = utc_naive_to_ts(dt)  # TODO: representation?
 
         js = jsonify({'data': table_data})
         return js
@@ -157,12 +157,14 @@ def get_history(loc_id):
         return jsonify({'error': 'User unauthorized'})
     try:
         location = db.session.query(Location).filter_by(id=loc_id).first()
-        result = {'tempm': [], 'wspdm': [], 'wdird': []}
+        chart_data = {'tempm': [], 'wspdm': [], 'wdird': []}
+        location_tz = pytz.timezone(location.tz_long)
+        tzinfo = utc_naive_to_tz_name(location.observations[0].time, location_tz)
         for obs in location.observations:
-            unix_ts = calendar.timegm(obs.time.timetuple())
-            for k in result.iterkeys():
-                result[k].append([unix_ts * 1000, getattr(obs, k)])
-        js = jsonify({'data': result})
+            shifted_ts = utc_naive_to_shifted_ts(obs.time, location_tz)
+            for k in chart_data.iterkeys():
+                chart_data[k].append([shifted_ts, getattr(obs, k)])
+        js = jsonify({'data': {'tzinfo': tzinfo, 'data': chart_data}})
         return js
     except Exception, e:
         logger.exception(e)
@@ -192,9 +194,9 @@ def get_forecast(loc_id):
     try:
         location = db.session.query(Location).filter_by(id=loc_id).first()
         location_tz = pytz.timezone(location.tz_long)
-        location_now = location_tz.localize(datetime.now())
+        location_now = utc_naive_to_location_aware(datetime.utcnow(), location_tz)
 
-        results = {}
+        charts_data = {}
         last_forecast_utc = db.session.query(func.max(Forecast.time)).filter(Forecast.location_id == loc_id)[0][0]
         qry = db.session.query(HourlyForecast).filter(
             Forecast.location_id == loc_id,
@@ -202,14 +204,16 @@ def get_forecast(loc_id):
             HourlyForecast.forecast_id == Forecast.id).order_by(
             HourlyForecast.time)
         result = {'tempm': [], 'wspdm': [], 'wdird': [],
-                  'time': last_forecast_utc.replace(tzinfo=pytz.UTC).astimezone(location_tz).strftime(
-                      '%d %b %Y %I:%M%p %Z')
+                  'time': utc_naive_to_location_aware(last_forecast_utc, location_tz).strftime('%d %b %Y %I:%M%p %Z%z')
                   }
+        tzinfo = None
         for obs in qry.all():
-            unix_ts = calendar.timegm(obs.time.timetuple())
+            if tzinfo is None:
+                tzinfo = utc_naive_to_tz_name(obs.time, location_tz)
+            shifted_ts = utc_naive_to_shifted_ts(obs.time, location_tz)
             for k in ('tempm', 'wspdm', 'wdird'):
-                result[k].append([unix_ts * 1000, getattr(obs, k)])
-        results['last'] = result
+                result[k].append([shifted_ts, getattr(obs, k)])
+        charts_data['last'] = result
 
         last_11am_location_tz = location_now.replace(hour=11, minute=0, second=0, microsecond=0)
         if last_11am_location_tz > location_now:
@@ -228,13 +232,13 @@ def get_forecast(loc_id):
                 HourlyForecast.forecast_id == forecast_id).order_by(
                 HourlyForecast.time)
             result = {'tempm': [], 'wspdm': [], 'wdird': [],
-                      'time': last_11am_location_tz.strftime('%d %b %Y %I:%M%p %Z')
+                      'time': last_11am_location_tz.strftime('%d %b %Y %I:%M%p %Z%z')
                       }
             for obs in qry.all():
-                unix_ts = calendar.timegm(obs.time.timetuple())
+                shifted_ts = utc_naive_to_shifted_ts(obs.time, location_tz)
                 for k in ('tempm', 'wspdm', 'wdird'):
-                    result[k].append([unix_ts * 1000, getattr(obs, k)])
-            results['last_11am'] = result
+                    result[k].append([shifted_ts, getattr(obs, k)])
+            charts_data['last_11am'] = result
 
         last_11pm_location_tz = location_now.replace(hour=23, minute=0, second=0, microsecond=0)
         if last_11pm_location_tz > location_now:
@@ -253,15 +257,17 @@ def get_forecast(loc_id):
                 HourlyForecast.forecast_id == forecast_id).order_by(
                 HourlyForecast.time)
             result = {'tempm': [], 'wspdm': [], 'wdird': [],
-                      'time': last_11pm_location_tz.strftime('%d %b %Y %I:%M%p %Z')
+                      'time': last_11pm_location_tz.strftime('%d %b %Y %I:%M%p %Z%z')
                       }
             for obs in qry.all():
-                unix_ts = calendar.timegm(obs.time.timetuple())
+                shifted_ts = utc_naive_to_shifted_ts(obs.time, location_tz)
                 for k in ('tempm', 'wspdm', 'wdird'):
-                    result[k].append([unix_ts * 1000, getattr(obs, k)])
-            results['last_11pm'] = result
+                    result[k].append([shifted_ts, getattr(obs, k)])
+            charts_data['last_11pm'] = result
 
-        js = jsonify({'data': results})
+        charts_data['tzinfo'] = tzinfo
+
+        js = jsonify({'data': charts_data})
         return js
     except Exception, e:
         logger.exception(e)
@@ -290,24 +296,28 @@ def get_errors_chunked(loc_id):
         return jsonify({'error': 'User unauthorized'})
     try:
         location = db.session.query(Location).filter_by(id=loc_id).first()
+        location_tz = pytz.timezone(location.tz_long)
         result = location.errors_chunked()
         if len(result) == 0:
             raise Exception('No forecasts overlapping with observations within last 30 days')
         start_time = result[0]['timestamp']
         end_time = result[-1]['timestamp'] + timedelta(hours=36)
         for chunk in result:
-            chunk['timestamp'] = calendar.timegm(chunk['timestamp'].timetuple()) * 1000.0
+            chunk['timestamp'] = utc_naive_to_location_aware(chunk['timestamp'], location_tz).strftime(
+                '%d %b %Y %I:%M%p %Z%z')
             for point in chunk['errors']:
-                point[0] = calendar.timegm(point[0].timetuple()) * 1000.0
+                point[0] = utc_naive_to_shifted_ts(point[0], location_tz)
             for point in chunk['forecasts']:
-                point[0] = calendar.timegm(point[0].timetuple()) * 1000.0
+                point[0] = utc_naive_to_shifted_ts(point[0], location_tz)
         observations = []
+        tzinfo = None
         for obs in location.observations:
             if obs.time < start_time or obs.time > end_time:
                 continue
-            unix_ts = calendar.timegm(obs.time.timetuple())
-            observations.append([unix_ts * 1000, obs.wspdm])
-        js = jsonify({'data': {'observations': observations, 'errors': result}})
+            if tzinfo is None:
+                tzinfo = utc_naive_to_tz_name(obs.time, location_tz)
+            observations.append([utc_naive_to_shifted_ts(obs.time, location_tz), obs.wspdm])
+        js = jsonify({'data': {'tzinfo': tzinfo, 'observations': observations, 'errors': result}})
         return js
     except Exception, e:
         logger.exception(e)

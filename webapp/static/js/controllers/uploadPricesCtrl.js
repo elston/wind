@@ -59,7 +59,7 @@ app.controller('UploadPricesCtrl', ['$scope', '$uibModalInstance', 'entity', 'ma
         $scope.uploadPrices = function () {
             marketService.uploadPrices(entity.id, $scope.fileFormat, $scope.priceFile)
                 .then(function (response) {
-                        alertify.alert('Prices upload', 'Done');
+                        alertify.notify('Uploading of prices is successful!', 'success', 5);
                     },
                     function (error) {
                         alertify.error(error);

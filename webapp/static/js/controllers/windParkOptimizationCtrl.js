@@ -115,7 +115,7 @@ app.controller('WindParkOptimizationCtrl', ['$scope', '$interval', '$timeout', '
                         xAxis: [{
                             type: 'datetime',
                             title: {
-                                text: 'Time, UTC'
+                                text: 'Time (' + data.tzinfo + ')'
                             }
                         }],
                         series: red_power_series
@@ -148,7 +148,7 @@ app.controller('WindParkOptimizationCtrl', ['$scope', '$interval', '$timeout', '
                         xAxis: [{
                             type: 'datetime',
                             title: {
-                                text: 'Time, UTC'
+                                text: 'Time (' + data.tzinfo + ')'
                             }
                         }],
                         series: Pd_series
@@ -181,7 +181,7 @@ app.controller('WindParkOptimizationCtrl', ['$scope', '$interval', '$timeout', '
                         xAxis: [{
                             type: 'datetime',
                             title: {
-                                text: 'Time, UTC'
+                                text: 'Time (' + data.tzinfo + ')'
                             }
                         }],
                         series: Pa_series
@@ -212,7 +212,10 @@ app.controller('WindParkOptimizationCtrl', ['$scope', '$interval', '$timeout', '
                             }
                         }],
                         xAxis: [{
-                            type: 'datetime'
+                            type: 'datetime',
+                            title: {
+                                text: 'Time (' + data.tzinfo + ')'
+                            }
                         }],
                         series: Ps_series
                     });

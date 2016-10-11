@@ -2,6 +2,7 @@ from collections import defaultdict
 import csv
 from datetime import datetime, timedelta, time
 import logging
+
 import cStringIO
 
 import pytz
@@ -17,6 +18,7 @@ from .history_download_status import HistoryDownloadStatus
 from .forecast import Forecast
 from .hourly_forecast import HourlyForecast
 from .arima_model import ArimaModel
+from webapp.tz_utils import utc_naive_to_ts
 
 
 class Location(db.Model):
@@ -390,7 +392,7 @@ class Location(db.Model):
             raise Exception("Not enough forecasts")
 
         forecasted_wind = [x.wspdm for x in relevant_forecasts]
-        dates = [x.time for x in relevant_forecasts]
+        dates = [utc_naive_to_ts(x.time) for x in relevant_forecasts]
 
         ro.r(long_command)
         seed = np.ones(3) * model.coef['intercept']
@@ -455,11 +457,7 @@ class Location(db.Model):
             if (forecast_time + allowed_forecast_time_diff).time() < time(hour=11,
                                                                           tzinfo=location_tz):  # before 11am - delta
                 continue
-            if (forecast_time - allowed_forecast_time_diff).time() > time(hour=11, tzinfo=location_tz) and \
-                            (forecast_time + allowed_forecast_time_diff).time() < time(hour=23,
-                                                                                       tzinfo=location_tz):  # between 11am + delta and 11pm - delta
-                continue
-            if (forecast_time - allowed_forecast_time_diff).time() > time(hour=23, tzinfo=location_tz):
+            if (forecast_time - allowed_forecast_time_diff).time() > time(hour=11, tzinfo=location_tz):
                 continue
             if Location.is_close_forecast(forecast, forecasts_to_fit):
                 continue

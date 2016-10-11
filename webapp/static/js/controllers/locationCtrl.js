@@ -15,7 +15,8 @@ app.controller('LocationsCtrl', ['$scope', '$uibModal', 'locationService', funct
                 action: function ($event) {
                     $('#new-location-dialog').modal('show');
                 },
-                order: 210
+                order: 210,
+                icon: 'grid-icon-add'
             },
             {
                 title: 'Delete selected locations',
@@ -33,7 +34,8 @@ app.controller('LocationsCtrl', ['$scope', '$uibModal', 'locationService', funct
                         }
                     });
                 },
-                order: 211
+                order: 211,
+                icon: 'grid-icon-remove'
             }
         ],
         columnDefs: [
