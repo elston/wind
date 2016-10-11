@@ -427,14 +427,35 @@
                 </select>
 
                 <div class="container-fluid">
-                    <div class="row">
-                        <div class="col-xs-1">
-                            <br><br>s.e.
+                    <div class="row summary-model-row">
+                        <div class="col-xs-4">
+                            <ul class="list-group">
+                                <li class="list-group-item" ng-repeat="(key, value) in modelData.forecast_error_model.coef" ng-if="$index < 5">
+                                    <strong>{{ key }}</strong> = {{ value | number: 4 }} ± {{ modelData.forecast_error_model.s_e[key] | number:4 }}
+                                </li>
+                            </ul>
                         </div>
-                        <div class="col-xs-1" ng-repeat="(key, value) in modelData.forecast_error_model.coef">
-                            <b>{{ key }}</b><br>
-                            {{ value | number: 4 }}<br>
-                            {{ modelData.forecast_error_model.s_e[key] | number:4 }}
+                        <div class="col-xs-4">
+                            <ul class="list-group">
+                                <li class="list-group-item" ng-repeat="(key, value) in modelData.forecast_error_model.coef" ng-if="$index >= 5 && $index < 10">
+                                    <strong>{{ key }}</strong> = {{ value | number: 4 }} ± {{ modelData.forecast_error_model.s_e[key] | number:4 }}
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="col-xs-4">
+                            <ul class="list-group">
+                                <li class="list-group-item" ng-repeat="(key, value) in modelData.forecast_error_model.coef" ng-if="$index >= 10 && $index < 15">
+                                    <strong>{{ key }}</strong> = {{ value | number: 4 }} ± {{ modelData.forecast_error_model.s_e[key] | number:4 }}
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="col-xs-4">
+                             <ul class="list-group">
+                                <li class="list-group-item" ng-repeat="(key, value) in modelData.forecast_error_model.coef" ng-if="$index >= 15 && $index < 20">
+                                    <strong>{{ key }}</strong> = {{ value | number: 4 }} ± {{ modelData.forecast_error_model.s_e[key] | number:4 }}
+                                </li>
+                            </ul>
                         </div>
                     </div>
                     <dl class="dl-horizontal">

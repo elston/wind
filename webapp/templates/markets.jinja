@@ -187,7 +187,7 @@
         <div class="panel panel-default" ng-if="summary.lambdaD_model">
             <div class="panel-heading"><h4 class="panel-title">Price model</h4></div>
             <div class="panel-body">
-                <div ng-repeat="item in modelsMetadata">
+                <div class="metadata-block" ng-class="{'metadata-block-last':$last}" ng-repeat="item in modelsMetadata">
                     <h4><span>{{ item[1] }}</span>
                         <select class="pull-right input-sm" id="analytic-plot"
                                 ng-model="summary.selectedAnalyticPlot[item[0]]">
@@ -202,24 +202,50 @@
                         </select>
                     </h4>
                     <div class="container-fluid">
-                        <div class="row">
-                            <div class="col-xs-1">
-                                <br><br>s.e.
+                        <div class="row summary-model-row">
+                            <div class="col-xs-4">
+                                <ul class="list-group">
+                                  <li class="list-group-item" ng-repeat="(key, value) in summary[item[0] + '_model'].coef" ng-if="$index < 5">
+                                    <strong>{{ key }}</strong> = {{ value | number: 4 }} ± {{ summary[item[0] + '_model'].s_e[key] | number:4 }}
+                                  </li>
+                                </ul>
                             </div>
-                            <div class="col-xs-1" ng-repeat="(key, value) in summary[item[0] + '_model'].coef">
-                                <b>{{ key }}</b><br>
-                                {{ value | number: 4 }}<br>
-                                {{ summary[item[0] + '_model'].s_e[key] | number:4 }}
+
+                            <div class="col-xs-4">
+                                <ul class="list-group">
+                                  <li class="list-group-item" ng-repeat="(key, value) in summary[item[0] + '_model'].coef" ng-if="$index >= 5 && $index < 10">
+                                    <strong>{{ key }}</strong> = {{ value | number: 4 }} ± {{ summary[item[0] + '_model'].s_e[key] | number:4 }}
+                                  </li>
+                                </ul>
                             </div>
+
+                            <div class="col-xs-4">
+                                <ul class="list-group">
+                                  <li class="list-group-item" ng-repeat="(key, value) in summary[item[0] + '_model'].coef" ng-if="$index >= 10 && $index < 15">
+                                    <strong>{{ key }}</strong> = {{ value | number: 4 }} ± {{ summary[item[0] + '_model'].s_e[key] | number:4 }}
+                                  </li>
+                                </ul>
+                            </div>
+                            <div class="col-xs-4">
+                                <ul class="list-group">
+                                  <li class="list-group-item" ng-repeat="(key, value) in summary[item[0] + '_model'].coef" ng-if="$index >= 15 && $index < 20">
+                                    <strong>{{ key }}</strong> = {{ value | number: 4 }} ± {{ summary[item[0] + '_model'].s_e[key] | number:4 }}
+                                  </li>
+                                </ul>
+                            </div>
+
+
                         </div>
+                        <div class="col-xs-12 col-lg-5">
                         <dl class="dl-horizontal">
-                            <dt>sigma<sup>2</sup></dt>
+                            <dt>sigma<sup>2</sup>:</dt>
                             <dd>{{ summary[item[0] + '_model'].sigma2 | number:4 }}</dd>
-                            <dt>log likelihood</dt>
+                            <dt>log likelihood:</dt>
                             <dd>{{ summary[item[0] + '_model'].loglik | number:4 }}</dd>
-                            <dt>AIC</dt>
+                            <dt>AIC:</dt>
                             <dd>{{ summary[item[0] + '_model'].aic | number:4 }}</dd>
                         </dl>
+                        </div>
                     </div>
                     <div uib-collapse="!(summary.selectedAnalyticPlot[item[0]] == 'prediction')"
                          expanded="plotPrediction(item)"
