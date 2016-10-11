@@ -52,6 +52,11 @@ app.controller('MarketDataCtrl', ['$scope', '$uibModalInstance', 'entity', 'mark
                                 renderTo: 'plot-value-' + value[0],
                                 animation: false
                             },
+                            rangeSelector: {
+                                inputDateFormat: '%b %e, %Y',
+                                inputEditDateFormat: '%Y-%m-%d',
+                                inputBoxWidth: 150,
+                            },
                             title: {
                                 text: value[1]
                             },
@@ -67,6 +72,23 @@ app.controller('MarketDataCtrl', ['$scope', '$uibModalInstance', 'entity', 'mark
                                 data: result,
                                 animation: false
                             }]
+                        }, function (chart) {
+                            setTimeout(function () {
+                                $('input.highcharts-range-selector', $($scope.chart.container).parent())
+                                    .datepicker();
+                            }, 1);
+                        });
+
+                        $.datepicker.setDefaults({
+                            dateFormat: 'yy-mm-dd',
+                            onSelect: function (dateText) {
+                                $(this).trigger('change');
+                                $(this).trigger('blur');
+                            },
+                            onClose: function () {
+                                $(this).trigger('change');
+                                $(this).trigger('blur');
+                            }
                         });
                     },
                     function (error) {
@@ -123,6 +145,11 @@ app.controller('MarketDataCtrl', ['$scope', '$uibModalInstance', 'entity', 'mark
                     renderTo: 'plot-' + value[0] + '-pred',
                     animation: false
                 },
+                rangeSelector: {
+                    inputDateFormat: '%b %e, %Y',
+                    inputEditDateFormat: '%Y-%m-%d',
+                    inputBoxWidth: 150,
+                },
                 title: {
                     text: value[1] + ' prediction'
                 },
@@ -151,8 +178,24 @@ app.controller('MarketDataCtrl', ['$scope', '$uibModalInstance', 'entity', 'mark
                         zIndex: 0,
                         fillOpacity: 0.3
                     }]
+            }, function (chart) {
+                setTimeout(function () {
+                    $('input.highcharts-range-selector', $($scope.chart.container).parent())
+                        .datepicker();
+                }, 1);
             });
 
+            $.datepicker.setDefaults({
+                dateFormat: 'yy-mm-dd',
+                onSelect: function (dateText) {
+                    $(this).trigger('change');
+                    $(this).trigger('blur');
+                },
+                onClose: function () {
+                    $(this).trigger('change');
+                    $(this).trigger('blur');
+                }
+            });
         };
 
         $scope.plotResiduals = function (value) {
@@ -168,6 +211,11 @@ app.controller('MarketDataCtrl', ['$scope', '$uibModalInstance', 'entity', 'mark
                 chart: {
                     renderTo: 'plot-' + value[0] + '-residuals',
                     animation: false
+                },
+                rangeSelector: {
+                    inputDateFormat: '%b %e, %Y',
+                    inputEditDateFormat: '%Y-%m-%d',
+                    inputBoxWidth: 150,
                 },
                 title: {
                     text: value[1] + ' residuals'
@@ -187,6 +235,23 @@ app.controller('MarketDataCtrl', ['$scope', '$uibModalInstance', 'entity', 'mark
                     data: residuals_data,
                     animation: false
                 }]
+            }, function (chart) {
+                setTimeout(function () {
+                    $('input.highcharts-range-selector', $($scope.chart.container).parent())
+                        .datepicker();
+                }, 1);
+            });
+
+            $.datepicker.setDefaults({
+                dateFormat: 'yy-mm-dd',
+                onSelect: function (dateText) {
+                    $(this).trigger('change');
+                    $(this).trigger('blur');
+                },
+                onClose: function () {
+                    $(this).trigger('change');
+                    $(this).trigger('blur');
+                }
             });
 
         };

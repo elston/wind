@@ -218,3 +218,7 @@ input::-webkit-inner-spin-button {
     margin-bottom: 75px;
     border: 1px solid #d4d4d4;
 }
+
+.ui-datepicker {
+    z-index:9999 !important;
+}

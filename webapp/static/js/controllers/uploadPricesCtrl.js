@@ -45,6 +45,11 @@ app.controller('UploadPricesCtrl', ['$scope', '$uibModalInstance', 'entity', 'ma
                     renderTo: 'prices-upload-chart-container',
                     animation: false
                 },
+                rangeSelector: {
+                    inputDateFormat: '%b %e, %Y %H:%M',
+                    inputEditDateFormat: '%Y-%m-%d %H:%M',
+                    inputBoxWidth: 150,
+                },
                 tooltip: {
                     xDateFormat: '%b %e, %Y, %H:%M'
                 },
@@ -53,6 +58,23 @@ app.controller('UploadPricesCtrl', ['$scope', '$uibModalInstance', 'entity', 'ma
                 },
                 yAxis: yAxis,
                 series: series
+            }, function (chart) {
+                setTimeout(function () {
+                    $('input.highcharts-range-selector', $($scope.chart.container).parent())
+                        .datepicker();
+                }, 1);
+            });
+
+            $.datepicker.setDefaults({
+                dateFormat: 'yy-mm-dd',
+                onSelect: function (dateText) {
+                    $(this).trigger('change');
+                    $(this).trigger('blur');
+                },
+                onClose: function () {
+                    $(this).trigger('change');
+                    $(this).trigger('blur');
+                }
             });
         };
 
