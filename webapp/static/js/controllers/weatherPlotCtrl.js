@@ -34,6 +34,17 @@ app.controller('WeatherPlotCtrl', ['$scope', '$q', '$uibModalInstance', 'entity'
             }
         };
 
+        $scope.formatAMPM = function (date) {
+            var hours = date.getHours();
+            var minutes = date.getMinutes();
+            var ampm = hours >= 12 ? 'pm' : 'am';
+            hours = hours % 12;
+            hours = hours ? hours : 12; // the hour '0' should be '12'
+            minutes = minutes < 10 ? '0'+minutes : minutes;
+            var strTime = hours + ':' + minutes + ' ' + ampm;
+            return strTime;
+        }
+
         $q.all([
                 locationService.getHistory(locationId)
                     .then(function (result) {
@@ -81,7 +92,7 @@ app.controller('WeatherPlotCtrl', ['$scope', '$q', '$uibModalInstance', 'entity'
 
                 if ($scope.forecast_data.last_11am) {
                     series.push({
-                        name: 'Temperature, C (forecast at ' + $scope.forecast_data.last_11am.time + ')',
+                        name: 'Temperature, C (forecast values from ' + $scope.forecast_data.last_11am.time.replace(/:00.*$/, 'am') + ')',
                         data: $scope.forecast_data.last_11am.tempm,
                         tooltip: {
                             valueDecimals: 1
@@ -90,7 +101,7 @@ app.controller('WeatherPlotCtrl', ['$scope', '$q', '$uibModalInstance', 'entity'
                         dashStyle: 'Dash'
                     });
                     series.push({
-                        name: 'Wind speed, km/h (forecast at ' + $scope.forecast_data.last_11am.time + ')',
+                        name: 'Wind speed, km/h (forecast values from ' + $scope.forecast_data.last_11am.time.replace(/:00.*$/, 'am') + ')',
                         data: $scope.forecast_data.last_11am.wspdm,
                         tooltip: {
                             valueDecimals: 1
@@ -100,7 +111,7 @@ app.controller('WeatherPlotCtrl', ['$scope', '$q', '$uibModalInstance', 'entity'
                         dashStyle: 'Dash'
                     });
                     series.push({
-                        name: 'Wind direction, degrees (forecast at ' + $scope.forecast_data.last_11am.time + ')',
+                        name: 'Wind direction, degrees (forecast values from ' + $scope.forecast_data.last_11am.time.replace(/:00.*$/, 'am') + ')',
                         data: $scope.forecast_data.last_11am.wdird,
                         tooltip: {
                             valueDecimals: 1
@@ -113,7 +124,7 @@ app.controller('WeatherPlotCtrl', ['$scope', '$q', '$uibModalInstance', 'entity'
 
                 if ($scope.forecast_data.last_11pm) {
                     series.push({
-                        name: 'Temperature, C (forecast at ' + $scope.forecast_data.last_11pm.time + ')',
+                        name: 'Temperature, C (forecast values from ' + $scope.forecast_data.last_11pm.time.replace(/:00.*$/, 'pm') + ')',
                         data: $scope.forecast_data.last_11pm.tempm,
                         tooltip: {
                             valueDecimals: 1
@@ -122,7 +133,7 @@ app.controller('WeatherPlotCtrl', ['$scope', '$q', '$uibModalInstance', 'entity'
                         dashStyle: 'Dot'
                     });
                     series.push({
-                        name: 'Wind speed, km/h (forecast at ' + $scope.forecast_data.last_11pm.time + ')',
+                        name: 'Wind speed, km/h (forecast values from ' + $scope.forecast_data.last_11pm.time.replace(/:00.*$/, 'pm') + ')',
                         data: $scope.forecast_data.last_11pm.wspdm,
                         tooltip: {
                             valueDecimals: 1
@@ -132,7 +143,7 @@ app.controller('WeatherPlotCtrl', ['$scope', '$q', '$uibModalInstance', 'entity'
                         dashStyle: 'Dot'
                     });
                     series.push({
-                        name: 'Wind direction, degrees (forecast at ' + $scope.forecast_data.last_11pm.time + ')',
+                        name: 'Wind direction, degrees (forecast values from ' + $scope.forecast_data.last_11pm.time.replace(/:00.*$/, 'pm') + ')',
                         data: $scope.forecast_data.last_11pm.wdird,
                         tooltip: {
                             valueDecimals: 1
@@ -145,7 +156,7 @@ app.controller('WeatherPlotCtrl', ['$scope', '$q', '$uibModalInstance', 'entity'
 
                 if ($scope.forecast_data.last) {
                     series.push({
-                        name: 'Temperature, C (last forecast at ' + $scope.forecast_data.last.time + ')',
+                        name: 'Temperature, C (latest forecast by ' + $scope.forecast_data.last.time + ')',
                         data: $scope.forecast_data.last.tempm,
                         tooltip: {
                             valueDecimals: 1
@@ -154,7 +165,7 @@ app.controller('WeatherPlotCtrl', ['$scope', '$q', '$uibModalInstance', 'entity'
                         dashStyle: 'DashDot'
                     });
                     series.push({
-                        name: 'Wind speed, km/h (forecast at ' + $scope.forecast_data.last.time + ')',
+                        name: 'Wind speed, km/h (latest forecast by ' + $scope.forecast_data.last.time + ')',
                         data: $scope.forecast_data.last.wspdm,
                         tooltip: {
                             valueDecimals: 1
@@ -164,7 +175,7 @@ app.controller('WeatherPlotCtrl', ['$scope', '$q', '$uibModalInstance', 'entity'
                         dashStyle: 'DashDot'
                     });
                     series.push({
-                        name: 'Wind direction, degrees (forecast at ' + $scope.forecast_data.last.time + ')',
+                        name: 'Wind direction, degrees (latest forecast by ' + $scope.forecast_data.last.time + ')',
                         data: $scope.forecast_data.last.wdird,
                         tooltip: {
                             valueDecimals: 1
@@ -218,31 +229,30 @@ app.controller('WeatherPlotCtrl', ['$scope', '$q', '$uibModalInstance', 'entity'
                         title: {
                             text: 'Time (' + $scope.history_data.tzinfo + ')'
                         },
-                        min: new Date().setHours(3, 0, 0, 0),
-                        max: new Date().setHours(3, 0, 0, 0) + 24 * 3600000,
+                        min: new Date(Date.UTC(new Date().getUTCFullYear(), new Date().getUTCMonth(), new Date().getUTCDate())).setUTCHours(0, 0, 0, 0),
+                        max: new Date(Date.UTC(new Date().getUTCFullYear(), new Date().getUTCMonth(), new Date().getUTCDate())).setUTCHours(0, 0, 0, 0) + 24 * 3600000,
                         events : {
                             afterSetExtremes: function(e) {
                                 if (e.trigger == "rangeSelectorButton" &&
                                     e.rangeSelectorButton.text == "24h"){
                                     setTimeout(function(){
                                         $scope.chart.xAxis[0].setExtremes(
-                                            new Date().setHours(3, 0, 0, 0),
-                                            new Date().setHours(3, 0, 0, 0) + 24 * 3600000);
+                                            new Date(Date.UTC(new Date().getUTCFullYear(), new Date().getUTCMonth(), new Date().getUTCDate())).setUTCHours(0, 0, 0, 0),
+                                            new Date(Date.UTC(new Date().getUTCFullYear(), new Date().getUTCMonth(), new Date().getUTCDate())).setUTCHours(0, 0, 0, 0) + 24 * 3600000);
                                     }, 1);
                                 } else if (e.trigger == "rangeSelectorButton" &&
                                     e.rangeSelectorButton.text == "36h"){
                                     setTimeout(function(){
                                         $scope.chart.xAxis[0].setExtremes(
-                                            new Date().setHours(15, 0, 0, 0),
-                                            new Date().setHours(15, 0, 0, 0) + 36 * 3600000);
+                                            new Date(Date.UTC(new Date().getUTCFullYear(), new Date().getUTCMonth(), new Date().getUTCDate())).setUTCHours(12, 0, 0, 0),
+                                            new Date(Date.UTC(new Date().getUTCFullYear(), new Date().getUTCMonth(), new Date().getUTCDate())).setUTCHours(12, 0, 0, 0) + 36 * 3600000);
                                     }, 1);
                                 } else if (e.trigger == "rangeSelectorButton" &&
                                     e.rangeSelectorButton.text == "1m") {
                                     setTimeout(function(){
                                         $scope.chart.xAxis[0].setExtremes(
-                                            new Date().setHours(3, 0, 0, 0),
-                                            new Date(new Date().setHours(3, 0, 0, 0))
-                                                .setMonth(new Date().getMonth()+1));
+                                            new Date(Date.UTC(new Date().getUTCFullYear(), new Date().getUTCMonth(), new Date().getUTCDate())).setUTCHours(0, 0, 0, 0),
+                                            new Date(new Date(Date.UTC(new Date().getUTCFullYear(), new Date().getUTCMonth(), new Date().getUTCDate())).setUTCHours(0, 0, 0, 0)).setUTCMonth(new Date().getMonth()+1));
                                     }, 1);
                                 }
                             }
