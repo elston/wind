@@ -1,6 +1,6 @@
 /*global app,$SCRIPT_ROOT,alertify,google*/
 
-app.controller('LocationsCtrl', ['$scope', '$uibModal', 'locationService', function ($scope, $uibModal, locationService) {
+app.controller('LocationsCtrl', ['$rootScope', '$scope', '$uibModal', 'locationService', function ($rootScope, $scope, $uibModal, locationService) {
     'use strict';
 
     $scope.gridOptions = {
@@ -185,13 +185,24 @@ app.controller('LocationsCtrl', ['$scope', '$uibModal', 'locationService', funct
         var bounds = new google.maps.LatLngBounds();
 
         $scope.gridOptions.data.forEach(function (location) {
+
+            var capacityCount = 0;
+
+            $rootScope.windparksList.forEach(function (windpark) {
+                if (windpark.location.id == location.id){
+                    windpark.turbines.forEach(function (turbin) {
+                        capacityCount += turbin.count * turbin.rated_power;
+                    });
+                }
+            });
+
             var marker = new google.maps.Marker({
                 map: map,
                 position: new google.maps.LatLng(location.lat, location.lon)
             });
             bounds.extend(marker.getPosition());
             var infoWindow = new google.maps.InfoWindow({
-                content: location.name
+                content: location.name + ' ' + capacityCount + ' MW'
             });
             google.maps.event.addListener(marker, 'click', function () {
                     infoWindow.open(map, marker);

@@ -1,7 +1,7 @@
 /*global app,$SCRIPT_ROOT,alertify*/
 
-app.controller('WindParksCtrl', ['$scope', '$uibModal', 'windparkService',
-    function ($scope, $uibModal, windparkService) {
+app.controller('WindParksCtrl', ['$rootScope', '$scope', '$uibModal', 'windparkService',
+    function ($rootScope, $scope, $uibModal, windparkService) {
         'use strict';
 
         $scope.gridOptions = {
@@ -106,6 +106,7 @@ app.controller('WindParksCtrl', ['$scope', '$uibModal', 'windparkService',
         $scope.reload = function () {
             var windparks = windparkService.getWindparks();
             $scope.gridOptions.data = windparks;
+            $rootScope.windparksList = windparks;
             $scope.noWindParks = windparks.length === 0;
             $scope.autoGridSize();
         };
