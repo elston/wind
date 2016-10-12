@@ -17,7 +17,6 @@ app.controller('NewLocationCtrl', ['$scope', '$rootScope', '$http', '$timeout', 
 
         $scope.gridOptions = {
             minRowsToShow: 5,
-            enableSorting: false,
             enableRowSelection: true,
             multiSelect: false,
             rowHeight: 40,
