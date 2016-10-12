@@ -197,7 +197,7 @@ app.controller('WeatherPlotCtrl', ['$scope', '$q', '$uibModalInstance', 'entity'
 
                 if ($scope.forecast_data.last_11am) {
                     series.push({
-                        name: 'Temperature, C (forecast values from ' + $scope.forecast_data.last_11am.time.replace(/:00.*$/, 'am') + ')',
+                        name: 'Temperature, C (forecast values from ' + $scope.forecast_data.last_11am.time + ')',
                         data: $scope.forecast_data.last_11am.tempm,
                         tooltip: {
                             valueDecimals: 1
@@ -206,7 +206,7 @@ app.controller('WeatherPlotCtrl', ['$scope', '$q', '$uibModalInstance', 'entity'
                         dashStyle: 'Dash'
                     });
                     series.push({
-                        name: 'Wind speed, km/h (forecast values from ' + $scope.forecast_data.last_11am.time.replace(/:00.*$/, 'am') + ')',
+                        name: 'Wind speed, km/h (forecast values from ' + $scope.forecast_data.last_11am.time + ')',
                         data: $scope.forecast_data.last_11am.wspdm,
                         tooltip: {
                             valueDecimals: 1
@@ -216,7 +216,7 @@ app.controller('WeatherPlotCtrl', ['$scope', '$q', '$uibModalInstance', 'entity'
                         dashStyle: 'Dash'
                     });
                     series.push({
-                        name: 'Wind direction, degrees (forecast values from ' + $scope.forecast_data.last_11am.time.replace(/:00.*$/, 'am') + ')',
+                        name: 'Wind direction, degrees (forecast values from ' + $scope.forecast_data.last_11am.time + ')',
                         data: $scope.forecast_data.last_11am.wdird,
                         tooltip: {
                             valueDecimals: 1
@@ -229,7 +229,7 @@ app.controller('WeatherPlotCtrl', ['$scope', '$q', '$uibModalInstance', 'entity'
 
                 if ($scope.forecast_data.last_11pm) {
                     series.push({
-                        name: 'Temperature, C (forecast values from ' + $scope.forecast_data.last_11pm.time.replace(/:00.*$/, 'pm') + ')',
+                        name: 'Temperature, C (forecast values from ' + $scope.forecast_data.last_11pm.time + ')',
                         data: $scope.forecast_data.last_11pm.tempm,
                         tooltip: {
                             valueDecimals: 1
@@ -238,7 +238,7 @@ app.controller('WeatherPlotCtrl', ['$scope', '$q', '$uibModalInstance', 'entity'
                         dashStyle: 'Dot'
                     });
                     series.push({
-                        name: 'Wind speed, km/h (forecast values from ' + $scope.forecast_data.last_11pm.time.replace(/:00.*$/, 'pm') + ')',
+                        name: 'Wind speed, km/h (forecast values from ' + $scope.forecast_data.last_11pm.time + ')',
                         data: $scope.forecast_data.last_11pm.wspdm,
                         tooltip: {
                             valueDecimals: 1
@@ -248,7 +248,7 @@ app.controller('WeatherPlotCtrl', ['$scope', '$q', '$uibModalInstance', 'entity'
                         dashStyle: 'Dot'
                     });
                     series.push({
-                        name: 'Wind direction, degrees (forecast values from ' + $scope.forecast_data.last_11pm.time.replace(/:00.*$/, 'pm') + ')',
+                        name: 'Wind direction, degrees (forecast values from ' + $scope.forecast_data.last_11pm.time + ')',
                         data: $scope.forecast_data.last_11pm.wdird,
                         tooltip: {
                             valueDecimals: 1
