@@ -14,6 +14,22 @@ app.controller('WeatherPlotCtrl', ['$scope', '$q', '$uibModalInstance', 'entity'
             $uibModalInstance.close();
         };
 
+        $scope.formatLastObservation = function (date) {
+            var fetchedDate = new Date(date[0]);
+            var year = fetchedDate.getUTCFullYear();
+            var month = fetchedDate.getUTCMonth() + 1;
+            var day = fetchedDate.getUTCDate();
+            var hours = fetchedDate.getUTCHours();
+            var minutes = fetchedDate.getUTCMinutes();
+            var ampm = hours >= 12 ? 'pm' : 'am';
+            hours = hours % 12;
+            hours = hours ? hours : 12;
+            minutes = minutes < 10 ? '0'+minutes : minutes;
+            var strDate = 'Observation updated on '+day+'-'+month+'-'+year+' '+hours + ':' + minutes + ampm +
+                ' ('+ $scope.history_data.tzinfo +')';
+            return strDate;
+        };
+
         $scope.updateSeriesSet = function () {
             for (var i = 0; i < $scope.chart.series.length - 1; i += 3) {
                 if ($scope.tempmEnabled) {
@@ -374,6 +390,9 @@ app.controller('WeatherPlotCtrl', ['$scope', '$q', '$uibModalInstance', 'entity'
                 });
 
                 $scope.updateSeriesSet();
+
+                $scope.lastObservation = $scope.formatLastObservation(
+                    $scope.history_data.data.wspdm[$scope.history_data.data.wspdm.length-1]);
             });
 
     }
