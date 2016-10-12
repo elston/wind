@@ -38,7 +38,46 @@ app.controller('WeatherPlotCtrl', ['$scope', '$q', '$uibModalInstance', 'entity'
                     $scope.chart.series[i + 0].options.showInLegend = true;
                     $scope.chart.legend.renderItem($scope.chart.series[i + 0]);
                     $scope.chart.legend.render();
+                } else {
+                    $scope.chart.series[i + 0].hide();
 
+                    $scope.chart.series[i + 0].options.showInLegend = false;
+                    $scope.chart.series[i + 0].legendItem = null;
+                    $scope.chart.legend.destroyItem($scope.chart.series[i + 0]);
+                    $scope.chart.legend.render();
+                }
+                if ($scope.wspdmEnabled) {
+                    $scope.chart.series[i + 1].show();
+
+                    $scope.chart.series[i + 1].options.showInLegend = true;
+                    $scope.chart.legend.renderItem($scope.chart.series[i + 1]);
+                    $scope.chart.legend.render();
+                } else {
+                    $scope.chart.series[i + 1].hide();
+
+                    $scope.chart.series[i + 1].options.showInLegend = false;
+                    $scope.chart.series[i + 1].legendItem = null;
+                    $scope.chart.legend.destroyItem($scope.chart.series[i + 1]);
+                    $scope.chart.legend.render();
+                }
+                if ($scope.wdirdEnabled) {
+                    $scope.chart.series[i + 2].show();
+
+                    $scope.chart.series[i + 2].options.showInLegend = true;
+                    $scope.chart.legend.renderItem($scope.chart.series[i + 2]);
+                    $scope.chart.legend.render();
+                } else {
+                    $scope.chart.series[i + 2].hide();
+
+                    $scope.chart.series[i + 2].options.showInLegend = false;
+                    $scope.chart.series[i + 2].legendItem = null;
+                    $scope.chart.legend.destroyItem($scope.chart.series[i + 2]);
+                    $scope.chart.legend.render();
+                }
+            }
+
+            for (var i = 0; i < $scope.chart.yAxis.length - 1; i += 3) {
+                if ($scope.tempmEnabled) {
                     if($scope.chart.yAxis[i + 0]){
                         $scope.chart.yAxis[i + 0].update({
                             labels: {
@@ -50,13 +89,6 @@ app.controller('WeatherPlotCtrl', ['$scope', '$q', '$uibModalInstance', 'entity'
                         });
                     }
                 } else {
-                    $scope.chart.series[i + 0].hide();
-
-                    $scope.chart.series[i + 0].options.showInLegend = false;
-                    $scope.chart.series[i + 0].legendItem = null;
-                    $scope.chart.legend.destroyItem($scope.chart.series[i + 0]);
-                    $scope.chart.legend.render();
-
                     if ($scope.chart.yAxis[i + 0]) {
                         $scope.chart.yAxis[i + 0].update({
                             labels: {
@@ -69,12 +101,6 @@ app.controller('WeatherPlotCtrl', ['$scope', '$q', '$uibModalInstance', 'entity'
                     }
                 }
                 if ($scope.wspdmEnabled) {
-                    $scope.chart.series[i + 1].show();
-
-                    $scope.chart.series[i + 1].options.showInLegend = true;
-                    $scope.chart.legend.renderItem($scope.chart.series[i + 1]);
-                    $scope.chart.legend.render();
-
                     if ($scope.chart.yAxis[i + 1]){
                         $scope.chart.yAxis[i + 1].update({
                             labels: {
@@ -86,13 +112,6 @@ app.controller('WeatherPlotCtrl', ['$scope', '$q', '$uibModalInstance', 'entity'
                         });
                     }
                 } else {
-                    $scope.chart.series[i + 1].hide();
-
-                    $scope.chart.series[i + 1].options.showInLegend = false;
-                    $scope.chart.series[i + 1].legendItem = null;
-                    $scope.chart.legend.destroyItem($scope.chart.series[i + 1]);
-                    $scope.chart.legend.render();
-
                     if ($scope.chart.yAxis[i + 1]) {
                         $scope.chart.yAxis[i + 1].update({
                             labels: {
@@ -105,12 +124,6 @@ app.controller('WeatherPlotCtrl', ['$scope', '$q', '$uibModalInstance', 'entity'
                     }
                 }
                 if ($scope.wdirdEnabled) {
-                    $scope.chart.series[i + 2].show();
-
-                    $scope.chart.series[i + 2].options.showInLegend = true;
-                    $scope.chart.legend.renderItem($scope.chart.series[i + 2]);
-                    $scope.chart.legend.render();
-
                     if ($scope.chart.yAxis[i + 2]) {
                         $scope.chart.yAxis[i + 2].update({
                             labels: {
@@ -122,13 +135,6 @@ app.controller('WeatherPlotCtrl', ['$scope', '$q', '$uibModalInstance', 'entity'
                         });
                     }
                 } else {
-                    $scope.chart.series[i + 2].hide();
-
-                    $scope.chart.series[i + 2].options.showInLegend = false;
-                    $scope.chart.series[i + 2].legendItem = null;
-                    $scope.chart.legend.destroyItem($scope.chart.series[i + 2]);
-                    $scope.chart.legend.render();
-
                     if ($scope.chart.yAxis[i + 2]) {
                         $scope.chart.yAxis[i + 2].update({
                             labels: {
@@ -141,6 +147,7 @@ app.controller('WeatherPlotCtrl', ['$scope', '$q', '$uibModalInstance', 'entity'
                     }
                 }
             }
+
         };
 
         $q.all([
