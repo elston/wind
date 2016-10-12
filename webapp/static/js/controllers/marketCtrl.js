@@ -5,7 +5,6 @@ app.controller('MarketsCtrl', ['$scope', '$uibModal', 'marketService',
         'use strict';
 
         $scope.gridOptions = {
-            enableSorting: false,
             enableGridMenu: true,
             enableRowSelection: true,
             multiSelect: true,

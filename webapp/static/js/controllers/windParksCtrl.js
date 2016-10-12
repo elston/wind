@@ -5,7 +5,6 @@ app.controller('WindParksCtrl', ['$rootScope', '$scope', '$uibModal', 'windparkS
         'use strict';
 
         $scope.gridOptions = {
-            enableSorting: false,
             enableGridMenu: true,
             enableRowSelection: true,
             multiSelect: true,

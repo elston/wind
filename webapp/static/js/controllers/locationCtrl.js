@@ -4,7 +4,6 @@ app.controller('LocationsCtrl', ['$rootScope', '$scope', '$uibModal', 'locationS
     'use strict';
 
     $scope.gridOptions = {
-        enableSorting: false,
         enableGridMenu: true,
         enableRowSelection: true,
         multiSelect: true,
@@ -45,11 +44,11 @@ app.controller('LocationsCtrl', ['$rootScope', '$scope', '$uibModal', 'locationS
             {field: 'city'},
             {field: 'tz_short', visible: false},
             {field: 'tz_long', visible: false},
-            {field: 'lat', cellFilter: 'number: 5'},
-            {field: 'lon', cellFilter: 'number: 5'},
-            {field: 'wspd_shape', cellFilter: 'number: 2'},
-            {field: 'wspd_scale', cellFilter: 'number: 2'},
-            {field: 'lookback', visible: false},
+            {field: 'lat', cellFilter: 'number: 5', enableSorting: false},
+            {field: 'lon', cellFilter: 'number: 5', enableSorting: false},
+            {field: 'wspd_shape', cellFilter: 'number: 2', enableSorting: false},
+            {field: 'wspd_scale', cellFilter: 'number: 2', enableSorting: false},
+            {field: 'lookback', visible: false, enableSorting: false},
 //            {field: 'lookforward', visible: false},
             {
                 field: 'action',
