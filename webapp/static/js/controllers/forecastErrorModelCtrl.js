@@ -9,6 +9,91 @@ app.controller('ForecastErrorModelCtrl', ['$scope', '$uibModalInstance', 'entity
         $scope.selectedAnalyticPlot = 'off';
         $scope.modelData = {};
 
+        $scope.observationEnabled = false;
+        $scope.forecastEnabled = true;
+        $scope.errorsEnabled = false;
+
+        $scope.datePickerOpts = {
+            locale: {
+                applyClass: 'btn-warning'
+            },
+            eventHandlers: {
+                'apply.daterangepicker': function(ev, picker) {
+                    $scope.updateSeriesSet();
+            }, 'show.daterangepicker': function () {
+                angular.element(document.getElementsByClassName('applyBtn')[0]).addClass('btn-warning');
+            }}
+
+        };
+
+        $scope.forDatePickerParser = function (date) {
+            var parsedDate = new Date(date);
+            var modifiedDate = new Date(parsedDate.getFullYear()+'-'+(parsedDate.getMonth()+1)+'-'+parsedDate.getDate());
+            return modifiedDate;
+        };
+
+        $scope.updateSeriesSet = function () {
+
+            if ($scope.observationEnabled) {
+                $scope.chart.series[0].show();
+                $scope.chart.series[0].options.showInLegend = true;
+                $scope.chart.legend.renderItem($scope.chart.series[0]);
+                $scope.chart.legend.render();
+            } else {
+                $scope.chart.series[0].hide();
+                $scope.chart.series[0].options.showInLegend = false;
+                $scope.chart.series[0].legendItem = null;
+                $scope.chart.legend.destroyItem($scope.chart.series[0]);
+                $scope.chart.legend.render();
+            }
+
+            for (var i = 1; i < $scope.chart.series.length - 1; i += 2) {
+                if ($scope.errorsEnabled) {
+                    if ($scope.forDatePickerParser($scope.chart.series[i + 0].data[0].x) >= new Date($scope.datePickerModel.startDate)
+                        && $scope.forDatePickerParser($scope.chart.series[i + 0].data[0].x) <= new Date($scope.datePickerModel.endDate)){
+                        $scope.chart.series[i + 0].show();
+                        $scope.chart.series[i + 0].options.showInLegend = true;
+                        $scope.chart.legend.renderItem($scope.chart.series[i + 0]);
+                        $scope.chart.legend.render();
+                    } else {
+                        $scope.chart.series[i + 0].hide();
+                        $scope.chart.series[i + 0].options.showInLegend = false;
+                        $scope.chart.series[i + 0].legendItem = null;
+                        $scope.chart.legend.destroyItem($scope.chart.series[i + 0]);
+                        $scope.chart.legend.render();
+                    }
+                } else {
+                    $scope.chart.series[i + 0].hide();
+                    $scope.chart.series[i + 0].options.showInLegend = false;
+                    $scope.chart.series[i + 0].legendItem = null;
+                    $scope.chart.legend.destroyItem($scope.chart.series[i + 0]);
+                    $scope.chart.legend.render();
+                }
+
+                if ($scope.forecastEnabled) {
+                    if ($scope.forDatePickerParser($scope.chart.series[i + 1].data[0].x) >= new Date($scope.datePickerModel.startDate)
+                        && $scope.forDatePickerParser($scope.chart.series[i + 1].data[0].x) <= new Date($scope.datePickerModel.endDate)){
+                        $scope.chart.series[i + 1].show();
+                        $scope.chart.series[i + 1].options.showInLegend = true;
+                        $scope.chart.legend.renderItem($scope.chart.series[i + 1]);
+                        $scope.chart.legend.render();
+                    } else {
+                        $scope.chart.series[i + 1].hide();
+                        $scope.chart.series[i + 1].options.showInLegend = false;
+                        $scope.chart.series[i + 1].legendItem = null;
+                        $scope.chart.legend.destroyItem($scope.chart.series[i + 1]);
+                        $scope.chart.legend.render();
+                    }
+                } else {
+                    $scope.chart.series[i + 1].hide();
+                    $scope.chart.series[i + 1].options.showInLegend = false;
+                    $scope.chart.series[i + 1].legendItem = null;
+                    $scope.chart.legend.destroyItem($scope.chart.series[i + 1]);
+                    $scope.chart.legend.render();
+                }
+            }
+        };
+
         $scope.update = function () {
             locationService.getModelData(entity.id)
                 .then(
@@ -32,6 +117,25 @@ app.controller('ForecastErrorModelCtrl', ['$scope', '$uibModalInstance', 'entity
                 .then(
                     function (result) {
                         $scope.errorsChunked = result.errors;
+
+                        $scope.datePickerStart = function () {
+                            var first = $scope.errorsChunked[0].errors[0];
+                            var parsedFirstDate = new Date(first[0]);
+                            return parsedFirstDate.getFullYear()+'-'+(parsedFirstDate.getMonth()+1)+'-'+parsedFirstDate.getDate();
+                        };
+
+                        $scope.datePickerEnd = function () {
+                            var last = $scope.errorsChunked[$scope.errorsChunked.length - 1].errors[0];
+                            var parsedLastDate = new Date(last[0]);
+                            return parsedLastDate.getFullYear()+'-'+(parsedLastDate.getMonth()+1)+'-'+parsedLastDate.getDate();;
+                        };
+
+                        $scope.datePickerMin = $scope.datePickerStart();
+                        $scope.datePickerMax = $scope.datePickerEnd();
+
+
+                        $scope.datePickerModel = {startDate: $scope.datePickerStart(), endDate: $scope.datePickerEnd()};
+
                         var series = [{
                             name: 'Observations',
                             data: result.observations,
@@ -87,6 +191,8 @@ app.controller('ForecastErrorModelCtrl', ['$scope', '$uibModalInstance', 'entity
                             }],
                             series: series
                         });
+
+                        $scope.updateSeriesSet();
                     },
                     function (error) {
                         alertify.error(error);

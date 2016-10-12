@@ -265,3 +265,11 @@ input::-webkit-inner-spin-button {
 .ui-datepicker {
     z-index:9999 !important;
 }
+
+.errors-chunked-block {
+    padding-top: 10px;
+}
+
+.errors-chunked-buttons {
+    padding-bottom: 10px;
+}

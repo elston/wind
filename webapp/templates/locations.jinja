@@ -390,8 +390,23 @@
 
         <div uib-collapse="selectedDataPlot != 'errors-chunked'" expanded="plotErrorsChunked()"
              collapsed="cleanErrorsChunked()">
-            <div class="well well-lg">
-                <div id="plot-value-errors-chunked" style="width:100%; height:600px;"></div>
+            <div class="well well-lg errors-chunked-block">
+                <div class="pull-left errors-chunked-buttons">
+                    <div class="btn-group pull-left">
+                        <label class="btn btn-default btn-xs">
+                            <input type="checkbox" name="observation" data-toggle="button" ng-model="observationEnabled"
+                                ng-change="updateSeriesSet()"> Observations</label>
+                        <label class="btn btn-default btn-xs active">
+                            <input type="checkbox" name="forecast" data-toggle="button" ng-model="forecastEnabled"
+                                ng-change="updateSeriesSet()"> Forecast </label>
+                        <label class="btn btn-default btn-xs">
+                            <input type="checkbox" name="errors" data-toggle="button" ng-model="errorsEnabled"
+                                ng-change="updateSeriesSet()"> Errors</label>
+                    </div>
+                </div>
+                <input date-range-picker class="pull-right date-picker" type="text" ng-model="datePickerModel"
+                 options="datePickerOpts" min="datePickerMin" max="datePickerMax"/>
+                <div id="plot-value-errors-chunked" style="width:100%; height:500px;"></div>
             </div>
         </div>
         <div uib-collapse="selectedDataPlot != 'errors-merged'" expanded="plotErrorsMerged()"
