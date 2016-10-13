@@ -19,7 +19,8 @@
     "angular-loading-spinner": "^0.0.3",
     "ng-file-upload": "^12.0.4",
     "angularjs-slider": "^5.4.3",
-    "jquery-ui": "^1.12.1"
+    "jquery-ui": "^1.12.1",
+    "angular-daterangepicker": "^0.2.2"
   },
   "resolutions": {
     "angular": ">=1.2.16 1.4.x"

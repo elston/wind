@@ -274,3 +274,11 @@ input::-webkit-inner-spin-button {
 .market-header-dates {
     padding: 0 0 0 5px;
 }
+
+.errors-chunked-block {
+    padding-top: 10px;
+}
+
+.errors-chunked-buttons {
+    padding-bottom: 10px;
+}
