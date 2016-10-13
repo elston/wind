@@ -205,7 +205,8 @@ app.controller('WeatherPlotCtrl', ['$scope', '$q', '$uibModalInstance', 'entity'
                         tooltip: {
                             valueDecimals: 1
                         },
-                        color: 'lightblue'
+                        color: 'darkblue',
+                        dashStyle: 'dash'
                     });
                     series.push({
                         name: 'Wind speed, km/h (forecast values from ' + $scope.forecast_data.last_11am.time + ')',
@@ -214,7 +215,8 @@ app.controller('WeatherPlotCtrl', ['$scope', '$q', '$uibModalInstance', 'entity'
                             valueDecimals: 1
                         },
                         yAxis: 1,
-                        color: 'lightblue'
+                        color: 'darkblue',
+                        dashStyle: 'dash'
                     });
                     series.push({
                         name: 'Wind direction, degrees (forecast values from ' + $scope.forecast_data.last_11am.time + ')',
@@ -223,7 +225,8 @@ app.controller('WeatherPlotCtrl', ['$scope', '$q', '$uibModalInstance', 'entity'
                             valueDecimals: 1
                         },
                         yAxis: 2,
-                        color: 'lightblue'
+                        color: 'darkblue',
+                        dashStyle: 'dash'
                     });
                 }
 
@@ -234,7 +237,8 @@ app.controller('WeatherPlotCtrl', ['$scope', '$q', '$uibModalInstance', 'entity'
                         tooltip: {
                             valueDecimals: 1
                         },
-                        color: 'darkblue'
+                        color: 'lightblue',
+                        dashStyle: 'shortdot'
                     });
                     series.push({
                         name: 'Wind speed, km/h (forecast values from ' + $scope.forecast_data.last_11pm.time + ')',
@@ -243,7 +247,8 @@ app.controller('WeatherPlotCtrl', ['$scope', '$q', '$uibModalInstance', 'entity'
                             valueDecimals: 1
                         },
                         yAxis: 1,
-                        color: 'darkblue'
+                        color: 'lightblue',
+                        dashStyle: 'shortdot'
                     });
                     series.push({
                         name: 'Wind direction, degrees (forecast values from ' + $scope.forecast_data.last_11pm.time + ')',
@@ -252,7 +257,8 @@ app.controller('WeatherPlotCtrl', ['$scope', '$q', '$uibModalInstance', 'entity'
                             valueDecimals: 1
                         },
                         yAxis: 2,
-                        color: 'darkblue'
+                        color: 'lightblue',
+                        dashStyle: 'shortdot'
                     });
                 }
 
@@ -264,6 +270,7 @@ app.controller('WeatherPlotCtrl', ['$scope', '$q', '$uibModalInstance', 'entity'
                             valueDecimals: 1
                         },
                         color: 'darkgrey',
+                        dashStyle: 'longdashdot'
                     });
                     series.push({
                         name: 'Wind speed, km/h (latest forecast by ' + $scope.forecast_data.last.time + ')',
@@ -273,6 +280,7 @@ app.controller('WeatherPlotCtrl', ['$scope', '$q', '$uibModalInstance', 'entity'
                         },
                         yAxis: 1,
                         color: 'darkgrey',
+                        dashStyle: 'longdashdot'
                     });
                     series.push({
                         name: 'Wind direction, degrees (latest forecast by ' + $scope.forecast_data.last.time + ')',
@@ -282,6 +290,7 @@ app.controller('WeatherPlotCtrl', ['$scope', '$q', '$uibModalInstance', 'entity'
                         },
                         yAxis: 2,
                         color: 'darkgrey',
+                        dashStyle: 'longdashdot'
                     });
                 }
 
