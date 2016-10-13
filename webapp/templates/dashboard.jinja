@@ -599,7 +599,7 @@
                     <pre>{{ statusData.log }}</pre>
                     <pre class="bg-danger" ng-if="statusData.isFailed">{{ statusData.error }}</pre>
                     <!--<pre>{{ optimizationResults }}</pre>-->
-                    <div ng-hide="statusData.status && statusData.status != 'finished'">
+                    <div ng-hide="statusData.status != 'finished'">
                         <dl class="dl-horizontal">
                             <dt>Calculation start:</dt>
                             <dd>{{ optimizationResults.computing_start }}</dd>

@@ -12,7 +12,8 @@ app.controller('WindParkOptimizationCtrl', ['$scope', '$interval', '$timeout', '
         var stopRefresh;
 
         $scope.overrideVariance = false;
-        $scope.forecastErrorVariance = $scope.location.forecast_error_model.sigma2;
+        if ($scope.location.forecast_error_model)
+            $scope.forecastErrorVariance = $scope.location.forecast_error_model.sigma2;
 
         $scope.overrideVarianceChanged = function () {
             if (!$scope.overrideVariance) {
@@ -309,6 +310,7 @@ app.controller('WindParkOptimizationCtrl', ['$scope', '$interval', '$timeout', '
             function (newVal, oldVal) {
                 windparkService.getDaOfferingCurve($scope.windpark.id, newVal)
                     .then(function (data) {
+                            if (!data) return;
                             $timeout(function () {
                                 var chart = new Highcharts.Chart({
                                     chart: {
