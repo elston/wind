@@ -330,21 +330,29 @@ app.controller('WindParkOptimizationCtrl', ['$scope', '$interval', '$timeout', '
                                             marker: {
                                                 enabled: true
                                             }
-                                        },
+                                        }
                                     },
                                     xAxis: [{
                                         title: {
                                             text: 'Volume, MWh'
                                         },
-                                        max: Math.max.apply(null, data.map(function(x) { return x[0]})) + 1,
-                                        min: Math.min.apply(null, data.map(function(x) { return x[0]})) - 1
+                                        max: Math.max.apply(null, data.map(function (x) {
+                                            return x[0];
+                                        })) + 1,
+                                        min: Math.min.apply(null, data.map(function (x) {
+                                            return x[0];
+                                        })) - 1
                                     }],
                                     yAxis: [{
                                         title: {
                                             text: 'DA price, €/MWh'
                                         },
-                                        max: Math.max.apply(null, data.map(function(x) { return x[1]})) + 1,
-                                        min: Math.min.apply(null, data.map(function(x) { return x[1]})) - 1
+                                        max: Math.max.apply(null, data.map(function (x) {
+                                            return x[1];
+                                        })) + 1,
+                                        min: Math.min.apply(null, data.map(function (x) {
+                                            return x[1];
+                                        })) - 1
                                     }],
                                     series: [{
                                         name: 'DA price, €/MWh',
