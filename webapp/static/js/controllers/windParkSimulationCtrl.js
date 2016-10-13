@@ -5,12 +5,13 @@ app.controller('WindParkSimulationCtrl', ['$scope', '$timeout', 'windparkService
         'use strict';
 
         $scope.status = {isDetailsOpen: false};
+        $scope.simulationDate = new Date();
         $scope.timeSpan = 24;
         $scope.nScenarios = 15;
         $scope.nReducedScenarios = 5;
         $scope.nDaAmScenarios = 15;
         $scope.nDaAmReducedScenarios = 2;
-        $scope.dayStart = 22;
+        $scope.dayStart = 0;
 
         $scope.nDaPriceScenarios = 100;
         $scope.nDaAmPriceScenarios = 100;
@@ -79,7 +80,7 @@ app.controller('WindParkSimulationCtrl', ['$scope', '$timeout', 'windparkService
         };
 
         $scope.updateWindSimulation = function () {
-            windparkService.getWindSimulation($scope.windpark.id, $scope.timeSpan, $scope.nScenarios,
+            windparkService.getWindSimulation($scope.windpark.id, $scope.simulationDate, $scope.nScenarios,
                 $scope.nReducedScenarios, $scope.nDaAmScenarios, $scope.nDaAmReducedScenarios)
                 .then(function (data) {
                         var wind_series = [];
@@ -288,7 +289,7 @@ app.controller('WindParkSimulationCtrl', ['$scope', '$timeout', 'windparkService
         };
 
         $scope.updateMarketSimulation = function () {
-            windparkService.getMarketSimulation($scope.windpark.id, $scope.dayStart, $scope.timeSpan,
+            windparkService.getMarketSimulation($scope.windpark.id, $scope.simulationDate,
                 $scope.nDaPriceScenarios, $scope.nDaRedcPriceScenarios,
                 $scope.nDaAmPriceScenarios, $scope.nDaAmRedcPriceScenarios,
                 $scope.nAdjPriceScenarios, $scope.nAdjRedcPriceScenarios)

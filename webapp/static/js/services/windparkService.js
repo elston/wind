@@ -185,12 +185,12 @@ app.factory('windparkService', ['$http', 'Upload', function ($http, Upload) {
                 });
     };
 
-    var getWindSimulation = function (id, timeSpan, nScenarios, nReducedScenarios, nDaAmScenarios,
+    var getWindSimulation = function (id, simulationDate, nScenarios, nReducedScenarios, nDaAmScenarios,
                                       nDaAmReducedScenarios) {
         return $http.get($SCRIPT_ROOT + '/windparks/wind_simulation/' + id,
             {
                 params: {
-                    time_span: timeSpan,
+                    simulation_date: simulationDate,
                     n_scenarios: nScenarios,
                     n_reduced_scenarios: nReducedScenarios,
                     n_da_am_scenarios: nDaAmScenarios,
@@ -210,14 +210,13 @@ app.factory('windparkService', ['$http', 'Upload', function ($http, Upload) {
 
     };
 
-    var getMarketSimulation = function (id, dayStart, timeSpan, nDaPriceScenarios, nDaRedcPriceScenarios,
+    var getMarketSimulation = function (id, simulationDate, nDaPriceScenarios, nDaRedcPriceScenarios,
                                         nDaAmPriceScenarios, nDaAmRedcPriceScenarios,
                                         nAdjPriceScenarios, nAdjRedcPriceScenarios) {
         return $http.get($SCRIPT_ROOT + '/windparks/market_simulation/' + id,
             {
                 params: {
-                    day_start: dayStart,
-                    time_span: timeSpan,
+                    simulation_date: simulationDate,
                     n_da_price_scenarios: nDaPriceScenarios,
                     n_da_redc_price_scenarios: nDaRedcPriceScenarios,
                     n_da_am_price_scenarios: nDaAmPriceScenarios,
