@@ -13,6 +13,10 @@ app.controller('ForecastErrorModelCtrl', ['$scope', '$uibModalInstance', 'entity
         $scope.forecastEnabled = true;
         $scope.errorsEnabled = false;
 
+        $scope.datePickerModel = {startDate: null, endDate: null};
+        $scope.datePickerMin = null;
+        $scope.datePickerMax = null;
+
         $scope.datePickerOpts = {
             locale: {
                 applyClass: 'btn-warning'
