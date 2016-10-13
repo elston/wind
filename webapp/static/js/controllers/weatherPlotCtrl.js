@@ -25,7 +25,7 @@ app.controller('WeatherPlotCtrl', ['$scope', '$q', '$uibModalInstance', 'entity'
             hours = hours % 12;
             hours = hours ? hours : 12;
             minutes = minutes < 10 ? '0'+minutes : minutes;
-            var strDate = 'Observation updated on '+day+'-'+month+'-'+year+' '+hours + ':' + minutes + ampm +
+            var strDate = 'Observation updated on: '+day+'-'+month+'-'+year+' '+hours + ':' + minutes + ampm +
                 ' ('+ $scope.history_data.tzinfo +')';
             return strDate;
         };
