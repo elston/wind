@@ -63,7 +63,7 @@ td.editablegrid-action button.btn, a.btn {
 span.data-label {
     font-weight: bold;
     text-align: right;
-    margin-right: 20px
+    margin-right: 15px
 }
 
 h4 button.pull-right {
@@ -269,4 +269,8 @@ input::-webkit-inner-spin-button {
 .last-observation {
     color: #337ab7;
     font-weight: bold;
+}
+
+.market-header-dates {
+    padding: 0 0 0 5px;
 }
