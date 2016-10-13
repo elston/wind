@@ -1,10 +1,9 @@
 /*global app,$SCRIPT_ROOT,alertify,google*/
 
-app.controller('LocationsCtrl', ['$scope', '$uibModal', 'locationService', function ($scope, $uibModal, locationService) {
+app.controller('LocationsCtrl', ['$rootScope', '$scope', '$uibModal', 'locationService', function ($rootScope, $scope, $uibModal, locationService) {
     'use strict';
 
     $scope.gridOptions = {
-        enableSorting: false,
         enableGridMenu: true,
         enableRowSelection: true,
         multiSelect: true,
@@ -45,11 +44,11 @@ app.controller('LocationsCtrl', ['$scope', '$uibModal', 'locationService', funct
             {field: 'city'},
             {field: 'tz_short', visible: false},
             {field: 'tz_long', visible: false},
-            {field: 'lat', cellFilter: 'number: 5'},
-            {field: 'lon', cellFilter: 'number: 5'},
-            {field: 'wspd_shape', cellFilter: 'number: 2'},
-            {field: 'wspd_scale', cellFilter: 'number: 2'},
-            {field: 'lookback', visible: false},
+            {field: 'lat', cellFilter: 'number: 5', enableSorting: false},
+            {field: 'lon', cellFilter: 'number: 5', enableSorting: false},
+            {field: 'wspd_shape', cellFilter: 'number: 2', enableSorting: false},
+            {field: 'wspd_scale', cellFilter: 'number: 2', enableSorting: false},
+            {field: 'lookback', visible: false, enableSorting: false},
 //            {field: 'lookforward', visible: false},
             {
                 field: 'action',
@@ -185,13 +184,24 @@ app.controller('LocationsCtrl', ['$scope', '$uibModal', 'locationService', funct
         var bounds = new google.maps.LatLngBounds();
 
         $scope.gridOptions.data.forEach(function (location) {
+
+            var capacityCount = 0;
+
+            $rootScope.windparksList.forEach(function (windpark) {
+                if (windpark.location.id == location.id){
+                    windpark.turbines.forEach(function (turbin) {
+                        capacityCount += turbin.count * turbin.rated_power;
+                    });
+                }
+            });
+
             var marker = new google.maps.Marker({
                 map: map,
                 position: new google.maps.LatLng(location.lat, location.lon)
             });
             bounds.extend(marker.getPosition());
             var infoWindow = new google.maps.InfoWindow({
-                content: location.name
+                content: location.name + ' ' + capacityCount + ' MW'
             });
             google.maps.event.addListener(marker, 'click', function () {
                     infoWindow.open(map, marker);

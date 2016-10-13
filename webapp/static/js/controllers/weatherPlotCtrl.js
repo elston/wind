@@ -14,6 +14,22 @@ app.controller('WeatherPlotCtrl', ['$scope', '$q', '$uibModalInstance', 'entity'
             $uibModalInstance.close();
         };
 
+        $scope.formatLastObservation = function (date) {
+            var fetchedDate = new Date(date[0]);
+            var year = fetchedDate.getUTCFullYear();
+            var month = fetchedDate.getUTCMonth() + 1;
+            var day = fetchedDate.getUTCDate();
+            var hours = fetchedDate.getUTCHours();
+            var minutes = fetchedDate.getUTCMinutes();
+            var ampm = hours >= 12 ? 'pm' : 'am';
+            hours = hours % 12;
+            hours = hours ? hours : 12;
+            minutes = minutes < 10 ? '0'+minutes : minutes;
+            var strDate = 'Observation updated on '+day+'-'+month+'-'+year+' '+hours + ':' + minutes + ampm +
+                ' ('+ $scope.history_data.tzinfo +')';
+            return strDate;
+        };
+
         $scope.updateSeriesSet = function () {
             for (var i = 0; i < $scope.chart.series.length - 1; i += 3) {
                 if ($scope.tempmEnabled) {
@@ -22,7 +38,46 @@ app.controller('WeatherPlotCtrl', ['$scope', '$q', '$uibModalInstance', 'entity'
                     $scope.chart.series[i + 0].options.showInLegend = true;
                     $scope.chart.legend.renderItem($scope.chart.series[i + 0]);
                     $scope.chart.legend.render();
+                } else {
+                    $scope.chart.series[i + 0].hide();
 
+                    $scope.chart.series[i + 0].options.showInLegend = false;
+                    $scope.chart.series[i + 0].legendItem = null;
+                    $scope.chart.legend.destroyItem($scope.chart.series[i + 0]);
+                    $scope.chart.legend.render();
+                }
+                if ($scope.wspdmEnabled) {
+                    $scope.chart.series[i + 1].show();
+
+                    $scope.chart.series[i + 1].options.showInLegend = true;
+                    $scope.chart.legend.renderItem($scope.chart.series[i + 1]);
+                    $scope.chart.legend.render();
+                } else {
+                    $scope.chart.series[i + 1].hide();
+
+                    $scope.chart.series[i + 1].options.showInLegend = false;
+                    $scope.chart.series[i + 1].legendItem = null;
+                    $scope.chart.legend.destroyItem($scope.chart.series[i + 1]);
+                    $scope.chart.legend.render();
+                }
+                if ($scope.wdirdEnabled) {
+                    $scope.chart.series[i + 2].show();
+
+                    $scope.chart.series[i + 2].options.showInLegend = true;
+                    $scope.chart.legend.renderItem($scope.chart.series[i + 2]);
+                    $scope.chart.legend.render();
+                } else {
+                    $scope.chart.series[i + 2].hide();
+
+                    $scope.chart.series[i + 2].options.showInLegend = false;
+                    $scope.chart.series[i + 2].legendItem = null;
+                    $scope.chart.legend.destroyItem($scope.chart.series[i + 2]);
+                    $scope.chart.legend.render();
+                }
+            }
+
+            for (var i = 0; i < $scope.chart.yAxis.length - 1; i += 3) {
+                if ($scope.tempmEnabled) {
                     if($scope.chart.yAxis[i + 0]){
                         $scope.chart.yAxis[i + 0].update({
                             labels: {
@@ -34,13 +89,6 @@ app.controller('WeatherPlotCtrl', ['$scope', '$q', '$uibModalInstance', 'entity'
                         });
                     }
                 } else {
-                    $scope.chart.series[i + 0].hide();
-
-                    $scope.chart.series[i + 0].options.showInLegend = false;
-                    $scope.chart.series[i + 0].legendItem = null;
-                    $scope.chart.legend.destroyItem($scope.chart.series[i + 0]);
-                    $scope.chart.legend.render();
-
                     if ($scope.chart.yAxis[i + 0]) {
                         $scope.chart.yAxis[i + 0].update({
                             labels: {
@@ -53,12 +101,6 @@ app.controller('WeatherPlotCtrl', ['$scope', '$q', '$uibModalInstance', 'entity'
                     }
                 }
                 if ($scope.wspdmEnabled) {
-                    $scope.chart.series[i + 1].show();
-
-                    $scope.chart.series[i + 1].options.showInLegend = true;
-                    $scope.chart.legend.renderItem($scope.chart.series[i + 1]);
-                    $scope.chart.legend.render();
-
                     if ($scope.chart.yAxis[i + 1]){
                         $scope.chart.yAxis[i + 1].update({
                             labels: {
@@ -70,13 +112,6 @@ app.controller('WeatherPlotCtrl', ['$scope', '$q', '$uibModalInstance', 'entity'
                         });
                     }
                 } else {
-                    $scope.chart.series[i + 1].hide();
-
-                    $scope.chart.series[i + 1].options.showInLegend = false;
-                    $scope.chart.series[i + 1].legendItem = null;
-                    $scope.chart.legend.destroyItem($scope.chart.series[i + 1]);
-                    $scope.chart.legend.render();
-
                     if ($scope.chart.yAxis[i + 1]) {
                         $scope.chart.yAxis[i + 1].update({
                             labels: {
@@ -89,12 +124,6 @@ app.controller('WeatherPlotCtrl', ['$scope', '$q', '$uibModalInstance', 'entity'
                     }
                 }
                 if ($scope.wdirdEnabled) {
-                    $scope.chart.series[i + 2].show();
-
-                    $scope.chart.series[i + 2].options.showInLegend = true;
-                    $scope.chart.legend.renderItem($scope.chart.series[i + 2]);
-                    $scope.chart.legend.render();
-
                     if ($scope.chart.yAxis[i + 2]) {
                         $scope.chart.yAxis[i + 2].update({
                             labels: {
@@ -106,13 +135,6 @@ app.controller('WeatherPlotCtrl', ['$scope', '$q', '$uibModalInstance', 'entity'
                         });
                     }
                 } else {
-                    $scope.chart.series[i + 2].hide();
-
-                    $scope.chart.series[i + 2].options.showInLegend = false;
-                    $scope.chart.series[i + 2].legendItem = null;
-                    $scope.chart.legend.destroyItem($scope.chart.series[i + 2]);
-                    $scope.chart.legend.render();
-
                     if ($scope.chart.yAxis[i + 2]) {
                         $scope.chart.yAxis[i + 2].update({
                             labels: {
@@ -125,6 +147,7 @@ app.controller('WeatherPlotCtrl', ['$scope', '$q', '$uibModalInstance', 'entity'
                     }
                 }
             }
+
         };
 
         $q.all([
@@ -153,7 +176,8 @@ app.controller('WeatherPlotCtrl', ['$scope', '$q', '$uibModalInstance', 'entity'
                     tooltip: {
                         valueDecimals: 1
                     },
-                    color: 'red'
+                    color: 'purple',
+                    lineWidth: 3
                 }, {
                     name: 'Wind speed, km/h (observation)',
                     data: $scope.history_data.data.wspdm,
@@ -161,7 +185,8 @@ app.controller('WeatherPlotCtrl', ['$scope', '$q', '$uibModalInstance', 'entity'
                         valueDecimals: 1
                     },
                     yAxis: 1,
-                    color: 'blue'
+                    color: 'purple',
+                    lineWidth: 3
                 }, {
                     name: 'Wind direction, degrees (observation)',
                     data: $scope.history_data.data.wdird,
@@ -169,70 +194,65 @@ app.controller('WeatherPlotCtrl', ['$scope', '$q', '$uibModalInstance', 'entity'
                         valueDecimals: 0
                     },
                     yAxis: 2,
-                    color: 'darkgrey'
+                    color: 'purple',
+                    lineWidth: 3
                 }];
 
                 if ($scope.forecast_data.last_11am) {
                     series.push({
-                        name: 'Temperature, C (forecast values from ' + $scope.forecast_data.last_11am.time.replace(/:00.*$/, 'am') + ')',
+                        name: 'Temperature, C (forecast values from ' + $scope.forecast_data.last_11am.time + ')',
                         data: $scope.forecast_data.last_11am.tempm,
                         tooltip: {
                             valueDecimals: 1
                         },
-                        color: 'red',
-                        dashStyle: 'Dash'
+                        color: 'lightblue'
                     });
                     series.push({
-                        name: 'Wind speed, km/h (forecast values from ' + $scope.forecast_data.last_11am.time.replace(/:00.*$/, 'am') + ')',
+                        name: 'Wind speed, km/h (forecast values from ' + $scope.forecast_data.last_11am.time + ')',
                         data: $scope.forecast_data.last_11am.wspdm,
                         tooltip: {
                             valueDecimals: 1
                         },
                         yAxis: 1,
-                        color: 'blue',
-                        dashStyle: 'Dash'
+                        color: 'lightblue'
                     });
                     series.push({
-                        name: 'Wind direction, degrees (forecast values from ' + $scope.forecast_data.last_11am.time.replace(/:00.*$/, 'am') + ')',
+                        name: 'Wind direction, degrees (forecast values from ' + $scope.forecast_data.last_11am.time + ')',
                         data: $scope.forecast_data.last_11am.wdird,
                         tooltip: {
                             valueDecimals: 1
                         },
                         yAxis: 2,
-                        color: 'darkgrey',
-                        dashStyle: 'Dash'
+                        color: 'lightblue'
                     });
                 }
 
                 if ($scope.forecast_data.last_11pm) {
                     series.push({
-                        name: 'Temperature, C (forecast values from ' + $scope.forecast_data.last_11pm.time.replace(/:00.*$/, 'pm') + ')',
+                        name: 'Temperature, C (forecast values from ' + $scope.forecast_data.last_11pm.time + ')',
                         data: $scope.forecast_data.last_11pm.tempm,
                         tooltip: {
                             valueDecimals: 1
                         },
-                        color: 'red',
-                        dashStyle: 'Dot'
+                        color: 'darkblue'
                     });
                     series.push({
-                        name: 'Wind speed, km/h (forecast values from ' + $scope.forecast_data.last_11pm.time.replace(/:00.*$/, 'pm') + ')',
+                        name: 'Wind speed, km/h (forecast values from ' + $scope.forecast_data.last_11pm.time + ')',
                         data: $scope.forecast_data.last_11pm.wspdm,
                         tooltip: {
                             valueDecimals: 1
                         },
                         yAxis: 1,
-                        color: 'blue',
-                        dashStyle: 'Dot'
+                        color: 'darkblue'
                     });
                     series.push({
-                        name: 'Wind direction, degrees (forecast values from ' + $scope.forecast_data.last_11pm.time.replace(/:00.*$/, 'pm') + ')',
+                        name: 'Wind direction, degrees (forecast values from ' + $scope.forecast_data.last_11pm.time + ')',
                         data: $scope.forecast_data.last_11pm.wdird,
                         tooltip: {
                             valueDecimals: 1
                         },
                         yAxis: 2,
-                        color: 'darkgrey',
-                        dashStyle: 'Dot'
+                        color: 'darkblue'
                     });
                 }
 
@@ -243,8 +263,7 @@ app.controller('WeatherPlotCtrl', ['$scope', '$q', '$uibModalInstance', 'entity'
                         tooltip: {
                             valueDecimals: 1
                         },
-                        color: 'red',
-                        dashStyle: 'DashDot'
+                        color: 'darkgrey',
                     });
                     series.push({
                         name: 'Wind speed, km/h (latest forecast by ' + $scope.forecast_data.last.time + ')',
@@ -253,8 +272,7 @@ app.controller('WeatherPlotCtrl', ['$scope', '$q', '$uibModalInstance', 'entity'
                             valueDecimals: 1
                         },
                         yAxis: 1,
-                        color: 'blue',
-                        dashStyle: 'DashDot'
+                        color: 'darkgrey',
                     });
                     series.push({
                         name: 'Wind direction, degrees (latest forecast by ' + $scope.forecast_data.last.time + ')',
@@ -264,7 +282,6 @@ app.controller('WeatherPlotCtrl', ['$scope', '$q', '$uibModalInstance', 'entity'
                         },
                         yAxis: 2,
                         color: 'darkgrey',
-                        dashStyle: 'DashDot'
                     });
                 }
 
@@ -374,6 +391,9 @@ app.controller('WeatherPlotCtrl', ['$scope', '$q', '$uibModalInstance', 'entity'
                 });
 
                 $scope.updateSeriesSet();
+
+                $scope.lastObservation = $scope.formatLastObservation(
+                    $scope.history_data.data.wspdm[$scope.history_data.data.wspdm.length-1]);
             });
 
     }
