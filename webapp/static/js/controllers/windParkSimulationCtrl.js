@@ -20,7 +20,8 @@ app.controller('WindParkSimulationCtrl', ['$scope', '$timeout', 'windparkService
         $scope.nDaAmRedcPriceScenarios = 5;
         $scope.nAdjRedcPriceScenarios = 5;
 
-        $scope.forecastErrorVariance = $scope.location.forecast_error_model.sigma2;
+        if ($scope.location.forecast_error_model)
+            $scope.forecastErrorVariance = $scope.location.forecast_error_model.sigma2;
 
         $scope.showDetails = function () {
         };
