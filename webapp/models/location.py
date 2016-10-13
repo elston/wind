@@ -2,7 +2,6 @@ from collections import defaultdict
 import csv
 from datetime import datetime, timedelta, time
 import logging
-
 import cStringIO
 
 import pytz
@@ -357,16 +356,21 @@ class Location(db.Model):
 
         return simulated_z, simulated_wind
 
-    def simulate_wind_with_forecast(self, date, time_span, n_scenarios, da_am_time_span, n_da_am_scenarios):
+    def simulate_wind_with_forecast(self, date, time_span, n_scenarios, da_am_time_span, n_da_am_scenarios,
+                                    forecast_error_variance=None):
         if self.forecast_error_model is None:
             raise Exception('Unable to simulate wind without model')
 
-        # p q P Q s d D
         model = self.forecast_error_model
+        if forecast_error_variance is not None:
+            var = forecast_error_variance
+        else:
+            var = model.sigma2
+        # p q P Q s d D
         long_command = 'error.model <- list(arma=c(%d,%d,%d,%d,%d,%d,%d), coef=list(%s), sigma2=%f, model=list(phi=c(%s), theta=c(%s)))' % \
                        (model.p, model.q, model.P, model.Q, 0, model.d, model.D,
                         ','.join(['%s=%.20f' % (name, value) for name, value in model.coef.iteritems()]),
-                        model.sigma2,
+                        var,
                         ','.join(['%.20f' % x for x in model.phi]),
                         ','.join(['%.20f' % x for x in model.theta]),
                         )

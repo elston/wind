@@ -20,6 +20,8 @@ app.controller('WindParkSimulationCtrl', ['$scope', '$timeout', 'windparkService
         $scope.nDaAmRedcPriceScenarios = 5;
         $scope.nAdjRedcPriceScenarios = 5;
 
+        $scope.forecastErrorVariance = $scope.location.forecast_error_model.sigma2;
+
         $scope.showDetails = function () {
         };
 
@@ -79,9 +81,18 @@ app.controller('WindParkSimulationCtrl', ['$scope', '$timeout', 'windparkService
             };
         };
 
+        $scope.overrideVariance = false;
+
+        $scope.overrideVarianceChanged = function () {
+            if (!$scope.overrideVariance) {
+                $scope.forecastErrorVariance = $scope.location.forecast_error_model.sigma2;
+            }
+        };
+
         $scope.updateWindSimulation = function () {
             windparkService.getWindSimulation($scope.windpark.id, $scope.simulationDate, $scope.nScenarios,
-                $scope.nReducedScenarios, $scope.nDaAmScenarios, $scope.nDaAmReducedScenarios)
+                $scope.nReducedScenarios, $scope.nDaAmScenarios, $scope.nDaAmReducedScenarios,
+                $scope.forecastErrorVariance)
                 .then(function (data) {
                         var wind_series = [];
                         data.wind_speed.forEach(function (sample) {

@@ -310,6 +310,24 @@
                                     <input type="number" ng-model="nDaAmReducedScenarios" id="n-da-am-reduced-scenarios"
                                            class="form-control input-sm" required>
                                 </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="forecast-var" class="col-xs-2 control-label">Variance: </label>
+
+                                <div class="col-xs-2">
+                                    <input type="number" ng-model="forecastErrorVariance" id="forecast-var"
+                                           class="form-control input-sm" ng-disabled="!overrideVariance">
+                                </div>
+
+                                <div class="col-xs-2">
+                                    <div class="checkbox">
+                                        <label>
+                                            <input type="checkbox" ng-model="overrideVariance"
+                                                   ng-change="overrideVarianceChanged()"> Override variance
+                                        </label>
+                                    </div>
+                                </div>
+
                                 <div class="col-xs-3">
                                     <button class="btn btn-info" style="width:100%"
                                             ng-click="updateWindSimulation()">Repeat simulation
@@ -326,14 +344,14 @@
 
                         <form class="form-horizontal">
                             <div class="form-group">
-<!--
-                                <label for="day-start" class="col-xs-2 control-label">Day start hour: </label>
+                                <!--
+                                                                <label for="day-start" class="col-xs-2 control-label">Day start hour: </label>
 
-                                <div class="col-xs-1">
-                                    <input type="number" ng-model="dayStart" id="day-start"
-                                           class="form-control input-sm" required>
-                                </div>
--->
+                                                                <div class="col-xs-1">
+                                                                    <input type="number" ng-model="dayStart" id="day-start"
+                                                                           class="form-control input-sm" required>
+                                                                </div>
+                                -->
                                 <label for="n-da-scenarios" class="col-xs-2 control-label"># DA price
                                     scenarios: </label>
 
@@ -476,6 +494,27 @@
                                 </div>
 
                             </div>
+
+                            <div class="form-group form-group-sm">
+                                <label for="opt-forecast-var" class="col-xs-2 control-label">Forecast error
+                                    variance: </label>
+
+                                <div class="col-xs-2">
+                                    <input type="number" ng-model="forecastErrorVariance" id="opt-forecast-var"
+                                           class="form-control input-sm"
+                                           ng-disabled="!overrideVariance || windpark.optimization_job.mode != 'stochastic'">
+                                </div>
+
+                                <div class="col-xs-2">
+                                    <label class="checkbox control-label">
+                                        <input type="checkbox" ng-model="overrideVariance"
+                                               ng-change="overrideVarianceChanged()"
+                                               ng-disabled="windpark.optimization_job.mode != 'stochastic'"> Override
+                                        variance
+                                    </label>
+                                </div>
+                            </div>
+
 
                             <div class="form-group form-group-sm">
                                 <label class="col-xs-2 control-label">DA price scenarios: </label>

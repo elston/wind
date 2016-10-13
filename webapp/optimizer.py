@@ -50,7 +50,9 @@ class Optimizer(object):
                 time_span=job.time_span,
                 n_scenarios=job.n_wind_scenarios,
                 da_am_time_span=12,
-                n_da_am_scenarios=job.n_da_am_wind_scenarios)
+                n_da_am_scenarios=job.n_da_am_wind_scenarios,
+                forecast_error_variance=job.forecast_error_variance
+            )
 
             da_am_power_scenarios = simulated_power[:, 0, :12]
 

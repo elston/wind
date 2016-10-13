@@ -328,9 +328,13 @@ def get_wind_simulation(wpark_id):
         n_reduced_scenarios = int(request.values.get('n_reduced_scenarios'))
         n_da_am_scenarios = int(request.values.get('n_da_am_scenarios'))
         n_da_am_reduced_scenarios = int(request.values.get('n_da_am_reduced_scenarios'))
+        forecast_error_variance = request.values.get('forecast_error_variance')
+        if forecast_error_variance is not None:
+            forecast_error_variance = float(forecast_error_variance)
 
         simulated_wind, simulated_power, forecasted_wind, forecasted_power, dates = \
-            windpark.simulate_generation(simulation_date, 24, n_scenarios, 12, n_da_am_scenarios)
+            windpark.simulate_generation(simulation_date, 24, n_scenarios, 12, n_da_am_scenarios,
+                                         forecast_error_variance=forecast_error_variance)
 
         da_am_wind_scenarios = simulated_wind[:, 0, :12]
 

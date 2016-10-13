@@ -186,7 +186,7 @@ app.factory('windparkService', ['$http', 'Upload', function ($http, Upload) {
     };
 
     var getWindSimulation = function (id, simulationDate, nScenarios, nReducedScenarios, nDaAmScenarios,
-                                      nDaAmReducedScenarios) {
+                                      nDaAmReducedScenarios, forecastErrorVariance) {
         return $http.get($SCRIPT_ROOT + '/windparks/wind_simulation/' + id,
             {
                 params: {
@@ -194,7 +194,8 @@ app.factory('windparkService', ['$http', 'Upload', function ($http, Upload) {
                     n_scenarios: nScenarios,
                     n_reduced_scenarios: nReducedScenarios,
                     n_da_am_scenarios: nDaAmScenarios,
-                    n_da_am_reduced_scenarios: nDaAmReducedScenarios
+                    n_da_am_reduced_scenarios: nDaAmReducedScenarios,
+                    forecast_error_variance: forecastErrorVariance
                 }
             })
             .then(function (response) {

@@ -11,8 +11,22 @@ app.controller('WindParkOptimizationCtrl', ['$scope', '$interval', '$timeout', '
 
         var stopRefresh;
 
+        $scope.overrideVariance = false;
+        $scope.forecastErrorVariance = $scope.location.forecast_error_model.sigma2;
+
+        $scope.overrideVarianceChanged = function () {
+            if (!$scope.overrideVariance) {
+                $scope.forecastErrorVariance = $scope.location.forecast_error_model.sigma2;
+            }
+        };
+
         $scope.optimize = function () {
             $scope.windpark.optimization_job.date = $scope.optimizationDate.toISOString().split('T')[0];
+            if ($scope.overrideVariance) {
+                $scope.windpark.optimization_job.forecast_error_variance = +$scope.forecastErrorVariance;
+            } else {
+                $scope.windpark.optimization_job.forecast_error_variance = null;
+            }
             windparkService.checkRecentPrices($scope.windpark.id, $scope.windpark.optimization_job)
                 .then(function (recent) {
                         if (!recent) {
