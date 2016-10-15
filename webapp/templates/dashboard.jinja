@@ -513,6 +513,25 @@
                                         variance
                                     </label>
                                 </div>
+
+                                <div class="col-xs-2">
+                                    <label class="checkbox control-label">
+                                        <input type="checkbox" ng-model="windpark.optimization_job.enable_shorts">
+                                        Short selling
+                                    </label>
+                                </div>
+
+                                <label for="opt-forecast-var" class="col-xs-2 control-label">Limit trades above forecast
+                                    at: </label>
+
+                                <div class="col-xs-2 input-group">
+                                    <input type="number" ng-model="windpark.optimization_job.trades_limit"
+                                           id="opt-trades-limit"
+                                           class="form-control input-sm"
+                                           ng-disabled="windpark.optimization_job.enable_shorts"
+                                           aria-describedby="opt-trades-perc">
+                                    <span class="input-group-addon" id="opt-trades-perc">%</span>
+                                </div>
                             </div>
 
 

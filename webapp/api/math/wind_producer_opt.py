@@ -205,6 +205,10 @@ class Optimizator():
         assert inp.r_pos.shape == (inp.K, inp.NT)
         assert inp.r_neg.shape == (inp.K, inp.NT)
         assert inp.pi.shape == (inp.D, inp.L, inp.A, inp.W, inp.K)
+        if isinstance(inp.Pmax, list):
+            assert len(inp.Pmax) == inp.NT
+        elif isinstance(inp.Pmax, np.ndarray):
+            assert inp.Pmax.shape == (inp.NT,)
 
     @staticmethod
     def optimize(inp, disable_am=False):
@@ -235,7 +239,10 @@ class Optimizator():
         for d in xrange(inp.D):
             Pd.append([])
             for t in xrange(inp.NT):
-                Pd[d].append(oovar("Pd(%d,%d)" % (d, t), lb=0, ub=inp.Pmax))
+                if isinstance(inp.Pmax, np.ndarray):
+                    Pd[d].append(oovar("Pd(%d,%d)" % (d, t), lb=0, ub=inp.Pmax[t]))
+                else:
+                    Pd[d].append(oovar("Pd(%d,%d)" % (d, t), lb=0, ub=inp.Pmax))
 
         Pa = []  # single period: Pa(D,L) Power traded in the adjustment market
         # multi period Pa(D,L,NT)
@@ -256,7 +263,10 @@ class Optimizator():
             for l in xrange(inp.L):
                 Ps[d].append([])
                 for t in xrange(inp.NT):
-                    Ps[d][l].append(oovar("Ps(%d,%d,%d)" % (d, l, t), lb=0, ub=inp.Pmax))
+                    if isinstance(inp.Pmax, np.ndarray):
+                        Ps[d][l].append(oovar("Ps(%d,%d,%d)" % (d, l, t), lb=0, ub=inp.Pmax[t]))
+                    else:
+                        Ps[d][l].append(oovar("Ps(%d,%d,%d)" % (d, l, t), lb=0, ub=inp.Pmax))
 
         desvP = []  # single period: desvP(D,L,W) Positive energy deviation
         # multi period desvP(D,L,W,NT)
@@ -356,7 +366,10 @@ class Optimizator():
             for l in xrange(inp.L):
                 for w in xrange(inp.W):
                     for t in xrange(inp.NT):
-                        cons_part.append(var.desvN[d][l][w][t] <= inp.dt * inp.Pmax)
+                        if isinstance(inp.Pmax, np.ndarray):
+                            cons_part.append(var.desvN[d][l][w][t] <= inp.dt * inp.Pmax[t])
+                        else:
+                            cons_part.append(var.desvN[d][l][w][t] <= inp.dt * inp.Pmax)
         constraints.extend(cons_part)
 
         logging.debug("MAXdesvNEG = \n%s", "\n".join([x.expr for x in cons_part]))

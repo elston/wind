@@ -35,6 +35,8 @@ class OptimizationJob(TypeDecorator):
         self.beta = 0
         self.mode = 'stochastic'
         self.forecast_error_variance = None
+        self.enable_shorts = False
+        self.trades_limit = 10
 
     def set_parameters(self):
         pass

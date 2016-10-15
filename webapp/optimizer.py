@@ -118,9 +118,14 @@ class Optimizer(object):
         r_pos = np.minimum(r, 1)
         r_neg = np.maximum(r, 1)
 
+        if job.enable_shorts:
+            Pmax = job.Pmax
+        else:
+            Pmax = forecasted_power[12:] * (1 + job.trades_limit / 100.0)
+
         inp = Input(D=D, L=L, A=A, W=W, K=K, NT=NT,
                     dt=job.dt,
-                    Pmax=job.Pmax,
+                    Pmax=Pmax,
                     alfa=job.alpha,
                     beta=job.beta,
                     P=red_sim_power[:, :, 12:],
