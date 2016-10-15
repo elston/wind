@@ -46,8 +46,8 @@ app.controller('LocationsCtrl', ['$rootScope', '$scope', '$uibModal', 'locationS
             {field: 'tz_long', visible: false},
             {field: 'lat', cellFilter: 'number: 5', enableSorting: false},
             {field: 'lon', cellFilter: 'number: 5', enableSorting: false},
-            {field: 'wspd_shape', cellFilter: 'number: 2', enableSorting: false},
-            {field: 'wspd_scale', cellFilter: 'number: 2', enableSorting: false},
+            {field: 'wspd_shape', cellFilter: 'number: 2', enableSorting: false, visible: false},
+            {field: 'wspd_scale', cellFilter: 'number: 2', enableSorting: false, visible: false},
             {field: 'lookback', visible: false, enableSorting: false},
 //            {field: 'lookforward', visible: false},
             {
