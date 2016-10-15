@@ -57,6 +57,6 @@ class Scheduler(object):
 
 
 def scheduled_forecast_update(location):
-    logging.info("Scheduled forecast update for location %s", location.name)
-    location.update_forecast()
+    logging.info("Scheduled update for location %s", location.name)
+    location.update_history()
     location.update_forecast()
