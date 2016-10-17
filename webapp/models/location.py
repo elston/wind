@@ -128,8 +128,8 @@ class Location(db.Model):
             except Exception, e:
                 logging.warn('Could not parse observation %r: %r', obs_data, e)
         if dls is None:
-            dls = HistoryDownloadStatus(date=date, partial=True, full=not today)
-            self.history_downloads.append(dls)
+            dls = HistoryDownloadStatus(location_id=self.id, date=date, partial=True, full=not today)
+            db.session.add(dls)
         else:
             dls.partial = True
             dls.full = not today

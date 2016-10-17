@@ -5,7 +5,7 @@ import unittest
 
 import webapp
 from webapp.models import Location
-from webapp.scheduler import Scheduler
+from webapp.scheduler import Scheduler, scheduled_forecast_update
 
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
@@ -28,10 +28,8 @@ class SchedulerTestCase(unittest.TestCase):
         self.session.add(test_location)
         self.session.commit()
 
-        # scheduler = Scheduler()
-        # scheduler.update_weather_schedules()
-        print webapp.sch.scheduler.get_jobs()
-        sleep(100)
+        webapp.sch.scheduler.add_job(scheduled_forecast_update, args=(test_location,))
+        sleep(10)
 
 if __name__ == '__main__':
     unittest.main()
