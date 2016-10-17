@@ -113,6 +113,8 @@
             </li>
             <li role="presentation"><a href="#markets" aria-controls="symbols" role="tab" data-toggle="tab">Markets</a>
             </li>
+            <li role="presentation"><a href="#jobs" aria-controls="symbols" role="tab" data-toggle="tab">Jobs</a>
+            </li>
             {% if current_user.has_role('admin') %}
             <li role="presentation"><a href="#admin" aria-controls="admin" role="tab" data-toggle="tab">Admin</a></li>
             {% endif %}
@@ -131,6 +133,11 @@
             <div role="tabpanel" class="tab-pane active" id="dashboard">{% include "dashboard.jinja" %}</div>
             <div role="tabpanel" class="tab-pane" id="locations">{% include "locations.jinja" %}</div>
             <div role="tabpanel" class="tab-pane" id="markets">{% include "markets.jinja" %}</div>
+            <div role="tabpanel" class="tab-pane" id="jobs">
+                <div ng-controller="StatusCtrl">
+                    <h5>Not implemented yet</h5>
+                </div>
+            </div>
             {% if current_user.has_role('admin') %}
             <div role="tabpanel" class="tab-pane" id="admin">{% include "admin.jinja" %}</div>
             {% endif %}
