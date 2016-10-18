@@ -24,8 +24,8 @@ app.controller('ForecastErrorModelCtrl', ['$scope', '$uibModalInstance', 'entity
             eventHandlers: {
                 'apply.daterangepicker': function(ev, picker) {
                     $scope.updateSeriesSet();
-            }, 'show.daterangepicker': function () {
-                angular.element(document.getElementsByClassName('applyBtn')[0]).addClass('btn-warning');
+            }, 'show.daterangepicker': function() {
+                    angular.element(document.getElementsByClassName('applyBtn')[0]).addClass('btn-warning');
             }}
 
         };
@@ -53,8 +53,10 @@ app.controller('ForecastErrorModelCtrl', ['$scope', '$uibModalInstance', 'entity
 
             for (var i = 1; i < $scope.chart.series.length - 1; i += 2) {
                 if ($scope.errorsEnabled) {
-                    if ($scope.forDatePickerParser($scope.chart.series[i + 0].data[0].x) >= new Date($scope.datePickerModel.startDate)
-                        && $scope.forDatePickerParser($scope.chart.series[i + 0].data[0].x) <= new Date($scope.datePickerModel.endDate)){
+                    if ($scope.forDatePickerParser($scope.chart.series[i + 0].data[0].x) >=
+                        new Date(new Date(new Date($scope.datePickerModel.startDate).setUTCHours(0,0,0,0)).setUTCDate(new Date($scope.datePickerModel.startDate).getDate()))
+                        && $scope.forDatePickerParser($scope.chart.series[i + 0].data[0].x) <=
+                        new Date(new Date(new Date($scope.datePickerModel.endDate).setUTCHours(23,59,0,0)).setUTCDate(new Date($scope.datePickerModel.endDate).getDate()))){
                         $scope.chart.series[i + 0].show();
                         $scope.chart.series[i + 0].options.showInLegend = true;
                         $scope.chart.legend.renderItem($scope.chart.series[i + 0]);
@@ -75,8 +77,10 @@ app.controller('ForecastErrorModelCtrl', ['$scope', '$uibModalInstance', 'entity
                 }
 
                 if ($scope.forecastEnabled) {
-                    if ($scope.forDatePickerParser($scope.chart.series[i + 1].data[0].x) >= new Date($scope.datePickerModel.startDate)
-                        && $scope.forDatePickerParser($scope.chart.series[i + 1].data[0].x) <= new Date($scope.datePickerModel.endDate)){
+                    if ($scope.forDatePickerParser($scope.chart.series[i + 1].data[0].x) >=
+                        new Date(new Date(new Date($scope.datePickerModel.startDate).setUTCHours(0,0,0,0)).setUTCDate(new Date($scope.datePickerModel.startDate).getDate()))
+                        && $scope.forDatePickerParser($scope.chart.series[i + 1].data[0].x) <=
+                        new Date(new Date(new Date($scope.datePickerModel.endDate).setUTCHours(23,59,0,0)).setUTCDate(new Date($scope.datePickerModel.endDate).getDate()))){
                         $scope.chart.series[i + 1].show();
                         $scope.chart.series[i + 1].options.showInLegend = true;
                         $scope.chart.legend.renderItem($scope.chart.series[i + 1]);
@@ -96,6 +100,12 @@ app.controller('ForecastErrorModelCtrl', ['$scope', '$uibModalInstance', 'entity
                     $scope.chart.legend.render();
                 }
             }
+
+            setTimeout(function(){
+                $scope.chart.xAxis[0].setExtremes(
+                    new Date(new Date($scope.datePickerModel.startDate).setUTCHours(0,0,0,0)).setUTCDate(new Date($scope.datePickerModel.startDate).getDate()),
+                    new Date(new Date($scope.datePickerModel.endDate).setUTCHours(23,59,0,0)).setUTCDate(new Date($scope.datePickerModel.endDate).getDate()));
+            }, 1);
         };
 
         $scope.update = function () {
@@ -123,20 +133,30 @@ app.controller('ForecastErrorModelCtrl', ['$scope', '$uibModalInstance', 'entity
                         $scope.errorsChunked = result.errors;
 
                         $scope.datePickerStart = function () {
-                            var first = $scope.errorsChunked[0].errors[0];
+                            var first = $scope.errorsChunked[$scope.errorsChunked.length - 1].errors[0];
                             var parsedFirstDate = new Date(first[0]);
-                            return parsedFirstDate.getFullYear()+'-'+(parsedFirstDate.getMonth()+1)+'-'+parsedFirstDate.getDate();
+                            parsedFirstDate.setUTCDate(parsedFirstDate.getUTCDate() - 4);
+                            var day = parsedFirstDate.getUTCDate();
+                            if(day.toString().length == 1){
+                                day = '0'+day;
+                            }
+                            return parsedFirstDate.getUTCFullYear()+'-'+(parsedFirstDate.getUTCMonth()+1)+'-'+day;
                         };
 
                         $scope.datePickerEnd = function () {
                             var last = $scope.errorsChunked[$scope.errorsChunked.length - 1].errors[0];
                             var parsedLastDate = new Date(last[0]);
-                            return parsedLastDate.getFullYear()+'-'+(parsedLastDate.getMonth()+1)+'-'+parsedLastDate.getDate();;
+                            return parsedLastDate.getUTCFullYear()+'-'+(parsedLastDate.getUTCMonth()+1)+'-'+parsedLastDate.getUTCDate();
                         };
 
-                        $scope.datePickerMin = $scope.datePickerStart();
-                        $scope.datePickerMax = $scope.datePickerEnd();
+                        $scope.dateMinInitial = function () {
+                            var first = $scope.errorsChunked[0].errors[0];
+                            var parsedFirstDate = new Date(first[0]);
+                            return parsedFirstDate.getUTCFullYear()+'-'+(parsedFirstDate.getUTCMonth()+1)+'-'+parsedFirstDate.getUTCDate();
+                        };
 
+                        $scope.datePickerMin = $scope.dateMinInitial();
+                        $scope.datePickerMax = $scope.datePickerEnd();
 
                         $scope.datePickerModel = {startDate: $scope.datePickerStart(), endDate: $scope.datePickerEnd()};
 
