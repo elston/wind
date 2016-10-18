@@ -38,6 +38,9 @@ app.controller('ForecastErrorModelCtrl', ['$scope', '$uibModalInstance', 'entity
 
         $scope.updateSeriesSet = function () {
 
+            var parsedStartDate = new Date(new Date($scope.datePickerModel.startDate).setUTCHours(0,0,0,0)).setUTCDate(new Date($scope.datePickerModel.startDate).getDate());
+            var parsedEndDate = new Date(new Date($scope.datePickerModel.endDate).setUTCHours(23,59,0,0)).setUTCDate(new Date($scope.datePickerModel.endDate).getDate());
+
             if ($scope.observationEnabled) {
                 $scope.chart.series[0].show();
                 $scope.chart.series[0].options.showInLegend = true;
@@ -53,10 +56,8 @@ app.controller('ForecastErrorModelCtrl', ['$scope', '$uibModalInstance', 'entity
 
             for (var i = 1; i < $scope.chart.series.length - 1; i += 2) {
                 if ($scope.errorsEnabled) {
-                    if ($scope.forDatePickerParser($scope.chart.series[i + 0].data[0].x) >=
-                        new Date(new Date(new Date($scope.datePickerModel.startDate).setUTCHours(0,0,0,0)).setUTCDate(new Date($scope.datePickerModel.startDate).getDate()))
-                        && $scope.forDatePickerParser($scope.chart.series[i + 0].data[0].x) <=
-                        new Date(new Date(new Date($scope.datePickerModel.endDate).setUTCHours(23,59,0,0)).setUTCDate(new Date($scope.datePickerModel.endDate).getDate()))){
+                    if ($scope.forDatePickerParser($scope.chart.series[i + 0].data[0].x) >= new Date(parsedStartDate)
+                        && $scope.forDatePickerParser($scope.chart.series[i + 0].data[0].x) <= new Date(parsedEndDate)){
                         $scope.chart.series[i + 0].show();
                         $scope.chart.series[i + 0].options.showInLegend = true;
                         $scope.chart.legend.renderItem($scope.chart.series[i + 0]);
@@ -77,10 +78,8 @@ app.controller('ForecastErrorModelCtrl', ['$scope', '$uibModalInstance', 'entity
                 }
 
                 if ($scope.forecastEnabled) {
-                    if ($scope.forDatePickerParser($scope.chart.series[i + 1].data[0].x) >=
-                        new Date(new Date(new Date($scope.datePickerModel.startDate).setUTCHours(0,0,0,0)).setUTCDate(new Date($scope.datePickerModel.startDate).getDate()))
-                        && $scope.forDatePickerParser($scope.chart.series[i + 1].data[0].x) <=
-                        new Date(new Date(new Date($scope.datePickerModel.endDate).setUTCHours(23,59,0,0)).setUTCDate(new Date($scope.datePickerModel.endDate).getDate()))){
+                    if ($scope.forDatePickerParser($scope.chart.series[i + 1].data[0].x) >= new Date(parsedStartDate)
+                        && $scope.forDatePickerParser($scope.chart.series[i + 1].data[0].x) <= new Date(parsedEndDate)){
                         $scope.chart.series[i + 1].show();
                         $scope.chart.series[i + 1].options.showInLegend = true;
                         $scope.chart.legend.renderItem($scope.chart.series[i + 1]);
@@ -101,10 +100,16 @@ app.controller('ForecastErrorModelCtrl', ['$scope', '$uibModalInstance', 'entity
                 }
             }
 
+            // setTimeout(function(){
+            //     $scope.chart.xAxis[0].setExtremes(
+            //         new Date(new Date($scope.datePickerModel.startDate).setUTCHours(0,0,0,0)).setUTCDate(new Date($scope.datePickerModel.startDate).getDate()),
+            //         new Date(new Date($scope.datePickerModel.endDate).setUTCHours(23,59,0,0)).setUTCDate(new Date($scope.datePickerModel.endDate).getDate()));
+            // }, 1);
+
             setTimeout(function(){
                 $scope.chart.xAxis[0].setExtremes(
-                    new Date(new Date($scope.datePickerModel.startDate).setUTCHours(0,0,0,0)).setUTCDate(new Date($scope.datePickerModel.startDate).getDate()),
-                    new Date(new Date($scope.datePickerModel.endDate).setUTCHours(23,59,0,0)).setUTCDate(new Date($scope.datePickerModel.endDate).getDate()));
+                    parsedStartDate,
+                    parsedEndDate);
             }, 1);
         };
 
