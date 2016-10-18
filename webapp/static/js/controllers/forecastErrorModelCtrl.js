@@ -100,12 +100,6 @@ app.controller('ForecastErrorModelCtrl', ['$scope', '$uibModalInstance', 'entity
                 }
             }
 
-            // setTimeout(function(){
-            //     $scope.chart.xAxis[0].setExtremes(
-            //         new Date(new Date($scope.datePickerModel.startDate).setUTCHours(0,0,0,0)).setUTCDate(new Date($scope.datePickerModel.startDate).getDate()),
-            //         new Date(new Date($scope.datePickerModel.endDate).setUTCHours(23,59,0,0)).setUTCDate(new Date($scope.datePickerModel.endDate).getDate()));
-            // }, 1);
-
             setTimeout(function(){
                 $scope.chart.xAxis[0].setExtremes(
                     parsedStartDate,
