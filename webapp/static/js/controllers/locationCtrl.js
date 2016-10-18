@@ -200,19 +200,55 @@ app.controller('LocationsCtrl', ['$rootScope', '$scope', '$uibModal', 'locationS
                 position: new google.maps.LatLng(location.lat, location.lon)
             });
             bounds.extend(marker.getPosition());
-            var infoWindow = new google.maps.InfoWindow({
-                content: location.name + ' ' + capacityCount + ' MW'
-            });
-            google.maps.event.addListener(marker, 'click', function () {
-                    infoWindow.open(map, marker);
-                }
-            );
-            infoWindow.open(map, marker);
+            $scope.attachInfoMessage(marker, location.name + ' ' + capacityCount.toFixed(2) + ' MW');
         });
 
         map.fitBounds(bounds);
         //}, 1000);
     };
+
+    $scope.attachInfoMessage = function (marker, message) {
+        var infoWindow = new google.maps.InfoWindow({
+            content: message
+        });
+
+        var isOpennedByClick = false;
+        var isOpenedByMouseover = false;
+
+        infoWindow.addListener('closeclick',function(){
+            isOpennedByClick = false;
+            currentMark.setMap(null);
+        });
+
+        marker.addListener('click', function() {
+            setTimeout(function(){
+                isOpenedByMouseover = false;
+                if (!isOpennedByClick) {
+                    isOpennedByClick = true;
+                    infoWindow.open(marker.get('map'), marker);
+                } else {
+                    isOpennedByClick = false;
+                    infoWindow.close();
+                }
+            }, 0);
+
+
+        });
+
+        marker.addListener('mouseover', function() {
+            if (!isOpennedByClick || infoWindow.getMap() == null){
+                isOpenedByMouseover = true;
+                infoWindow.open(marker.get('map'), marker);
+            }
+        });
+
+        marker.addListener('mouseout', function() {
+            if(isOpenedByMouseover){
+                isOpenedByMouseover = false;
+                infoWindow.close();
+            }
+        });
+    }
 
     $scope.update = function () {
         var locations = locationService.getLocations();
