@@ -237,7 +237,7 @@ input::-webkit-inner-spin-button {
 }
 
 #locations_map {
-    margin-bottom: 75px;
+    margin-bottom: -15px;
     border: 1px solid #d4d4d4;
 }
 
