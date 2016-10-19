@@ -49,6 +49,9 @@ app.controller('UploadPricesCtrl', ['$scope', '$uibModalInstance', 'entity', 'ma
                     inputDateFormat: '%b %e, %Y %H:%M',
                     inputEditDateFormat: '%Y-%m-%d %H:%M',
                     inputBoxWidth: 150,
+                    inputDateParser: function (value) {
+                        return new Date(new Date(value).setUTCHours(0,0,0,0)).setUTCDate(new Date(value).getDate());
+                    }
                 },
                 tooltip: {
                     xDateFormat: '%b %e, %Y, %H:%M'

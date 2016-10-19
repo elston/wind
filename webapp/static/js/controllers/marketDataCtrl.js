@@ -56,6 +56,9 @@ app.controller('MarketDataCtrl', ['$scope', '$uibModalInstance', 'entity', 'mark
                                 inputDateFormat: '%b %e, %Y',
                                 inputEditDateFormat: '%Y-%m-%d',
                                 inputBoxWidth: 150,
+                                inputDateParser: function (value) {
+                                    return new Date(new Date(value).setUTCHours(0,0,0,0)).setUTCDate(new Date(value).getDate());
+                                }
                             },
                             title: {
                                 text: value[1]
@@ -149,6 +152,9 @@ app.controller('MarketDataCtrl', ['$scope', '$uibModalInstance', 'entity', 'mark
                     inputDateFormat: '%b %e, %Y',
                     inputEditDateFormat: '%Y-%m-%d',
                     inputBoxWidth: 150,
+                    inputDateParser: function (value) {
+                        return new Date(new Date(value).setUTCHours(0,0,0,0)).setUTCDate(new Date(value).getDate());
+                    }
                 },
                 title: {
                     text: value[1] + ' prediction'
@@ -216,6 +222,9 @@ app.controller('MarketDataCtrl', ['$scope', '$uibModalInstance', 'entity', 'mark
                     inputDateFormat: '%b %e, %Y',
                     inputEditDateFormat: '%Y-%m-%d',
                     inputBoxWidth: 150,
+                    inputDateParser: function (value) {
+                        return new Date(new Date(value).setUTCHours(0,0,0,0)).setUTCDate(new Date(value).getDate());
+                    }
                 },
                 title: {
                     text: value[1] + ' residuals'

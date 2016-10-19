@@ -20,6 +20,13 @@ app.controller('WindparkGenerationCtrl', ['$scope', 'windparkService',
                                 renderTo: 'plot-generation',
                                 animation: false
                             },
+                            rangeSelector: {
+                                inputDateFormat: '%b %e, %Y',
+                                inputEditDateFormat: '%Y-%m-%d',
+                                inputDateParser: function (value) {
+                                    return new Date(new Date(value).setUTCHours(0,0,0,0)).setUTCDate(new Date(value).getDate());
+                                }
+                            },
                             title: {
                                 text: 'Generation'
                             },
