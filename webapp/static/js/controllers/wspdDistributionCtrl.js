@@ -51,8 +51,8 @@ app.controller('WspdDistributionCtrl', ['$scope', '$uibModalInstance', '$rootSco
                             animation: false
                         },
                         title: {
-                            text: 'shape=' + Highcharts.numberFormat(result[0], 3) +
-                            ', scale=' + Highcharts.numberFormat(result[1], 3) + ' km/h'
+                            text: 'shape=' + Highcharts.numberFormat(result[0], 2) +
+                            ', scale=' + Highcharts.numberFormat(result[1], 2) + ' km/h'
                         },
                         credits: {
                             enabled: false
@@ -74,10 +74,10 @@ app.controller('WspdDistributionCtrl', ['$scope', '$uibModalInstance', '$rootSco
                             }],
                         tooltip: {
                             formatter: function () {
-                                var s = '<b>' + Highcharts.numberFormat(this.x, 3) + ' km/h</b>';
+                                var s = '<b>' + Highcharts.numberFormat(this.x, 2) + ' km/h</b>';
                                 $.each(this.points, function () {
                                     s += '<br/>' + this.series.name + ': ' +
-                                        Highcharts.numberFormat(this.y, 3);
+                                        Highcharts.numberFormat(this.y, 2);
                                 });
                                 return s;
                             },

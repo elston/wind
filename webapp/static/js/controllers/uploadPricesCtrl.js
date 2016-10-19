@@ -34,7 +34,7 @@ app.controller('UploadPricesCtrl', ['$scope', '$uibModalInstance', 'entity', 'ma
                     yAxis: yAxis.length - 1,
                     animation: false,
                     tooltip: {
-                        valueDecimals: 3
+                        valueDecimals: 2
                     }
                 });
             });

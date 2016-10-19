@@ -34,7 +34,7 @@ app.controller('UploadGenerationCtrl', ['$scope', '$uibModalInstance', 'entity',
                     yAxis: yAxis.length - 1,
                     animation: false,
                     tooltip: {
-                        valueDecimals: 3
+                        valueDecimals: 2
                     }
                 });
             });

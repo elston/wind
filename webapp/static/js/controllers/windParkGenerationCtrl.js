@@ -50,7 +50,7 @@ app.controller('WindparkGenerationCtrl', ['$scope', 'windparkService',
                                     animation: false,
                                     yAxis: 1,
                                     tooltip: {
-                                        valueDecimals: 3
+                                        valueDecimals: 1
                                     }
                                 }]
                         }, function (chart) {

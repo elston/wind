@@ -374,7 +374,7 @@ app.controller('WindParkOptimizationCtrl', ['$scope', '$interval', '$timeout', '
                                         animation: false,
                                         tooltip: {
                                             headerFormat: 'Volume, MWh: <b>{point.x:.3f}</b><br/>',
-                                            pointFormat: '{series.name}: <b>{point.y:.3f}</b><br/>',
+                                            pointFormat: '{series.name}: <b>{point.y}</b><br/>',
                                             valueDecimals: 1
                                         }
                                     }]
