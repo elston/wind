@@ -162,6 +162,9 @@ app.controller('ForecastErrorModelCtrl', ['$scope', '$uibModalInstance', 'entity
                         var series = [{
                             name: 'Observations',
                             data: result.observations,
+                            tooltip: {
+                                valueDecimals: 3
+                            },
                             animation: false,
                             marker: {
                                 enabled: false
@@ -172,6 +175,9 @@ app.controller('ForecastErrorModelCtrl', ['$scope', '$uibModalInstance', 'entity
                             series.push({
                                 name: 'error ' + elem.timestamp,
                                 data: elem.errors,
+                                tooltip: {
+                                    valueDecimals: 3
+                                },
                                 animation: false,
                                 marker: {
                                     enabled: false
@@ -181,6 +187,9 @@ app.controller('ForecastErrorModelCtrl', ['$scope', '$uibModalInstance', 'entity
                             series.push({
                                 name: 'forecast ' + elem.timestamp,
                                 data: elem.forecasts,
+                                tooltip: {
+                                    valueDecimals: 3
+                                },
                                 animation: false,
                                 marker: {
                                     enabled: false
@@ -248,7 +257,10 @@ app.controller('ForecastErrorModelCtrl', ['$scope', '$uibModalInstance', 'entity
                                 }
                             }],
                             series: [{
-                                data: $scope.errorsMerged.errors
+                                data: $scope.errorsMerged.errors,
+                                tooltip: {
+                                    valueDecimals: 3
+                                },
                             }]
                         });
                     },
@@ -309,11 +321,17 @@ app.controller('ForecastErrorModelCtrl', ['$scope', '$uibModalInstance', 'entity
                 series: [
                     {
                         data: pred_data,
+                        tooltip: {
+                            valueDecimals: 3
+                        },
                         animation: false,
                         zIndex: 1
                     },
                     {
                         data: pred_data_plus_minus,
+                        tooltip: {
+                            valueDecimals: 3
+                        },
                         animation: false,
                         type: 'arearange',
                         lineWidth: 0,
@@ -354,6 +372,9 @@ app.controller('ForecastErrorModelCtrl', ['$scope', '$uibModalInstance', 'entity
                 }],
                 series: [{
                     data: residuals_data,
+                    tooltip: {
+                        valueDecimals: 3
+                    },
                     animation: false
                 }]
             });
@@ -411,6 +432,9 @@ app.controller('ForecastErrorModelCtrl', ['$scope', '$uibModalInstance', 'entity
                 },
                 series: [{
                     data: series_data,
+                    tooltip: {
+                        valueDecimals: 3
+                    },
                     animation: false
                 }]
             });
@@ -468,6 +492,9 @@ app.controller('ForecastErrorModelCtrl', ['$scope', '$uibModalInstance', 'entity
                 },
                 series: [{
                     data: series_data,
+                    tooltip: {
+                        valueDecimals: 3
+                    },
                     animation: false
                 }]
             });
@@ -525,6 +552,9 @@ app.controller('ForecastErrorModelCtrl', ['$scope', '$uibModalInstance', 'entity
                 },
                 series: [{
                     data: series_data,
+                    tooltip: {
+                        valueDecimals: 3
+                    },
                     animation: false
                 }]
             });
@@ -582,6 +612,9 @@ app.controller('ForecastErrorModelCtrl', ['$scope', '$uibModalInstance', 'entity
                 },
                 series: [{
                     data: series_data,
+                    tooltip: {
+                        valueDecimals: 3
+                    },
                     animation: false
                 }]
             });
@@ -605,6 +638,13 @@ app.controller('ForecastErrorModelCtrl', ['$scope', '$uibModalInstance', 'entity
                 chart: {
                     renderTo: 'plot-error-residuals-qq',
                     animation: false
+                },
+                tooltip: {
+                    formatter: function() {
+                        return '<span style="color:'+ this.color +'">\u25CF</span> ' +
+                            this.series.name + '<br/>x: <b>' + this.x.toFixed(3) +'</b>'+
+                            '<br/>y: <b>' + this.y.toFixed(3) + '</b>';
+                    }
                 },
                 title: {
                     text: 'Wind speed forecast error normal Q-Q plot'
@@ -631,11 +671,17 @@ app.controller('ForecastErrorModelCtrl', ['$scope', '$uibModalInstance', 'entity
                 },
                 series: [{
                     data: series_data,
+                    tooltip: {
+                        valueDecimals: 3
+                    },
                     animation: false,
                     type: 'scatter'
                 },
                     {
                         data: linePoints,
+                        tooltip: {
+                            valueDecimals: 3
+                        },
                         animation: false,
                         type: 'line',
                         marker: {

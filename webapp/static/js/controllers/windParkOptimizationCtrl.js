@@ -69,6 +69,9 @@ app.controller('WindParkOptimizationCtrl', ['$scope', '$interval', '$timeout', '
                     var p = data.power_probs[i][j];
                     red_power_series.push({
                         data: data.reduced_simulated_power[i][j],
+                        tooltip: {
+                            valueDecimals: 3
+                        },
                         name: 'l' + i + ',w' + j + ',p' + p.toFixed(2)
                     });
                 }
@@ -78,6 +81,9 @@ app.controller('WindParkOptimizationCtrl', ['$scope', '$interval', '$timeout', '
             for (i = 0; i < data.Pd.length; i++) {
                 Pd_series.push({
                     data: data.Pd[i],
+                    tooltip: {
+                        valueDecimals: 3
+                    },
                     name: 'd' + i
                 });
             }
@@ -87,6 +93,9 @@ app.controller('WindParkOptimizationCtrl', ['$scope', '$interval', '$timeout', '
                 for (j = 0; j < data.Pa[i].length; j++) {
                     Pa_series.push({
                         data: data.Pa[i][j],
+                        tooltip: {
+                            valueDecimals: 3
+                        },
                         name: 'l' + j + ',d' + i
                     });
                 }
@@ -97,6 +106,9 @@ app.controller('WindParkOptimizationCtrl', ['$scope', '$interval', '$timeout', '
                 for (j = 0; j < data.Ps[i].length; j++) {
                     Ps_series.push({
                         data: data.Ps[i][j],
+                        tooltip: {
+                            valueDecimals: 3
+                        },
                         name: 'd' + i + ',l' + j
                     });
                 }
@@ -361,7 +373,7 @@ app.controller('WindParkOptimizationCtrl', ['$scope', '$interval', '$timeout', '
                                         data: data,
                                         animation: false,
                                         tooltip: {
-                                            headerFormat: 'Volume, MWh: <b>{point.x}</b><br/>',
+                                            headerFormat: 'Volume, MWh: <b>{point.x:.3f}</b><br/>',
                                             pointFormat: '{series.name}: <b>{point.y}</b><br/>',
                                             valueDecimals: 1
                                         }

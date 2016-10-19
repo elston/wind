@@ -73,6 +73,9 @@ app.controller('MarketDataCtrl', ['$scope', '$uibModalInstance', 'entity', 'mark
                             }],
                             series: [{
                                 data: result,
+                                tooltip: {
+                                    valueDecimals: 3
+                                },
                                 animation: false
                             }]
                         }, function (chart) {
@@ -173,11 +176,17 @@ app.controller('MarketDataCtrl', ['$scope', '$uibModalInstance', 'entity', 'mark
                 series: [
                     {
                         data: pred_data,
+                        tooltip: {
+                            valueDecimals: 3
+                        },
                         animation: false,
                         zIndex: 1
                     },
                     {
                         data: pred_data_plus_minus,
+                        tooltip: {
+                            valueDecimals: 3
+                        },
                         animation: false,
                         type: 'arearange',
                         lineWidth: 0,
@@ -242,6 +251,9 @@ app.controller('MarketDataCtrl', ['$scope', '$uibModalInstance', 'entity', 'mark
                 }],
                 series: [{
                     data: residuals_data,
+                    tooltip: {
+                        valueDecimals: 3
+                    },
                     animation: false
                 }]
             }, function (chart) {
@@ -316,6 +328,9 @@ app.controller('MarketDataCtrl', ['$scope', '$uibModalInstance', 'entity', 'mark
                 },
                 series: [{
                     data: series_data,
+                    tooltip: {
+                        valueDecimals: 3
+                    },
                     animation: false
                 }]
             });
@@ -373,6 +388,9 @@ app.controller('MarketDataCtrl', ['$scope', '$uibModalInstance', 'entity', 'mark
                 },
                 series: [{
                     data: series_data,
+                    tooltip: {
+                        valueDecimals: 3
+                    },
                     animation: false
                 }]
             });
@@ -430,6 +448,9 @@ app.controller('MarketDataCtrl', ['$scope', '$uibModalInstance', 'entity', 'mark
                 },
                 series: [{
                     data: series_data,
+                    tooltip: {
+                        valueDecimals: 3
+                    },
                     animation: false
                 }]
             });
@@ -487,6 +508,9 @@ app.controller('MarketDataCtrl', ['$scope', '$uibModalInstance', 'entity', 'mark
                 },
                 series: [{
                     data: series_data,
+                    tooltip: {
+                        valueDecimals: 3
+                    },
                     animation: false
                 }]
             });
@@ -510,6 +534,13 @@ app.controller('MarketDataCtrl', ['$scope', '$uibModalInstance', 'entity', 'mark
                 chart: {
                     renderTo: 'plot-' + value[0] + '-residuals-qq',
                     animation: false
+                },
+                tooltip : {
+                    formatter: function() {
+                        return '<span style="color:'+ this.color +'">\u25CF</span> ' +
+                            this.series.name + '<br/>x: <b>' + this.x.toFixed(3) +'</b>'+
+                            '<br/>y: <b>' + this.y.toFixed(3) + '</b>';
+                    }
                 },
                 title: {
                     text: value[1] + ' normal Q-Q plot'
