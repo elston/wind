@@ -423,37 +423,34 @@
                                 </div>
 
                                 <div class="col-xs-3">
-                                    <label class="checkbox control-label">
+                                    <label class="checkbox-inline control-label">
                                         <input type="checkbox" ng-model="windpark.optimization_job.refit_weather">Re-calibrate
                                         wind model</label>
                                 </div>
 
                                 <div class="col-xs-3">
-                                    <label class="checkbox control-label">
+                                    <label class="checkbox-inline control-label">
                                         <input type="checkbox" ng-model="windpark.optimization_job.refit_market">Re-calibrate
                                         market model</label>
                                 </div>
                             </div>
 
                             <div class="form-group form-group-sm">
-                                <label class="col-xs-3 control-label">Optimization method: </label>
+                                <label class="col-xs-2 control-label">Optimization method: </label>
 
-                                <div class="col-xs-3">
-                                    <label class="radio control-label">
+                                <div class="col-xs-10">
+                                    <label class="radio-inline control-label">
                                         <input type="radio" ng-model="windpark.optimization_job.mode"
                                                value="stochastic">Stochastic</label>
-                                </div>
-                                <div class="col-xs-3">
-                                    <label class="radio control-label">
+                                    <label class="radio-inline control-label">
                                         <input type="radio" ng-model="windpark.optimization_job.mode"
-                                               value="deterministic">Deterministic optimization</label>
-                                </div>
-                                <div class="col-xs-3">
-                                    <label class="radio control-label">
+                                               value="deterministic">Deterministic</label>
+                                    <label class="radio-inline control-label">
                                         <input type="radio" ng-model="windpark.optimization_job.mode" value="adjusted">Adjusted
-                                        deterministic optimization</label>
+                                        deterministic</label>
                                 </div>
                             </div>
+                            <hr>
 
                             <div class="form-group form-group-sm">
                                 <label class="col-xs-3 control-label">DA wind production scenarios: </label>
@@ -488,44 +485,28 @@
 
                             </div>
 
-                            <div class="form-group form-group-sm">
-                                <label for="opt-forecast-var" class="col-xs-2 control-label">Forecast error
-                                    variance: </label>
+                            <!--
+                                                        <div class="form-group form-group-sm">
+                                                            <label for="opt-forecast-var" class="col-xs-2 control-label">Forecast error
+                                                                variance: </label>
 
-                                <div class="col-xs-2">
-                                    <input type="number" ng-model="forecastErrorVariance" id="opt-forecast-var"
-                                           class="form-control input-sm"
-                                           ng-disabled="!overrideVariance || windpark.optimization_job.mode != 'stochastic'">
-                                </div>
+                                                            <div class="col-xs-2">
+                                                                <input type="number" ng-model="forecastErrorVariance" id="opt-forecast-var"
+                                                                       class="form-control input-sm"
+                                                                       ng-disabled="!overrideVariance || windpark.optimization_job.mode != 'stochastic'">
+                                                            </div>
 
-                                <div class="col-xs-2">
-                                    <label class="checkbox control-label">
-                                        <input type="checkbox" ng-model="overrideVariance"
-                                               ng-change="overrideVarianceChanged()"
-                                               ng-disabled="windpark.optimization_job.mode != 'stochastic'"> Override
-                                        variance
-                                    </label>
-                                </div>
+                                                            <div class="col-xs-2">
+                                                                <label class="checkbox control-label">
+                                                                    <input type="checkbox" ng-model="overrideVariance"
+                                                                           ng-change="overrideVarianceChanged()"
+                                                                           ng-disabled="windpark.optimization_job.mode != 'stochastic'"> Override
+                                                                    variance
+                                                                </label>
+                                                            </div>
 
-                                <div class="col-xs-2">
-                                    <label class="checkbox control-label">
-                                        <input type="checkbox" ng-model="windpark.optimization_job.enable_shorts">
-                                        Short selling
-                                    </label>
-                                </div>
-
-                                <label for="opt-forecast-var" class="col-xs-2 control-label">Limit trades above forecast
-                                    at: </label>
-
-                                <div class="col-xs-2 input-group">
-                                    <input type="number" ng-model="windpark.optimization_job.trades_limit"
-                                           id="opt-trades-limit"
-                                           class="form-control input-sm"
-                                           ng-disabled="windpark.optimization_job.enable_shorts"
-                                           aria-describedby="opt-trades-perc">
-                                    <span class="input-group-addon" id="opt-trades-perc">%</span>
-                                </div>
-                            </div>
+                                                        </div>
+                            -->
 
 
                             <div class="form-group form-group-sm">
@@ -579,15 +560,33 @@
                             <div class="form-group form-group-sm">
                                 <label class="col-xs-2 control-label">Risk aversion: </label>
 
-                                <div class="col-xs-2">
+                                <div class="col-xs-1">
                                     <input type="number" ng-model="windpark.optimization_job.beta" class="form-control"
                                            required>
                                 </div>
                                 <label class="col-xs-2 control-label">CvaR confidence level: </label>
 
-                                <div class="col-xs-2">
+                                <div class="col-xs-1">
                                     <input type="number" ng-model="windpark.optimization_job.alpha" class="form-control"
                                            required>
+                                </div>
+                                <div class="col-xs-2">
+                                    <label class="checkbox-inline control-label">
+                                        <input type="checkbox" ng-model="windpark.optimization_job.enable_shorts">
+                                        Short selling
+                                    </label>
+                                </div>
+
+                                <label for="opt-trades-limit" class="col-xs-2 control-label">Limit trades above forecast
+                                    at: </label>
+
+                                <div class="col-xs-1 input-group">
+                                    <input type="number" ng-model="windpark.optimization_job.trades_limit"
+                                           id="opt-trades-limit"
+                                           class="form-control input-sm"
+                                           ng-disabled="windpark.optimization_job.enable_shorts"
+                                           aria-describedby="opt-trades-perc">
+                                    <span class="input-group-addon" id="opt-trades-perc">%</span>
                                 </div>
                             </div>
                         </form>
