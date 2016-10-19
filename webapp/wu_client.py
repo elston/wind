@@ -36,7 +36,7 @@ class WuClient:
         except Exception, e:
             logging.warning('WU API key not found: %s', e)
         self.last_call_time = 0
-        self.lock = threading.RLock
+        self.lock = threading.RLock()
 
     def throttle_minute_(self):
         time_to_wait = self.last_call_time + self.min_interval_sec - time.time()
