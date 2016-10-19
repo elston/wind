@@ -98,24 +98,36 @@ app.controller('WindParkSimulationCtrl', ['$scope', '$timeout', 'windparkService
                         var wind_series = [];
                         data.wind_speed.forEach(function (sample) {
                             wind_series.push({
-                                data: sample
+                                data: sample,
+                                tooltip: {
+                                    valueDecimals: 3
+                                }
                             });
                         });
 
                         wind_series.push({
                             data: data.forecasted_wind,
+                            tooltip: {
+                                valueDecimals: 3
+                            },
                             color: 'rgba(255, 0, 0, 1)'
                         });
 
                         var power_series = [];
                         data.power.forEach(function (sample) {
                             power_series.push({
-                                data: sample
+                                data: sample,
+                                tooltip: {
+                                    valueDecimals: 3
+                                }
                             });
                         });
 
                         power_series.push({
                             data: data.forecasted_power,
+                            tooltip: {
+                                valueDecimals: 3
+                            },
                             color: 'rgba(255, 0, 0, 1)'
                         });
 
@@ -131,6 +143,9 @@ app.controller('WindParkSimulationCtrl', ['$scope', '$timeout', 'windparkService
                             color = HSVtoRGB(h, 1, 1);
                             red_wind_series.push({
                                 data: data.reduced_wind_speed[i],
+                                tooltip: {
+                                    valueDecimals: 3
+                                },
                                 name: p.toFixed(2),
                                 color: 'rgba(' + color.r + ',' + color.g + ',' + color.b + ',' + alpha + ')'
                             });
@@ -146,6 +161,9 @@ app.controller('WindParkSimulationCtrl', ['$scope', '$timeout', 'windparkService
                             color = HSVtoRGB(h, 1, 1);
                             red_power_series.push({
                                 data: data.reduced_power[i],
+                                tooltip: {
+                                    valueDecimals: 3
+                                },
                                 name: p.toFixed(2),
                                 color: 'rgba(' + color.r + ',' + color.g + ',' + color.b + ',' + alpha + ')'
                             });
@@ -309,21 +327,30 @@ app.controller('WindParkSimulationCtrl', ['$scope', '$timeout', 'windparkService
                         var lambdaD_series = [];
                         data.lambdaD.forEach(function (sample) {
                             lambdaD_series.push({
-                                data: sample
+                                data: sample,
+                                tooltip: {
+                                    valueDecimals: 3
+                                }
                             });
                         });
 
                         var MAvsMD_series = [];
                         data.MAvsMD.forEach(function (sample) {
                             MAvsMD_series.push({
-                                data: sample
+                                data: sample,
+                                tooltip: {
+                                    valueDecimals: 3
+                                }
                             });
                         });
 
                         var sqrt_r_series = [];
                         data.sqrt_r.forEach(function (sample) {
                             sqrt_r_series.push({
-                                data: sample
+                                data: sample,
+                                tooltip: {
+                                    valueDecimals: 3
+                                }
                             });
                         });
 
@@ -339,6 +366,9 @@ app.controller('WindParkSimulationCtrl', ['$scope', '$timeout', 'windparkService
                             color = HSVtoRGB(h, 1, 1);
                             red_lambdaD_series.push({
                                 data: data.reduced_lambdaD[i],
+                                tooltip: {
+                                    valueDecimals: 3
+                                },
                                 name: p.toFixed(2),
                                 color: 'rgba(' + color.r + ',' + color.g + ',' + color.b + ',' + alpha + ')'
                             });
@@ -354,6 +384,9 @@ app.controller('WindParkSimulationCtrl', ['$scope', '$timeout', 'windparkService
                             color = HSVtoRGB(h, 1, 1);
                             red_MAvsMD_series.push({
                                 data: data.reduced_MAvsMD[i],
+                                tooltip: {
+                                    valueDecimals: 3
+                                },
                                 name: p.toFixed(2),
                                 color: 'rgba(' + color.r + ',' + color.g + ',' + color.b + ',' + alpha + ')'
                             });
@@ -369,6 +402,9 @@ app.controller('WindParkSimulationCtrl', ['$scope', '$timeout', 'windparkService
                             color = HSVtoRGB(h, 1, 1);
                             red_sqrt_r_series.push({
                                 data: data.reduced_sqrt_r[i],
+                                tooltip: {
+                                    valueDecimals: 3
+                                },
                                 name: p.toFixed(2),
                                 color: 'rgba(' + color.r + ',' + color.g + ',' + color.b + ',' + alpha + ')'
                             });

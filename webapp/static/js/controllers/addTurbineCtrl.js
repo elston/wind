@@ -83,6 +83,9 @@ app.controller('AddTurbineCtrl', ['$scope', '$rootScope', '$uibModalInstance', '
                 series: [{
                     name: 'Power curve',
                     data: data,
+                    tooltip: {
+                        valueDecimals: 3
+                    },
                     animation: false
                 }]
             });

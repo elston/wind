@@ -174,7 +174,7 @@ app.controller('WeatherPlotCtrl', ['$scope', '$q', '$uibModalInstance', 'entity'
                     name: 'Temperature, C (observation)',
                     data: $scope.history_data.data.tempm,
                     tooltip: {
-                        valueDecimals: 1
+                        valueDecimals: 3
                     },
                     color: 'purple',
                     lineWidth: 3
@@ -182,7 +182,7 @@ app.controller('WeatherPlotCtrl', ['$scope', '$q', '$uibModalInstance', 'entity'
                     name: 'Wind speed, km/h (observation)',
                     data: $scope.history_data.data.wspdm,
                     tooltip: {
-                        valueDecimals: 1
+                        valueDecimals: 3
                     },
                     yAxis: 1,
                     color: 'purple',
@@ -191,7 +191,7 @@ app.controller('WeatherPlotCtrl', ['$scope', '$q', '$uibModalInstance', 'entity'
                     name: 'Wind direction, degrees (observation)',
                     data: $scope.history_data.data.wdird,
                     tooltip: {
-                        valueDecimals: 0
+                        valueDecimals: 3
                     },
                     yAxis: 2,
                     color: 'purple',
@@ -203,7 +203,7 @@ app.controller('WeatherPlotCtrl', ['$scope', '$q', '$uibModalInstance', 'entity'
                         name: 'Temperature, C (forecast values from ' + $scope.forecast_data.last_11am.time + ')',
                         data: $scope.forecast_data.last_11am.tempm,
                         tooltip: {
-                            valueDecimals: 1
+                            valueDecimals: 3
                         },
                         color: 'darkblue',
                         dashStyle: 'dash'
@@ -212,7 +212,7 @@ app.controller('WeatherPlotCtrl', ['$scope', '$q', '$uibModalInstance', 'entity'
                         name: 'Wind speed, km/h (forecast values from ' + $scope.forecast_data.last_11am.time + ')',
                         data: $scope.forecast_data.last_11am.wspdm,
                         tooltip: {
-                            valueDecimals: 1
+                            valueDecimals: 3
                         },
                         yAxis: 1,
                         color: 'darkblue',
@@ -222,7 +222,7 @@ app.controller('WeatherPlotCtrl', ['$scope', '$q', '$uibModalInstance', 'entity'
                         name: 'Wind direction, degrees (forecast values from ' + $scope.forecast_data.last_11am.time + ')',
                         data: $scope.forecast_data.last_11am.wdird,
                         tooltip: {
-                            valueDecimals: 1
+                            valueDecimals: 3
                         },
                         yAxis: 2,
                         color: 'darkblue',
@@ -235,7 +235,7 @@ app.controller('WeatherPlotCtrl', ['$scope', '$q', '$uibModalInstance', 'entity'
                         name: 'Temperature, C (forecast values from ' + $scope.forecast_data.last_11pm.time + ')',
                         data: $scope.forecast_data.last_11pm.tempm,
                         tooltip: {
-                            valueDecimals: 1
+                            valueDecimals: 3
                         },
                         color: 'lightblue',
                         dashStyle: 'shortdot'
@@ -244,7 +244,7 @@ app.controller('WeatherPlotCtrl', ['$scope', '$q', '$uibModalInstance', 'entity'
                         name: 'Wind speed, km/h (forecast values from ' + $scope.forecast_data.last_11pm.time + ')',
                         data: $scope.forecast_data.last_11pm.wspdm,
                         tooltip: {
-                            valueDecimals: 1
+                            valueDecimals: 3
                         },
                         yAxis: 1,
                         color: 'lightblue',
@@ -254,7 +254,7 @@ app.controller('WeatherPlotCtrl', ['$scope', '$q', '$uibModalInstance', 'entity'
                         name: 'Wind direction, degrees (forecast values from ' + $scope.forecast_data.last_11pm.time + ')',
                         data: $scope.forecast_data.last_11pm.wdird,
                         tooltip: {
-                            valueDecimals: 1
+                            valueDecimals: 3
                         },
                         yAxis: 2,
                         color: 'lightblue',
@@ -267,7 +267,7 @@ app.controller('WeatherPlotCtrl', ['$scope', '$q', '$uibModalInstance', 'entity'
                         name: 'Temperature, C (latest forecast by ' + $scope.forecast_data.last.time + ')',
                         data: $scope.forecast_data.last.tempm,
                         tooltip: {
-                            valueDecimals: 1
+                            valueDecimals: 3
                         },
                         color: 'darkgrey',
                         dashStyle: 'longdashdot'
@@ -276,7 +276,7 @@ app.controller('WeatherPlotCtrl', ['$scope', '$q', '$uibModalInstance', 'entity'
                         name: 'Wind speed, km/h (latest forecast by ' + $scope.forecast_data.last.time + ')',
                         data: $scope.forecast_data.last.wspdm,
                         tooltip: {
-                            valueDecimals: 1
+                            valueDecimals: 3
                         },
                         yAxis: 1,
                         color: 'darkgrey',
@@ -286,7 +286,7 @@ app.controller('WeatherPlotCtrl', ['$scope', '$q', '$uibModalInstance', 'entity'
                         name: 'Wind direction, degrees (latest forecast by ' + $scope.forecast_data.last.time + ')',
                         data: $scope.forecast_data.last.wdird,
                         tooltip: {
-                            valueDecimals: 1
+                            valueDecimals: 3
                         },
                         yAxis: 2,
                         color: 'darkgrey',

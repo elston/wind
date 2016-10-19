@@ -101,6 +101,9 @@ app.controller('WindparkTurbinesCtrl', ['$scope', '$rootScope', '$timeout', '$ui
                                 series: [{
                                     name: 'Power curve',
                                     data: curve,
+                                    tooltip: {
+                                        valueDecimals: 3
+                                    },
                                     animation: false
                                 }]
                             });
