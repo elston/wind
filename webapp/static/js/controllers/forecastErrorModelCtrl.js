@@ -175,7 +175,8 @@ app.controller('ForecastErrorModelCtrl', ['$scope', '$uibModalInstance', 'entity
                                 animation: false,
                                 marker: {
                                     enabled: false
-                                }
+                                },
+                                dashStyle: 'Dot'
                             });
                             series.push({
                                 name: 'forecast ' + elem.timestamp,
@@ -183,8 +184,7 @@ app.controller('ForecastErrorModelCtrl', ['$scope', '$uibModalInstance', 'entity
                                 animation: false,
                                 marker: {
                                     enabled: false
-                                },
-                                dashStyle: 'Dot'
+                                }
                             });
                         });
                         $scope.chart = new Highcharts.Chart({
