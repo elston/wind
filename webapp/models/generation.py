@@ -8,6 +8,7 @@ class Generation(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
     windpark_id = db.Column(db.Integer(), db.ForeignKey('windparks.id'), index=True)
     time = db.Column(db.DateTime(), index=True)  # UTC time
+    wind_speed = db.Column(db.Float())  # WindSpeed kph
     power = db.Column(db.Float())  # power in MW
 
     windpark = relationship('Windpark', back_populates='generation')

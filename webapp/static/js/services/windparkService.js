@@ -120,8 +120,15 @@ app.factory('windparkService', ['$http', 'Upload', function ($http, Upload) {
 
     };
 
-    var getWindVsPower = function (id) {
-        return $http.get($SCRIPT_ROOT + '/windparks/windvspower/' + id)
+    var getWindVsPower = function (id, useWU, dateMin, dateMax) {
+        return $http.get($SCRIPT_ROOT + '/windparks/windvspower/' + id,
+            {
+                params: {
+                    use_wu: useWU,
+                    date_min: dateMin,
+                    date_max: dateMax
+                }
+            })
             .then(function (response) {
                     if ('error' in response.data) {
                         throw response.data.error;

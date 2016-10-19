@@ -16,7 +16,8 @@ from webapp.models import Windpark, Generation, Observation
 from webapp.models.optimization_job import OptimizationJob
 from webapp.models.windpark_turbines import WindparkTurbine
 from webapp.tasks import start_windpark_optimization, windpark_optimization_status, terminate_windpark_optimization
-from webapp.tz_utils import shift_ts, ts_to_tz_name
+from webapp.tz_utils import shift_ts, ts_to_tz_name, utc_naive_to_shifted_ts, utc_naive_to_tz_name, \
+    utc_naive_to_location_aware
 from werkzeug.utils import secure_filename
 
 logger = logging.getLogger(__name__)
@@ -95,8 +96,8 @@ def parse_sotavento_generation(csvfile):
     df = pd.read_csv(csvfile,
                      header=0,
                      index_col=0,
-                     names=['time', 'power'],
-                     usecols=[0, 3],
+                     names=['time', 'wind_speed', 'power'],
+                     usecols=[0, 1, 3],
                      parse_dates=['time'],
                      date_parser=dateparse)
     df.power /= 1000.0
@@ -180,22 +181,17 @@ def get_wpark_values(wpark_id):
     if not current_user.is_authenticated:
         return jsonify({'error': 'User unauthorized'})
     try:
-        power = db.session.query(Generation.time, Generation.power) \
-            .filter_by(windpark_id=wpark_id) \
-            .order_by(Generation.time) \
-            .all()
+        windpark = db.session.query(Windpark).filter_by(id=wpark_id).first()
+        location = windpark.location
+        location_tz = pytz.timezone(location.tz_long)
+        tzinfo = utc_naive_to_tz_name(windpark.generation[0].time, location_tz)
 
-        location_id = db.session.query(Windpark.location_id) \
-            .filter_by(id=wpark_id) \
-            .first()[0]
-
-        wind = db.session.query(Observation.time, Observation.wspdm) \
-            .filter_by(location_id=location_id) \
-            .order_by(Observation.time) \
-            .all()
-
-        values = {'power': [[calendar.timegm(x[0].utctimetuple()) * 1000, x[1]] for x in power],
-                  'wind': [[calendar.timegm(x[0].utctimetuple()) * 1000, x[1]] for x in wind]
+        values = {'power': [[utc_naive_to_shifted_ts(x.time, location_tz), x.power] for x in windpark.generation],
+                  'wind_uploaded': [[utc_naive_to_shifted_ts(x.time, location_tz), x.wind_speed] for x in
+                                    windpark.generation],
+                  'wind_wu': [[utc_naive_to_shifted_ts(x.time, location_tz), x.wspdm] for x in
+                              windpark.location.observations],
+                  'tzinfo': tzinfo
                   }
 
         js = jsonify({'data': values})
@@ -211,21 +207,37 @@ def get_wind_vs_power(wpark_id):
     if not current_user.is_authenticated:
         return jsonify({'error': 'User unauthorized'})
     try:
-        location_id = db.session.query(Windpark.location_id) \
-            .filter_by(id=wpark_id) \
-            .first()[0]
+        use_wu = request.values.get('use_wu')
+        use_wu = use_wu.lower() in ('true', 'yes', 't', '1')
+        date_min = datetime.utcfromtimestamp(float(request.values.get('date_min')) / 1000)
+        date_max = datetime.utcfromtimestamp(float(request.values.get('date_max')) / 1000)
 
-        wind_vs_power = db.session.query(Observation.wspdm, Generation.power) \
-            .filter(Generation.windpark_id == wpark_id) \
-            .filter(Observation.location_id == location_id) \
-            .filter(Observation.time == Generation.time) \
-            .all()
+        windpark = db.session.query(Windpark).filter_by(id=wpark_id).first()
+        location = windpark.location
+        location_tz = pytz.timezone(location.tz_long)
+
+        if use_wu:
+            wind_vs_power = db.session.query(Observation.wspdm, Generation.power, Generation.time) \
+                .filter(Generation.windpark_id == wpark_id) \
+                .filter(Observation.location_id == location.id) \
+                .filter(Observation.time == Generation.time) \
+                .filter(Observation.time >= date_min) \
+                .filter(Observation.time <= date_max) \
+                .all()
+        else:
+            wind_vs_power = db.session.query(Generation.wind_speed, Generation.power, Generation.time) \
+                .filter(Generation.windpark_id == wpark_id) \
+                .filter(Generation.time >= date_min) \
+                .filter(Generation.time <= date_max) \
+                .all()
 
         if len(wind_vs_power) == 0:
             raise Exception('No overlapping wind and generation data available')
 
         wind = np.array([x[0] for x in wind_vs_power])
         power = np.array([x[1] for x in wind_vs_power])
+        date_min = np.min([x[2] for x in wind_vs_power])
+        date_max = np.max([x[2] for x in wind_vs_power])
 
         model = fit(wind, power)
 
@@ -235,7 +247,10 @@ def get_wind_vs_power(wpark_id):
         result = {'scatterplot': wind_vs_power,
                   'beta': list(model.beta),
                   'sd_beta': list(model.sd_beta),
-                  'model': zip(model_wind, model_power)}
+                  'model': zip(model_wind, model_power),
+                  'use_wu': use_wu,
+                  'date_min': utc_naive_to_location_aware(date_min, location_tz).strftime('%d %b %Y %I:%M%p %Z%z'),
+                  'date_max': utc_naive_to_location_aware(date_max, location_tz).strftime('%d %b %Y %I:%M%p %Z%z')}
 
         js = jsonify({'data': result})
         return js

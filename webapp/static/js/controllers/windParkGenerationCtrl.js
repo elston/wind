@@ -26,6 +26,9 @@ app.controller('WindparkGenerationCtrl', ['$scope', 'windparkService',
                             credits: {
                                 enabled: false
                             },
+                            legend: {
+                                enabled: true
+                            },
                             yAxis: [{
                                 title: {
                                     text: 'Power, MW'
@@ -36,6 +39,11 @@ app.controller('WindparkGenerationCtrl', ['$scope', 'windparkService',
                                         text: 'Wind speed, km/h'
                                     }
                                 }],
+                            xAxis: {
+                                title: {
+                                    text: 'Time (' + result.tzinfo + ')'
+                                }
+                            },
                             series: [{
                                 name: 'Generation, MW',
                                 data: result.power,
@@ -45,8 +53,17 @@ app.controller('WindparkGenerationCtrl', ['$scope', 'windparkService',
                                 }
                             },
                                 {
-                                    name: 'Wind speed, km/h',
-                                    data: result.wind,
+                                    name: 'Wind speed, km/h (WU)',
+                                    data: result.wind_wu,
+                                    animation: false,
+                                    yAxis: 1,
+                                    tooltip: {
+                                        valueDecimals: 1
+                                    }
+                                },
+                                {
+                                    name: 'Wind speed, km/h (uploaded)',
+                                    data: result.wind_uploaded,
                                     animation: false,
                                     yAxis: 1,
                                     tooltip: {
@@ -82,11 +99,28 @@ app.controller('WindparkGenerationCtrl', ['$scope', 'windparkService',
         };
 
         $scope.plotWindVsPower = function () {
-            windparkService.getWindVsPower($scope.windpark.id)
+            if (!$scope.chart) {
+                alertify.error('Select wind speed source and date range in the chart first.');
+                $scope.summary.showWindVsPower = false;
+                return;
+            }
+            if ($scope.chart.series[1].visible && $scope.chart.series[2].visible) {
+                alertify.error('Both wind speed series are enabled in the chart. Select desirable wind speed series before fitting.');
+                $scope.summary.showWindVsPower = false;
+                return;
+            }
+            if (!$scope.chart.series[1].visible && !$scope.chart.series[2].visible) {
+                alertify.error('None of wind speed series are enabled in the chart. Select desirable wind speed series before fitting.');
+                $scope.summary.showWindVsPower = false;
+                return;
+            }
+            var useWU = $scope.chart.series[1].visible;
+            var dateMin = $scope.chart.xAxis[0].min;
+            var dateMax = $scope.chart.xAxis[0].max;
+            windparkService.getWindVsPower($scope.windpark.id, useWU, dateMin, dateMax)
                 .then(function (result) {
-                        $scope.beta = result.beta;
-                        $scope.sd_beta = result.sd_beta;
-                        $scope.chart = new Highcharts.Chart({
+                        $scope.fittingResult = result;
+                        $scope.scatter = new Highcharts.Chart({
                             chart: {
                                 zoomType: 'xy',
                                 renderTo: 'plot-wind-vs-power',

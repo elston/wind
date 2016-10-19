@@ -236,15 +236,28 @@
                         <div uib-collapse="!summary.showWindVsPower" expanded="plotWindVsPower()"
                              collapsed="cleanWindVsPowerPlot()">
                             <div class="well well-lg">
+                                <p>Model fitted using <span ng-if="fittingResult.use_wu">Weather Underground</span>
+                                    <span ng-if="!fittingResult.use_wu">manually uploaded</span> wind speed and all data
+                                    available in the range {{ fittingResult.date_min }}&mdash;{{ fittingResult.date_max
+                                    }}.
+                                </p>
                                 <dl class="dl-horizontal">
                                     <dt>V<sub>cut-in</sub></dt>
-                                    <dd>{{ beta[0] | number:2 }}±{{ sd_beta[0] | number:2 }}</dd>
+                                    <dd>{{ fittingResult.beta[0] | number:2 }}±{{ fittingResult.sd_beta[0] | number:2
+                                        }}
+                                    </dd>
                                     <dt>V<sub>rated</sub></dt>
-                                    <dd>{{ beta[1] | number:2 }}±{{ sd_beta[1] | number:2 }}</dd>
+                                    <dd>{{ fittingResult.beta[1] | number:2 }}±{{ fittingResult.sd_beta[1] | number:2
+                                        }}
+                                    </dd>
                                     <dt>V<sub>cut-out</sub></dt>
-                                    <dd>{{ beta[2] | number:2 }}±{{ sd_beta[2] | number:2 }}</dd>
+                                    <dd>{{ fittingResult.beta[2] | number:2 }}±{{ fittingResult.sd_beta[2] | number:2
+                                        }}
+                                    </dd>
                                     <dt>W<sub>rated</sub></dt>
-                                    <dd>{{ beta[3] | number:2 }}±{{ sd_beta[3] | number:2 }}</dd>
+                                    <dd>{{ fittingResult.beta[3] | number:2 }}±{{ fittingResult.sd_beta[3] | number:2
+                                        }}
+                                    </dd>
                                 </dl>
                                 <div id="plot-wind-vs-power" style="width:100%; height:400px;"></div>
                             </div>
