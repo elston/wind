@@ -29,6 +29,8 @@ class OptimizationResults(TypeDecorator):
         self.reduced_simulated_power = None
         self.power_probs = None
         self.dates = None
+        self.used_forecast_time = None
+        self.last_price_used = None
 
     def set_parameters(self):
         pass
@@ -54,7 +56,7 @@ class OptimizationResults(TypeDecorator):
                  expected_profit=self.expected_profit, profit_std=self.profit_std, cvar=self.cvar,
                  Pd=self.Pd, Pa=self.Pa, Ps=self.Ps, desvP=self.desvP, desvN=self.desvN,
                  reduced_simulated_power=self.reduced_simulated_power, power_probs=self.power_probs,
-                 dates=self.dates)
+                 dates=self.dates, used_forecast_time=self.used_forecast_time, last_price_used=self.last_price_used)
         if detailed:
             d['input'] = self.input
         return d

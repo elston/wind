@@ -41,14 +41,11 @@ class Optimizer(object):
             power_probs = np.array([[1.0]])
 
         elif job.mode == 'stochastic':
-            simulated_wind, simulated_power, forecasted_wind, forecasted_power, dates = self.windpark.simulate_generation(
-                date=job.date,
-                time_span=job.time_span,
-                n_scenarios=job.n_wind_scenarios,
-                da_am_time_span=12,
-                n_da_am_scenarios=job.n_da_am_wind_scenarios,
-                forecast_error_variance=job.forecast_error_variance
-            )
+            simulated_wind, simulated_power, forecasted_wind, forecasted_power, dates, used_forecast_time \
+                = self.windpark.simulate_generation(date=job.date, time_span=job.time_span,
+                                                    n_scenarios=job.n_wind_scenarios, da_am_time_span=12,
+                                                    n_da_am_scenarios=job.n_da_am_wind_scenarios,
+                                                    forecast_error_variance=job.forecast_error_variance)
 
             da_am_power_scenarios = simulated_power[:, 0, :12]
 
@@ -79,11 +76,11 @@ class Optimizer(object):
             raise Exception('unknown optimization mode %s', job.mode)
 
         lambdaD, MAvsMD, sqrt_r, last_price_used = self.windpark.simulate_market(date=job.date,
-                                                                start_hour=job.market_start_hour,
-                                                                time_span=job.time_span,
-                                                                n_lambdaD_scenarios=job.n_lambdaD_scenarios,
-                                                                n_MAvsMD_scenarios=job.n_MAvsMD_scenarios,
-                                                                n_sqrt_r_scenarios=job.n_sqrt_r_scenarios)
+                                                                                 start_hour=job.market_start_hour,
+                                                                                 time_span=job.time_span,
+                                                                                 n_lambdaD_scenarios=job.n_lambdaD_scenarios,
+                                                                                 n_MAvsMD_scenarios=job.n_MAvsMD_scenarios,
+                                                                                 n_sqrt_r_scenarios=job.n_sqrt_r_scenarios)
         lambdaD_red, lambdaD_prob, _ = reduce_scenarios(lambdaD,
                                                         np.ones(job.n_lambdaD_scenarios) / job.n_lambdaD_scenarios,
                                                         job.n_redc_lambdaD_scenarios)
@@ -162,6 +159,8 @@ class Optimizer(object):
         self.result.input['reduced_sqrt_r'] = sqrt_r_red.tolist()
         self.result.input['sqrt_r_probs'] = sqrt_r_prob.tolist()
         self.result.dates = dates
+        self.result.used_forecast_time = used_forecast_time
+        self.result.last_price_used = last_price_used
         return self.result
 
     def start(self):
