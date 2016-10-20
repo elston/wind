@@ -26,9 +26,9 @@ def fit(wind, power):
 
     model = Model(model_function)
     data = Data(wind, power, wd=1. / np.power(apriori_wind_std, 2), we=1. / np.power(apriori_power_std, 2))
-    v_cutin = 12.
-    v_rated = 50.
-    v_cutout = 90.
+    v_cutin = 1.
+    v_rated = 10.
+    v_cutout = 30.
     w_rated = np.max(power)
 
     odr = ODR(data, model, beta0=[v_cutin, v_rated, v_cutout, w_rated])
