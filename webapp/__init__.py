@@ -1,4 +1,5 @@
 import logging
+import math
 
 from flask import Flask, jsonify
 from flask.json import JSONEncoder
@@ -15,7 +16,7 @@ Bootstrap(app)
 class MyJSONEncoder(JSONEncoder):
     def encode(self, o):
         def anti_nan(obj):
-            if isinstance(obj, float) and obj != obj:  # NaN
+            if isinstance(obj, float) and (math.isnan(obj) or math.isinf(obj)):
                 return None
             elif isinstance(obj, dict):
                 return dict((k, anti_nan(v)) for k, v in obj.items())
