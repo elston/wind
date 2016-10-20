@@ -33,14 +33,10 @@ class Optimizer(object):
         self.start_scenarios_generation()
 
         if job.mode == 'deterministic' or job.mode == 'adjusted':
-            simulated_wind, simulated_power, forecasted_wind, forecasted_power, dates = self.windpark.simulate_generation(
-                date=job.date,
-                time_span=job.time_span,
-                n_scenarios=1,
-                da_am_time_span=12,
-                n_da_am_scenarios=1,
-                adjusted=job.mode == 'adjusted'
-            )
+            simulated_wind, simulated_power, forecasted_wind, forecasted_power, dates, used_forecast_time \
+                = self.windpark.simulate_generation(date=job.date, time_span=job.time_span, n_scenarios=1,
+                                                    da_am_time_span=12, n_da_am_scenarios=1,
+                                                    adjusted=job.mode == 'adjusted')
             red_sim_power = np.array([[forecasted_power]])
             power_probs = np.array([[1.0]])
 
@@ -82,7 +78,7 @@ class Optimizer(object):
         else:
             raise Exception('unknown optimization mode %s', job.mode)
 
-        lambdaD, MAvsMD, sqrt_r = self.windpark.simulate_market(date=job.date,
+        lambdaD, MAvsMD, sqrt_r, last_price_used = self.windpark.simulate_market(date=job.date,
                                                                 start_hour=job.market_start_hour,
                                                                 time_span=job.time_span,
                                                                 n_lambdaD_scenarios=job.n_lambdaD_scenarios,

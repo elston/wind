@@ -420,7 +420,7 @@ class Location(db.Model):
 
         simulated_wind = forecasted_wind + simulated_error
 
-        return forecasted_wind, simulated_wind, dates
+        return forecasted_wind, simulated_wind, dates, last_forecast.time
 
     def fit_error_model(self):
 

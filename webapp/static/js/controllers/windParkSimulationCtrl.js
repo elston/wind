@@ -95,6 +95,8 @@ app.controller('WindParkSimulationCtrl', ['$scope', '$timeout', 'windparkService
                 $scope.nReducedScenarios, $scope.nDaAmScenarios, $scope.nDaAmReducedScenarios,
                 $scope.forecastErrorVariance)
                 .then(function (data) {
+                        $scope.usedForecastTime = data.used_forecast_time;
+                        $scope.windWarning = data.warning;
                         var wind_series = [];
                         data.wind_speed.forEach(function (sample) {
                             wind_series.push({
@@ -324,6 +326,8 @@ app.controller('WindParkSimulationCtrl', ['$scope', '$timeout', 'windparkService
                 $scope.nDaAmPriceScenarios, $scope.nDaAmRedcPriceScenarios,
                 $scope.nAdjPriceScenarios, $scope.nAdjRedcPriceScenarios)
                 .then(function (data) {
+                        $scope.lastPriceUsed = data.last_price_used;
+                        $scope.priceWarning = data.warning;
                         var lambdaD_series = [];
                         data.lambdaD.forEach(function (sample) {
                             lambdaD_series.push({

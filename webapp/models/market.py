@@ -181,6 +181,7 @@ class Market(db.Model):
             seeds['lambdaD'].append(price.lambdaD)
             seeds['MAvsMD'].append(price.MAvsMD)
             seeds['sqrt.r'].append(price.sqrt_r)
+            seeds['time'].append(price.time)
 
         # find first range without NaNs in all prices searching from end, jumping by whole days
         while True:
@@ -191,9 +192,14 @@ class Market(db.Model):
             seeds['lambdaD'] = seeds['lambdaD'][:-24]
             seeds['MAvsMD'] = seeds['MAvsMD'][:-24]
             seeds['sqrt.r'] = seeds['sqrt.r'][:-24]
+            seeds['time'] = seeds['time'][:-24]
         seeds['lambdaD'] = seeds['lambdaD'][-100:]
         seeds['MAvsMD'] = seeds['MAvsMD'][-100:]
         seeds['sqrt.r'] = seeds['sqrt.r'][-100:]
+
+        last_price_used = seeds['time'][-1]
+
+        del seeds['time']
 
         for model_name, model in (('lambdaD', self.lambdaD_model),
                                   ('MAvsMD', self.MAvsMD_model),
@@ -256,4 +262,4 @@ class Market(db.Model):
         #     simulated_sqrt_r = numpy2ri.ri2py(simulated_sqrt_r)
         #     simulated_sqrt_r_s.append(list(simulated_sqrt_r))
 
-        return simulated_lambdaD, simulated_MAvsMD, simulated_sqrt_r
+        return simulated_lambdaD, simulated_MAvsMD, simulated_sqrt_r, last_price_used

@@ -1,6 +1,6 @@
 import calendar
 import logging
-from datetime import datetime
+from datetime import datetime, timedelta
 import cStringIO
 import zipfile
 
@@ -338,7 +338,9 @@ def get_wind_simulation(wpark_id):
     try:
         windpark = db.session.query(Windpark).filter_by(id=wpark_id).first()
 
-        simulation_date = datetime.strptime(request.values.get('simulation_date'), "%Y-%m-%dT%H:%M:%S.%fZ").date()
+        simulation_date = (datetime.strptime(request.values.get('simulation_date'),
+                                             "%Y-%m-%dT%H:%M:%S.%fZ")) - timedelta(days=1)
+
         n_scenarios = int(request.values.get('n_scenarios'))
         n_reduced_scenarios = int(request.values.get('n_reduced_scenarios'))
         n_da_am_scenarios = int(request.values.get('n_da_am_scenarios'))
@@ -347,7 +349,7 @@ def get_wind_simulation(wpark_id):
         if forecast_error_variance is not None:
             forecast_error_variance = float(forecast_error_variance)
 
-        simulated_wind, simulated_power, forecasted_wind, forecasted_power, dates = \
+        simulated_wind, simulated_power, forecasted_wind, forecasted_power, dates, used_forecast_time = \
             windpark.simulate_generation(simulation_date, 24, n_scenarios, 12, n_da_am_scenarios,
                                          forecast_error_variance=forecast_error_variance)
 
@@ -430,7 +432,11 @@ def get_wind_simulation(wpark_id):
                                'power_probs': power_probs.tolist(),
                                'forecasted_wind': forecasted_wind,
                                'forecasted_power': forecasted_power,
-                               'tzinfo': tzinfo}})
+                               'tzinfo': tzinfo,
+                               'used_forecast_time': utc_naive_to_location_aware(used_forecast_time,
+                                                                                 location_tz).strftime(
+                                   '%d %b %Y %I:%M%p %Z%z'),
+                               'warning': simulation_date - used_forecast_time > timedelta(days=1)}})
         return js
     except Exception, e:
         logger.exception(e)
@@ -444,6 +450,7 @@ def get_market_simulation(wpark_id):
         return jsonify({'error': 'User unauthorized'})
     try:
         windpark = db.session.query(Windpark).filter_by(id=wpark_id).first()
+        location_tz = pytz.timezone(windpark.location.tz_long)
 
         n_da_price_scenarios = int(request.values.get('n_da_price_scenarios'))
         n_da_redc_price_scenarios = int(request.values.get('n_da_redc_price_scenarios'))
@@ -452,11 +459,9 @@ def get_market_simulation(wpark_id):
         n_adj_price_scenarios = int(request.values.get('n_adj_price_scenarios'))
         n_adj_redc_price_scenarios = int(request.values.get('n_adj_redc_price_scenarios'))
 
-        simulated_lambdaD, simulated_MAvsMD, simulated_sqrt_r = windpark.market.simulate_prices(0,
-                                                                                                24,
-                                                                                                n_da_price_scenarios,
-                                                                                                n_da_am_price_scenarios,
-                                                                                                n_adj_price_scenarios)
+        simulated_lambdaD, simulated_MAvsMD, simulated_sqrt_r, last_price_used \
+            = windpark.market.simulate_prices(0, 24, n_da_price_scenarios, n_da_am_price_scenarios,
+                                              n_adj_price_scenarios)
         red_sim_lambdaD, lambdaD_probs, _ = reduce_scenarios(simulated_lambdaD,
                                                              np.ones(n_da_price_scenarios) / n_da_price_scenarios,
                                                              n_da_redc_price_scenarios)
@@ -475,8 +480,12 @@ def get_market_simulation(wpark_id):
                                'reduced_sqrt_r': red_sim_sqrt_r.tolist(),
                                'lambdaD_probs': lambdaD_probs.tolist(),
                                'MAvsMD_probs': MAvsMD_probs.tolist(),
-                               'sqrt_r_probs': sqrt_r_probs.tolist()
-                               }})
+                               'sqrt_r_probs': sqrt_r_probs.tolist(),
+                               'last_price_used': utc_naive_to_location_aware(last_price_used,
+                                                                              location_tz).strftime(
+                                   '%d %b %Y %I:%M%p %Z%z'),
+                               'warning': datetime.utcnow() - last_price_used > timedelta(days=1)}})
+
         return js
     except Exception, e:
         logger.exception(e)
