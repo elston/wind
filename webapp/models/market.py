@@ -10,12 +10,6 @@ import numpy as np
 from scipy import stats
 from sqlalchemy.orm import relationship
 
-
-
-
-
-
-
 # from rpy2.robjects.packages import importr
 import rpy2.robjects as ro
 from rpy2.robjects import numpy2ri
@@ -41,7 +35,7 @@ class Market(db.Model):
 
     prices = relationship('Prices', back_populates='market', order_by='Prices.time',
                           cascade='all, delete-orphan')
-    windparks = relationship('Windpark', back_populates='market', cascade='all')
+    windparks = relationship('Windpark', back_populates='market')
 
     @classmethod
     def from_excess_args(cls, **kwargs):
