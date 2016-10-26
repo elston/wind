@@ -10,12 +10,6 @@ import numpy as np
 from scipy import stats
 from sqlalchemy.orm import relationship
 
-
-
-
-
-
-
 # from rpy2.robjects.packages import importr
 import rpy2.robjects as ro
 from rpy2.robjects import numpy2ri
@@ -59,9 +53,9 @@ class Market(db.Model):
 
     def add_prices(self, df):
         for ts in df.index:
-            prices = db.session.query(Prices).filter_by(market_id=self.id, time=ts).first()
+            prices = db.session.query(Prices).filter_by(market_id=self.id, time=ts.to_datetime()).first()
             if prices is None:
-                prices = Prices(market_id=self.id, time=ts)
+                prices = Prices(market_id=self.id, time=ts.to_datetime())
                 db.session.add(prices)
             for name in df.columns.values:
                 setattr(prices, name, df[name][ts])

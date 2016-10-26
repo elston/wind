@@ -75,9 +75,9 @@ class Windpark(db.Model):
 
     def add_generation(self, df):
         for ts in df.index:
-            gen = db.session.query(Generation).filter_by(windpark_id=self.id, time=ts).first()
+            gen = db.session.query(Generation).filter_by(windpark_id=self.id, time=ts.to_datetime()).first()
             if gen is None:
-                gen = Generation(windpark_id=self.id, time=ts)
+                gen = Generation(windpark_id=self.id, time=ts.to_datetime())
                 db.session.add(gen)
             for name in df.columns.values:
                 setattr(gen, name, df[name][ts])
