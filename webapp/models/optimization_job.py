@@ -76,7 +76,8 @@ class OptimizationJob(TypeDecorator):
                     dt=self.dt,
                     Pmax=self.Pmax, alpha=self.alpha, beta=self.beta,
                     mode=self.mode,
-                    forecast_error_variance=self.forecast_error_variance)
+                    forecast_error_variance=self.forecast_error_variance,
+                    enable_shorts=self.enable_shorts, trades_limit=self.trades_limit)
 
     def get_csv(self):
         fields = ['name', 'value']
