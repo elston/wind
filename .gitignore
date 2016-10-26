@@ -1,4 +1,5 @@
-/webapp/data/db.sqlite
+*.sqlite
+*.sql
 *_api_key
 
 /tests/math/.Rhistory
