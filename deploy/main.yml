@@ -34,6 +34,9 @@
       - r-base
       - r-base-dev
       - redis-server
+      - mysql-server
+      - libmysqlclient-dev
+      - python-mysqldb
     when: ansible_os_family == "Debian"
 
   - name: install packages
@@ -62,6 +65,12 @@
       - rpm-build
     when: ansible_os_family == "RedHat"
 
+  - name: create a new database
+  - mysql_db: name=wind state=present
+
+  - name: create database user 'wind' and password 'wind' with 'wind' database privileges
+  - mysql_user: name=wind password=wind priv=wind.*:ALL state=present
+
   - name: create virtualenv
     command: virtualenv env
     args:
@@ -81,7 +90,7 @@
     command: tar xvfz lp_solve_5.5.2.0_source.tar.gz creates=lp_solve_5.5 chdir=/tmp
 
   - name: patch lpsolve
-    lineinfile: dest=/tmp/lp_solve_5.5/lpsolve55/ccc regexp='isnan\(0\)' line='echo \'main(){isnan(0.0);}\'>>/tmp/isnan.c'
+    lineinfile: dest=/tmp/lp_solve_5.5/lpsolve55/ccc regexp='isnan\(0\)' line='echo "main(){isnan(0.0);}">>/tmp/isnan.c'
 
   - name: build lpsolve
     command: sh ccc chdir=/tmp/lp_solve_5.5/lpsolve55 creates=bin/ux64/liblpsolve55.so
