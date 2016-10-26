@@ -79,8 +79,14 @@ security = Security(app, user_datastore)
 
 # setup APScheduler
 from scheduler import Scheduler
+
 sch = Scheduler()
+try:
+    sch.update_weather_schedules()
+except Exception, e:
+    logging.info("update weather schedules ", e)
 sch.start()
+
 
 @app.before_first_request
 def init_db():
@@ -92,8 +98,8 @@ def init_db():
         user_datastore.create_user(email=app.config['ADMIN_EMAIL'],
                                    password=app.config['ADMIN_PASSWORD'],
                                    roles=[admin_role, ])
-    db.session.commit()
-    sch.update_weather_schedules()
+        db.session.commit()
+        sch.update_weather_schedules()
 
 
 @app.errorhandler(404)
