@@ -6,13 +6,18 @@ import rpy2.robjects as ro
 from rpy2.robjects import numpy2ri
 from scipy import stats
 from sqlalchemy import TypeDecorator, VARCHAR
+from sqlalchemy.dialects.mysql import MEDIUMTEXT
+from webapp import db
 
 
 class ArimaModel(TypeDecorator):
     """Represents an immutable structure as a json-encoded string.
     """
 
-    impl = VARCHAR
+    if db.engine.dialect.name == 'mysql':
+        impl = MEDIUMTEXT
+    else:
+        impl = VARCHAR
 
     def __init__(self, *args, **kwargs):
         super(ArimaModel, self).__init__(*args, **kwargs)

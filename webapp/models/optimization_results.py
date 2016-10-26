@@ -5,13 +5,18 @@ import cStringIO
 import flask
 import numpy as np
 from sqlalchemy import TypeDecorator, VARCHAR
+from sqlalchemy.dialects.mysql import MEDIUMTEXT
+from webapp import db
 
 
 class OptimizationResults(TypeDecorator):
     """Represents an immutable structure as a json-encoded string.
     """
 
-    impl = VARCHAR
+    if db.engine.dialect.name == 'mysql':
+        impl = MEDIUMTEXT
+    else:
+        impl = VARCHAR
 
     def __init__(self, *args, **kwargs):
         super(OptimizationResults, self).__init__(*args, **kwargs)

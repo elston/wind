@@ -12,7 +12,7 @@ class Turbine(db.Model):
     rated_power = db.Column(db.Float())  # MW
     v_cutin = db.Column(db.Float())  # m/s
     v_cutoff = db.Column(db.Float())  # m/s
-    description = db.Column(db.Unicode())
+    description = db.Column(db.Unicode(4096))
 
     power_curve = relationship('TurbinePowerCurve', back_populates='turbine', order_by='TurbinePowerCurve.wind_speed',
                                cascade='all, delete-orphan')

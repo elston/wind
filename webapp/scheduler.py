@@ -4,7 +4,7 @@ from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.jobstores.sqlalchemy import SQLAlchemyJobStore
 from apscheduler.executors.pool import ThreadPoolExecutor
 import pytz
-from webapp import db
+from webapp import db, app
 from .models import Location
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
@@ -13,7 +13,7 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(level
 class Scheduler(object):
     def __init__(self):
         jobstores = {
-            'default': SQLAlchemyJobStore(url='sqlite:///webapp/data/jobs.sqlite')
+            'default': SQLAlchemyJobStore(url=app.config['SCHEDULER_DATABASE_URI'])
         }
         executors = {
             'default': ThreadPoolExecutor(20),
