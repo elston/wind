@@ -1,3 +1,4 @@
+from datetime import datetime
 import json
 from math import sqrt
 
@@ -51,6 +52,7 @@ class ArimaModel(TypeDecorator):
         self.data_pacf = None
         self.data_acf_clim = None
         self.data_pacf_clim = None
+        self.fitting_time = None
 
     def set_parameters(self, p, d, q, P, D, Q, m, n_ahead=48):
         self.p = p
@@ -88,6 +90,7 @@ class ArimaModel(TypeDecorator):
         self._residuals_pacf = ro.r('pacf(fit$residuals, plot=FALSE, na.action=na.pass)')
         self._data_acf = ro.r('acf(x, plot=FALSE, na.action=na.pass)')
         self._data_pacf = ro.r('pacf(x, plot=FALSE, na.action=na.pass)')
+        self.fitting_time = datetime.utcnow().isoformat()
 
     def to_dict(self):
         if self._model is not None:
@@ -120,4 +123,4 @@ class ArimaModel(TypeDecorator):
                     residuals_acf=self.residuals_acf, residuals_acf_clim=self.residuals_acf_clim,
                     residuals_pacf=self.residuals_pacf, residuals_pacf_clim=self.residuals_pacf_clim,
                     data_acf=self.data_acf, data_acf_clim=self.data_acf_clim,
-                    data_pacf=self.data_pacf, data_pacf_clim=self.data_pacf_clim)
+                    data_pacf=self.data_pacf, data_pacf_clim=self.data_pacf_clim, fitting_time=self.fitting_time)

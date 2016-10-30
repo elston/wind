@@ -34,6 +34,21 @@ app.controller('WindParkOptimizationCtrl', ['$scope', '$interval', '$timeout', '
                         }, 2000);
         };
 
+        var confirmWarnings = function(warnings) {
+            if(warnings.length == 0)
+                startOptimization();
+            else {
+                var warning = warnings.shift();
+                alertify.confirm('Confirm', warning,
+                    function () {
+                        $timeout(function () {
+                            confirmWarnings(warnings);
+                        }, 1000);
+                    },
+                    null);
+            }
+        };
+
         $scope.optimize = function () {
             $scope.windpark.optimization_job.date = $scope.optimizationDate.toISOString().split('T')[0];
             if ($scope.overrideVariance) {
@@ -41,38 +56,12 @@ app.controller('WindParkOptimizationCtrl', ['$scope', '$interval', '$timeout', '
             } else {
                 $scope.windpark.optimization_job.forecast_error_variance = null;
             }
-            windparkService.checkObsolescence($scope.windpark.id, $scope.windpark.optimization_job)
+            windparkService.optimizationPretest($scope.windpark.id, $scope.windpark.optimization_job)
                 .then(function (data) {
-                        if (data.wind_warning) {
-                            alertify.confirm("Confirm", "Used forecast dated by " + data.used_forecast_time + " . Would you like to proceed anyway?",
-                                function () {
-                                    if (data.price_warning) {
-                                        $timeout(function () {
-                                            alertify.confirm("Confirm", "Last price dated by " + data.last_price_used + " . Would you like to proceed anyway?",
-                                                function () {
-                                                    startOptimization();
-                                                },
-                                                null);
-                                        }, 2);
-                                    } else {
-                                        startOptimization();
-                                    }
-                                },
-                                null);
-                        } else {
-                            if (data.price_warning) {
-                                alertify.confirm("Confirm", "Last price dated by " + data.last_price_used + " . Would you like to proceed anyway?",
-                                    function () {
-                                        startOptimization();
-                                    },
-                                    null);
-                            } else {
-                                startOptimization();
-                            }
-                        }
+                        confirmWarnings(data);
                     },
                     function (error) {
-                        alertify.error(error);
+                        alertify.alert('Fatal error', error);
                     });
         };
 

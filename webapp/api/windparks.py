@@ -1,7 +1,6 @@
 import calendar
-from collections import defaultdict
 import logging
-from datetime import datetime, timedelta, time
+from datetime import datetime, timedelta
 import cStringIO
 import zipfile
 
@@ -691,77 +690,53 @@ def get_da_offering_curve(wpark_id):
         return js
 
 
-@app.route('/api/windparks/<wpark_id>/check_obsolescence', methods=['POST', ])
-def check_obsolescence(wpark_id):
+@app.route('/api/windparks/<wpark_id>/optimization_pretest', methods=['POST', ])
+def optimization_pretest(wpark_id):
     if not current_user.is_authenticated:
         return jsonify({'error': 'User unauthorized'})
     try:
         job_parameters = request.get_json()
-        date = datetime.strptime(job_parameters['date'], '%Y-%m-%d')
+        warnings = []
 
         windpark = db.session.query(Windpark).filter_by(id=wpark_id).first()
+        location = windpark.location
+        if location is None:
+            raise Exception('Location is undefined')
+        location_tz = pytz.timezone(location.tz_long)
+        wind_model = location.forecast_error_model
+        if not job_parameters['refit_weather'] and wind_model is None:
+            raise Exception('Wind model is undefined')
+        if not job_parameters['refit_weather'] and wind_model.fitting_time is None:
+            raise Exception('Wind model calibration time is unknown')
 
-        location_tz = pytz.timezone(windpark.location.tz_long)
-        location_12pm = location_tz.localize(datetime.combine(date, time(hour=12)))
-        utc_naive_location_12pm = location_12pm.astimezone(pytz.UTC).replace(tzinfo=None)
+        market = windpark.market
+        if market is None:
+            raise Exception('Market is undefined')
+        if not job_parameters['refit_market'] and (
+                            market.lambdaD_model is None or market.MAvsMD_model is None or market.sqrt_r_model is None):
+            raise Exception('Price model is undefined')
+        if not job_parameters['refit_market'] and (
+                            market.lambdaD_model.fitting_time is None or market.MAvsMD_model.fitting_time is None or
+                        market.sqrt_r_model.fitting_time is None):
+            raise Exception('Price model fitting time is unknown')
 
-        last_forecast = None
-        for try_forecast in reversed(windpark.location.forecasts):
-            if try_forecast.time < utc_naive_location_12pm:
-                last_forecast = try_forecast
-                break
+        wind_model_fitting_time = datetime.strptime(wind_model.fitting_time, '%Y-%m-%dT%H:%M:%S.%f')
+        if not job_parameters[
+            'refit_weather'] and True:  # datetime.utcnow() - wind_model.fitting_time > timedelta(days=1):
+            warnings.append(
+                'The last wind model calibration date was: %s would you like to proceed anyway?' % utc_naive_to_location_aware(
+                    wind_model_fitting_time, location_tz).strftime('%d %b %Y %I:%M%p %Z%z'))
 
-        if last_forecast is None:
-            raise Exception("Not enough forecasts")
+        price_model_fitting_time = datetime.strptime(market.lambdaD_model.fitting_time, '%Y-%m-%dT%H:%M:%S.%f')
+        if not job_parameters[
+            'refit_market'] and True:  # datetime.utcnow() - market.lambdaD_model.fitting_time > timedelta(days=1):
+            warnings.append(
+                'The last last market price calibration date was: %s would you like to proceed anyway?' % utc_naive_to_location_aware(
+                    price_model_fitting_time, location_tz).strftime('%d %b %Y %I:%M%p %Z%z'))
 
-        start_dt = datetime.combine(date, time(0, 0, 0, 0))
-        start_dt_location_tz = location_tz.localize(start_dt)
-
-        start_dt_utc = start_dt_location_tz.astimezone(pytz.UTC)
-        start_hour_utc = start_dt_utc.hour
-
-        time_after_last = None
-        for price in windpark.market.prices:
-            if price.time.hour == start_hour_utc:
-                time_after_last = price.time
-
-        seeds = defaultdict(list)
-
-        for price in windpark.market.prices:
-            if price.time >= time_after_last:
-                break
-            seeds['lambdaD'].append(price.lambdaD)
-            seeds['MAvsMD'].append(price.MAvsMD)
-            seeds['sqrt.r'].append(price.sqrt_r)
-            seeds['time'].append(price.time)
-
-        while True:
-            if (all([x is not None for x in seeds['lambdaD'][-100:]]) and
-                    all([x is not None for x in seeds['MAvsMD'][-100:]]) and
-                    all([x is not None for x in seeds['sqrt.r'][-100:]])):
-                break
-            seeds['lambdaD'] = seeds['lambdaD'][:-24]
-            seeds['MAvsMD'] = seeds['MAvsMD'][:-24]
-            seeds['sqrt.r'] = seeds['sqrt.r'][:-24]
-            seeds['time'] = seeds['time'][:-24]
-
-        last_price_used = seeds['time'][-1]
-
-        del seeds
-
-        js = jsonify({'data': {
-            'used_forecast_time': utc_naive_to_location_aware(last_forecast.time,
-                                                              location_tz).strftime(
-                '%d %b %Y %I:%M%p %Z%z'),
-            'wind_warning': date - last_forecast.time > timedelta(days=1),
-            'last_price_used': utc_naive_to_location_aware(last_price_used,
-                                                           location_tz).strftime(
-                '%d %b %Y %I:%M%p %Z%z'),
-            'price_warning': datetime.utcnow() - last_price_used > timedelta(days=1)
-        }
-        })
+        js = jsonify({'data': warnings})
         return js
     except Exception, e:
         logger.exception(e)
-        js = jsonify({'error': repr(e)})
+        js = jsonify({'error': str(e)})
         return js
