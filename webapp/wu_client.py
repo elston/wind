@@ -40,9 +40,9 @@ class WuClient:
 
     def throttle_minute_(self):
         time_to_wait = self.last_call_time + self.min_interval_sec - time.time()
-        self.last_call_time = time.time()
         if time_to_wait > 0:
             time.sleep(time_to_wait)
+        self.last_call_time = time.time()
 
     def check_day_limit_(self):
         now = datetime.now(tz=pytz.timezone('US/Eastern'))
