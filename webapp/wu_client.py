@@ -47,13 +47,15 @@ class WuClient:
     def check_day_limit_(self):
         now = datetime.now(tz=pytz.timezone('US/Eastern'))
         day_key = (now - self.us_eastern_noon).days
+        db.session.commit()
         counter = db.session.query(WUDailyCount).filter_by(id=day_key).first()
         if counter is None:
             try:
                 db.session.add(WUDailyCount(id=day_key, count=1))
                 db.session.commit()
-            except:
-                pass
+            except Exception, e:
+                db.session.rollback()
+                logging.error(e)
         else:
             if counter.count >= self.day_limit:
                 dt = self.us_eastern_noon + timedelta(days=day_key + 1)

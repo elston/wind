@@ -133,7 +133,6 @@ class Location(db.Model):
         else:
             dls.partial = True
             dls.full = not today
-        db.session.flush()
         db.session.commit()
 
     def get_download_status(self, date):
@@ -186,12 +185,15 @@ class Location(db.Model):
         tempm = self._filter_history(tempm_raw_values, threshold, kernel_size)
 
         for idx, observation in enumerate(observations):
-            db.session.query(Observation) \
-                .filter(Observation.location_id == self.id) \
-                .filter(Observation.time == observation.time) \
-                .update({Observation.wspdm: wspdm[idx],
-                         Observation.tempm: tempm[idx]
-                         }, synchronize_session=False)
+            try:
+                db.session.query(Observation) \
+                    .filter(Observation.location_id == self.id) \
+                    .filter(Observation.time == observation.time) \
+                    .update({Observation.wspdm: wspdm[idx],
+                             Observation.tempm: tempm[idx]
+                             }, synchronize_session=False)
+            except Exception, e:
+                logging.error(e)
         db.session.commit()
 
     @staticmethod
