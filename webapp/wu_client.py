@@ -81,7 +81,11 @@ class WuClient:
                                                                     call,
                                                                     urllib.quote(query.encode('utf-8')))
             r = requests.get(url)
-            response = r.json()
+            try:
+                response = r.json()
+            except Exception, e:
+                logging.exception("Cannot parse %s: %r", r.content, e)
+                raise e
             return response
 
     def geolookup(self, query):
