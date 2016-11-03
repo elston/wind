@@ -95,7 +95,7 @@ app.controller('WindparkTurbinesCtrl', ['$scope', '$rootScope', '$timeout', '$ui
                                 }],
                                 xAxis: [{
                                     title: {
-                                        text: 'Wind speed, m/s'
+                                        text: 'Wind speed, km/h'
                                     }
                                 }],
                                 series: [{

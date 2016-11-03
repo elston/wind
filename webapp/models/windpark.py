@@ -108,7 +108,7 @@ class Windpark(db.Model):
         if self.power_curve is None:
             return None
         else:
-            return [[x[0], x[1] / 1000.0] for x in self.power_curve.values]
+            return [[x[0] * 3.6, x[1] / 1000.0] for x in self.power_curve.values]
 
     def _calculate_total_power_curve(self):
         if self.data_source != 'turbines':
@@ -137,14 +137,14 @@ class Windpark(db.Model):
         forecasted_wind, simulated_wind, dates, used_forecast_time \
             = self.location.simulate_wind_with_forecast(date, time_span, n_scenarios, da_am_time_span,
                                                         n_da_am_scenarios, forecast_error_variance)
-        simulated_wind = np.array(simulated_wind) / 3.6
-        simulated_power = np.interp(simulated_wind, self.power_curve['wind_speed'], self.power_curve['power']) / 1000.0
+        simulated_wind = np.array(simulated_wind)
+        simulated_power = np.interp(simulated_wind / 3.6, self.power_curve['wind_speed'], self.power_curve['power']) / 1000.0
 
         if adjusted:
-            forecasted_wind = (np.array(forecasted_wind) + self.location.forecast_error_model.coef['intercept']) / 3.6
+            forecasted_wind = (np.array(forecasted_wind) + self.location.forecast_error_model.coef['intercept'])
         else:
-            forecasted_wind = np.array(forecasted_wind) / 3.6
-        forecasted_power = np.interp(forecasted_wind, self.power_curve['wind_speed'],
+            forecasted_wind = np.array(forecasted_wind)
+        forecasted_power = np.interp(forecasted_wind / 3.6, self.power_curve['wind_speed'],
                                      self.power_curve['power']) / 1000.0
 
         return simulated_wind, simulated_power, forecasted_wind, forecasted_power, dates, used_forecast_time

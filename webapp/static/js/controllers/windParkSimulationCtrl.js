@@ -197,7 +197,7 @@ app.controller('WindParkSimulationCtrl', ['$scope', '$timeout', 'windparkService
                                 },
                                 yAxis: [{
                                     title: {
-                                        text: 'Wind speed, m/s'
+                                        text: 'Wind speed, km/h'
                                     }
                                 }],
                                 xAxis: {
@@ -267,7 +267,7 @@ app.controller('WindParkSimulationCtrl', ['$scope', '$timeout', 'windparkService
                                 },
                                 yAxis: [{
                                     title: {
-                                        text: 'Wind speed, m/s'
+                                        text: 'Wind speed, km/h'
                                     }
                                 }],
                                 xAxis: {

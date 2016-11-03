@@ -77,7 +77,7 @@ app.controller('AddTurbineCtrl', ['$scope', '$rootScope', '$uibModalInstance', '
                 }],
                 xAxis: [{
                     title: {
-                        text: 'Wind speed, m/s'
+                        text: 'Wind speed, km/h'
                     }
                 }],
                 series: [{

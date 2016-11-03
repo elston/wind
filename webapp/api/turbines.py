@@ -34,7 +34,7 @@ def get_power_curve(turbine_id):
         turbine = db.session.query(Turbine).filter_by(id=turbine_id).first()
         table_data = []
         for point in turbine.power_curve:
-            table_data.append([point.wind_speed, point.power / 1000.0])
+            table_data.append([point.wind_speed * 3.6, point.power / 1000.0])
 
         js = jsonify({'data': table_data})
         return js
