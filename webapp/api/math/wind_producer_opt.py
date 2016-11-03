@@ -21,16 +21,17 @@ class Input(tuple):
     __slots__ = ()  # prevents the creation of instance dictionaries
 
     _fields = (
-        "D", "L", "A", "W", "K", "dt", "Pmax", "alfa", "beta", "P", "lambdaD", "MAvsMD", "r_pos", "r_neg", "pi", "NT")
+        "D", "L", "A", "W", "K", "dt", "Pmax", "alfa", "beta", "P", "lambdaD", "MAvsMD", "r_pos", "r_neg", "pi", "NT",
+    "intraday_limit")
 
-    def __new__(_cls, D, L, A, W, K, dt, Pmax, alfa, beta, P, lambdaD, MAvsMD, r_pos, r_neg, pi, NT):
+    def __new__(_cls, D, L, A, W, K, dt, Pmax, alfa, beta, P, lambdaD, MAvsMD, r_pos, r_neg, pi, NT, intraday_limit):
         'Create new instance of Input(D, L, A, W, K, dt, Pmax, alfa, beta, P, lambdaD, MAvsMD, r_pos, r_neg, pi, NT)'
         return tuple.__new__(_cls, (
-            D, L, A, W, K, dt, Pmax, alfa, beta, P, lambdaD, MAvsMD, r_pos, r_neg, pi, NT,))
+            D, L, A, W, K, dt, Pmax, alfa, beta, P, lambdaD, MAvsMD, r_pos, r_neg, pi, NT, intraday_limit))
 
     def __repr__(self):
         'Return a nicely formatted representation string'
-        return 'Input(D=%r, L=%r, A=%r, W=%r, K=%r, dt=%r, Pmax=%r, alfa=%r, beta=%r, P=%r, lambdaD=%r, MAvsMD=%r, r_pos=%r, r_neg=%r, pi=%r, NT=%r)' % self
+        return 'Input(D=%r, L=%r, A=%r, W=%r, K=%r, dt=%r, Pmax=%r, alfa=%r, beta=%r, P=%r, lambdaD=%r, MAvsMD=%r, r_pos=%r, r_neg=%r, pi=%r, NT=%r, intraday_limit=%r)' % self
 
     def _asdict(self):
         'Return a new OrderedDict which maps field names to their values'
@@ -62,6 +63,7 @@ class Input(tuple):
                      doc='Imbalance price ratio for negative energy deviations, real K vec. for s.p. KxNT matr. for m.p.')
     pi = property(itemgetter(14), doc='Scenario probabilities, real DxLxAxWxK matrix')
     NT = property(itemgetter(15), doc='Index for time periods, integer scalar')
+    intraday_limit = property(itemgetter(16), doc='max(abs(Pa/Ps)) * 100%')
 
 
 class Variables(tuple):
@@ -429,6 +431,17 @@ class Optimizator():
         constraints.extend(cons_part)
 
         logging.debug("CVaRrest = \n%s", "\n".join([x.expr for x in cons_part]))
+
+        # Limit percentage of intraday volumes
+        cons_part = []
+        for d in xrange(inp.D):
+            for l in xrange(inp.L):
+                for t in xrange(inp.NT):
+                    cons_part.append(var.Pa[d][l][t] <= var.Ps[d][l][t] * inp.intraday_limit / 100.0)
+                    cons_part.append(var.Pa[d][l][t] >= -var.Ps[d][l][t] * inp.intraday_limit / 100.0)
+        constraints.extend(cons_part)
+
+        logging.debug("additional = \n%s", "\n".join([x.expr for x in cons_part]))
 
         logging.debug("constraints = \n%s", "\n".join([x.expr for x in constraints]))
         return constraints

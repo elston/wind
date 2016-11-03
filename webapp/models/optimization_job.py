@@ -43,6 +43,7 @@ class OptimizationJob(TypeDecorator):
         self.forecast_error_variance = None
         self.enable_shorts = False
         self.trades_limit = 10
+        self.intraday_limit = 10
 
     def set_parameters(self):
         pass
@@ -83,7 +84,8 @@ class OptimizationJob(TypeDecorator):
                     Pmax=self.Pmax, alpha=self.alpha, beta=self.beta,
                     mode=self.mode,
                     forecast_error_variance=self.forecast_error_variance,
-                    enable_shorts=self.enable_shorts, trades_limit=self.trades_limit)
+                    enable_shorts=self.enable_shorts, trades_limit=self.trades_limit,
+                    intraday_limit=self.intraday_limit)
 
     def get_csv(self):
         fields = ['name', 'value']

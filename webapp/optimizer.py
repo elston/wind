@@ -126,7 +126,8 @@ class Optimizer(object):
                     MAvsMD=MAvsMD_red,
                     r_pos=r_pos,
                     r_neg=r_neg,
-                    pi=pi
+                    pi=pi,
+                    intraday_limit=job.intraday_limit
                     )
 
         n_variables = D * NT * (1 + 2 * L * (1 + W)) + 1 + D * L * A * W * K
