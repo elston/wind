@@ -720,19 +720,19 @@ def optimization_pretest(wpark_id):
                         market.sqrt_r_model.fitting_time is None):
             raise Exception('Price model fitting time is unknown')
 
-        wind_model_fitting_time = datetime.strptime(wind_model.fitting_time, '%Y-%m-%dT%H:%M:%S.%f')
-        if not job_parameters[
-            'refit_weather'] and True:  # datetime.utcnow() - wind_model.fitting_time > timedelta(days=1):
-            warnings.append(
-                'The last wind model calibration date was: %s would you like to proceed anyway?' % utc_naive_to_location_aware(
-                    wind_model_fitting_time, location_tz).strftime('%d %b %Y %I:%M%p %Z%z'))
+        if not job_parameters['refit_weather']:
+            wind_model_fitting_time = datetime.strptime(wind_model.fitting_time, '%Y-%m-%dT%H:%M:%S.%f')
+            if datetime.utcnow() - wind_model_fitting_time > timedelta(days=1):
+                warnings.append(
+                    'The last wind model calibration date was: %s would you like to proceed anyway?' % utc_naive_to_location_aware(
+                        wind_model_fitting_time, location_tz).strftime('%d %b %Y %I:%M%p %Z%z'))
 
-        price_model_fitting_time = datetime.strptime(market.lambdaD_model.fitting_time, '%Y-%m-%dT%H:%M:%S.%f')
-        if not job_parameters[
-            'refit_market'] and True:  # datetime.utcnow() - market.lambdaD_model.fitting_time > timedelta(days=1):
-            warnings.append(
-                'The last last market price calibration date was: %s would you like to proceed anyway?' % utc_naive_to_location_aware(
-                    price_model_fitting_time, location_tz).strftime('%d %b %Y %I:%M%p %Z%z'))
+        if not job_parameters['refit_market']:
+            price_model_fitting_time = datetime.strptime(market.lambdaD_model.fitting_time, '%Y-%m-%dT%H:%M:%S.%f')
+            if datetime.utcnow() - price_model_fitting_time > timedelta(days=1):
+                warnings.append(
+                    'The last last market price calibration date was: %s would you like to proceed anyway?' % utc_naive_to_location_aware(
+                        price_model_fitting_time, location_tz).strftime('%d %b %Y %I:%M%p %Z%z'))
 
         js = jsonify({'data': warnings})
         return js
