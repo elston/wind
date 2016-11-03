@@ -339,7 +339,7 @@ def get_wind_simulation(wpark_id):
         windpark = db.session.query(Windpark).filter_by(id=wpark_id).first()
 
         simulation_date = (datetime.strptime(request.values.get('simulation_date'),
-                                             "%Y-%m-%dT%H:%M:%S.%fZ")) - timedelta(days=1)
+                                             "%Y-%m-%dT%H:%M:%S.%fZ"))
 
         n_scenarios = int(request.values.get('n_scenarios'))
         n_reduced_scenarios = int(request.values.get('n_reduced_scenarios'))

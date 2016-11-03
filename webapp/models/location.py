@@ -379,7 +379,7 @@ class Location(db.Model):
         logging.debug(long_command)
 
         location_tz = pytz.timezone(self.tz_long)
-        location_12pm = location_tz.localize(datetime.combine(date, time(hour=12)))
+        location_12pm = location_tz.localize(datetime.combine(date, time(hour=12))) - timedelta(days=1)
         utc_naive_location_12pm = location_12pm.astimezone(pytz.UTC).replace(tzinfo=None)
 
         last_forecast = None
