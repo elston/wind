@@ -448,6 +448,24 @@ class Location(db.Model):
             errors_merged.extend([None] * 36)
         return errors_merged
 
+    def get_observation_for_forecast(self, forecast_time):
+        qry = db.session.query(Observation).filter(
+            Observation.time >= forecast_time - timedelta(minutes=30),
+            Observation.time < forecast_time + timedelta(minutes=30),
+            Observation.location_id == self.id
+        )
+
+        observation_points = qry.all()
+
+        if len(observation_points) == 0:
+            return None
+        else:
+            average_wspdm = np.average([x.wspdm for x in observation_points])
+            if np.isnan(average_wspdm):
+                return None
+            else:
+                return average_wspdm
+
     def errors_chunked(self):
         location_tz = pytz.timezone(self.tz_long)
         last_observation_time = self.observations[-1].time.replace(tzinfo=pytz.UTC).astimezone(
@@ -471,6 +489,10 @@ class Location(db.Model):
 
         errors_chunked = []
 
+        past_calls = {}
+        miss = 0
+        hit = 0
+
         logging.info('Using %d forecasts', len(forecasts_to_fit))
         for forecast in forecasts_to_fit:
             logging.info('%s', forecast.time.replace(tzinfo=pytz.UTC).astimezone(location_tz))
@@ -485,28 +507,25 @@ class Location(db.Model):
             forecast_data = qry.all()[:36]
             for forecast_point in forecast_data:
 
-                qry = db.session.query(Observation).filter(
-                    Observation.time >= forecast_point.time - timedelta(minutes=30),
-                    Observation.time < forecast_point.time + timedelta(minutes=30),
-                    Observation.location_id == self.id
-                )
+                if forecast_point.time not in past_calls:
+                    past_calls[forecast_point.time] = self.get_observation_for_forecast(forecast_point.time)
+                    miss += 1
+                else:
+                    hit += 1
+                average_wspdm = past_calls[forecast_point.time]
 
-                observation_points = qry.all()
-
-                if len(observation_points) == 0:
+                if average_wspdm is None:
                     forecast_errors.append([forecast_point.time, None])
                 else:
-                    average_wspdm = np.average([x.wspdm for x in observation_points])
-                    if np.isnan(average_wspdm):
-                        forecast_errors.append([forecast_point.time, None])
-                    else:
-                        error = average_wspdm - forecast_point.wspdm
-                        forecast_errors.append([forecast_point.time, error])
+                    error = average_wspdm - forecast_point.wspdm
+                    forecast_errors.append([forecast_point.time, error])
 
                 forecast_data_prepared.append([forecast_point.time, forecast_point.wspdm])
 
             errors_chunked.append(
                 {'timestamp': forecast.time, 'errors': forecast_errors, 'forecasts': forecast_data_prepared})
+
+        # logging.info('miss %d, hit %d', miss, hit)
 
         return errors_chunked
 
