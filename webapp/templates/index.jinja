@@ -6,7 +6,8 @@
 
 {% block styles %}
 {{ super() }}
-<link type="text/css" href="{{ url_for('.static', filename='bower_components/jquery-ui/themes/base/jquery-ui.min.css') }}"
+<link type="text/css"
+      href="{{ url_for('.static', filename='bower_components/jquery-ui/themes/base/jquery-ui.min.css') }}"
       rel='stylesheet'/>
 <link type="text/css"
       href="{{ url_for('.static', filename='bower_components/alertify-js/build/css/alertify.min.css') }}"
@@ -16,9 +17,11 @@
       rel='stylesheet'/>
 <link type="text/css" href="{{ url_for('.static', filename='bower_components/angular-ui-grid/ui-grid.min.css') }}"
       rel='stylesheet'/>
-<link type="text/css" href="{{ url_for('.static', filename='bower_components/angularjs-slider/dist/rzslider.min.css') }}"
+<link type="text/css"
+      href="{{ url_for('.static', filename='bower_components/angularjs-slider/dist/rzslider.min.css') }}"
       rel='stylesheet'/>
-<link type="text/css" href="{{ url_for('.static', filename='bower_components/bootstrap-daterangepicker/daterangepicker.css') }}"
+<link type="text/css"
+      href="{{ url_for('.static', filename='bower_components/bootstrap-daterangepicker/daterangepicker.css') }}"
       rel='stylesheet'/>
 <link type="text/css" href="{{ url_for('.static', filename='editablegrid/editablegrid.css') }}" rel='stylesheet'/>
 <link type="text/css" href="{{ url_for('.static', filename='css/style.css') }}" rel='stylesheet'/>
@@ -36,6 +39,7 @@
 {% else %}
     $ADMIN_ROLE = false;
 {% endif %}
+
 </script>
 <script src='https://maps.googleapis.com/maps/api/js?v=3.exp&key={{ gmap_api_key }}'></script>
 <script src="{{ url_for('.static', filename='bower_components/jquery-ui/jquery-ui.min.js') }}"></script>
@@ -79,10 +83,12 @@
 <script src="{{ url_for('.static', filename='js/controllers/locationDataCtrl.js') }}"></script>
 <script src="{{ url_for('.static', filename='js/controllers/addTurbineCtrl.js') }}"></script>
 <script src="{{ url_for('.static', filename='js/controllers/forecastErrorModelCtrl.js') }}"></script>
+<script src="{{ url_for('.static', filename='js/controllers/jobsCtrl.js') }}"></script>
 <script src="{{ url_for('.static', filename='js/services/locationService.js') }}"></script>
 <script src="{{ url_for('.static', filename='js/services/marketService.js') }}"></script>
 <script src="{{ url_for('.static', filename='js/services/windparkService.js') }}"></script>
 <script src="{{ url_for('.static', filename='js/services/turbinesService.js') }}"></script>
+<script src="{{ url_for('.static', filename='js/services/jobsService.js') }}"></script>
 {% if current_user.has_role('admin') %}
 <script src="{{ url_for('.static', filename='js/admin.js') }}"></script>
 {% endif %}
@@ -109,7 +115,8 @@
             <li role="presentation" class="active"><a href="#dashboard" aria-controls="symbols" role="tab"
                                                       data-toggle="tab">Dashboard</a>
             </li>
-            <li role="presentation"><a href="#locations" aria-controls="symbols" role="tab" data-toggle="tab">Locations</a>
+            <li role="presentation"><a href="#locations" aria-controls="symbols" role="tab"
+                                       data-toggle="tab">Locations</a>
             </li>
             <li role="presentation"><a href="#markets" aria-controls="symbols" role="tab" data-toggle="tab">Markets</a>
             </li>
@@ -133,11 +140,7 @@
             <div role="tabpanel" class="tab-pane active" id="dashboard">{% include "dashboard.jinja" %}</div>
             <div role="tabpanel" class="tab-pane" id="locations">{% include "locations.jinja" %}</div>
             <div role="tabpanel" class="tab-pane" id="markets">{% include "markets.jinja" %}</div>
-            <div role="tabpanel" class="tab-pane" id="jobs">
-                <div ng-controller="StatusCtrl">
-                    <h5>Not implemented yet</h5>
-                </div>
-            </div>
+            <div role="tabpanel" class="tab-pane" id="jobs">{% include "jobs.jinja" %}</div>
             {% if current_user.has_role('admin') %}
             <div role="tabpanel" class="tab-pane" id="admin">{% include "admin.jinja" %}</div>
             {% endif %}
