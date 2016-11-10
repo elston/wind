@@ -58,5 +58,11 @@ class Scheduler(object):
 
 def scheduled_forecast_update(location):
     logging.info("Scheduled update for location %s", location.name)
-    location.update_history()
-    location.update_forecast()
+    try:
+        location.update_history()
+    finally:
+        db.session.remove()
+    try:
+        location.update_forecast()
+    finally:
+        db.session.remove()
