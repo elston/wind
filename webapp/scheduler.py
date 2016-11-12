@@ -6,6 +6,7 @@ from apscheduler.executors.pool import ThreadPoolExecutor
 import pytz
 from webapp import db, app
 from .models import Location
+from webapp.tasks import start_forecast_update
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
@@ -35,7 +36,7 @@ class Scheduler(object):
                 continue
             job_id = 'user_%s_forecast_update_%s_11am' % (location.user_id, location.l)
             if location.update_at_11am:
-                job = self.scheduler.add_job(scheduled_forecast_update, args=(location,), id=job_id, trigger='cron',
+                job = self.scheduler.add_job(start_forecast_update, args=(location,), id=job_id, trigger='cron',
                                              hour=11, minute=0, replace_existing=True, timezone=timezone)
             else:
                 try:
@@ -44,7 +45,7 @@ class Scheduler(object):
                     pass
             job_id = 'user_%s_forecast_update_%s_11pm' % (location.user_id, location.l)
             if location.update_at_11pm:
-                job = self.scheduler.add_job(scheduled_forecast_update, args=(location,), id=job_id, trigger='cron',
+                job = self.scheduler.add_job(start_forecast_update, args=(location,), id=job_id, trigger='cron',
                                              hour=23, minute=0, replace_existing=True, timezone=timezone)
             else:
                 try:
@@ -54,9 +55,3 @@ class Scheduler(object):
 
     def start(self):
         self.scheduler.start()
-
-
-def scheduled_forecast_update(location):
-    logging.info("Scheduled update for location %s", location.name)
-    location.update_history()
-    location.update_forecast()

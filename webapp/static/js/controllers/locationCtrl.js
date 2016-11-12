@@ -89,13 +89,13 @@ app.controller('LocationsCtrl', ['$rootScope', '$scope', '$uibModal', 'locationS
                     alertify.error('Error while updating history for location "' + locationName + '": ' + error);
                 });
 
-        locationService.updateForecast(locationId)
-            .then(function () {
-                    alertify.success('Forecast for location "' + locationName + '" updated');
-                },
-                function (error) {
-                    alertify.error('Error while updating forecast for location "' + locationName + '": ' + error);
-                });
+//        locationService.updateForecast(locationId)
+//            .then(function () {
+//                    alertify.success('Forecast for location "' + locationName + '" updated');
+//                },
+//                function (error) {
+//                    alertify.error('Error while updating forecast for location "' + locationName + '": ' + error);
+//                });
     });
 
     $scope.$on('downloadData', function ($event) {

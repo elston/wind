@@ -1,5 +1,7 @@
+from datetime import datetime
 import logging
 import signal
+import urllib
 
 import psutil as psutil
 import os
@@ -7,7 +9,7 @@ from rq import Queue, get_current_job, Connection, Worker
 from redis import Redis
 from rq.job import Job
 from webapp import db
-from webapp.models import Windpark
+from webapp.models import Windpark, Location
 from webapp.models.optimization_job import OptimizationJob
 from webapp.optimizer import Optimizer
 
@@ -82,3 +84,27 @@ def windpark_optimizer_job(windpark_id, job_parameters=OptimizationJob()):
         db.session.commit()
 
         return result.to_dict()
+
+
+def start_forecast_update(location_id):
+    job_id = urllib.urlencode({'job': 'wu_download', 'location': location_id, 'id': datetime.utcnow().isoformat()})
+    job = q.enqueue(forecast_update_job, location_id, timeout=1200, result_ttl=-1, job_id=job_id)
+    return job
+
+
+def forecast_update_job(location_id):
+    with Connection():
+        job = get_current_job()
+        print 'Current job: %s' % (job.id,)
+        logging.getLogger().addHandler(RqLogHandler(job))
+        # logging.info("Scheduled update for location %s", location.name)
+        try:
+            location = db.session.query(Location).filter_by(id=location_id).first()
+            location.update_history()
+        finally:
+            db.session.remove()
+        try:
+            location = db.session.query(Location).filter_by(id=location_id).first()
+            location.update_forecast()
+        finally:
+            db.session.remove()
