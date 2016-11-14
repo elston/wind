@@ -51,9 +51,7 @@ def start_windpark_optimization(windpark_id, job_parameters=OptimizationJob()):
 def windpark_optimization_status(windpark_id):
     return q.fetch_job('windpark_opt_%d' % windpark_id)
 
-
-def terminate_windpark_optimization(windpark_id):
-    job_id = 'windpark_opt_%d' % windpark_id
+def kill_job(job_id):
     with Connection():
         ws = Worker.all()
         for w in ws:
@@ -67,6 +65,12 @@ def terminate_windpark_optimization(windpark_id):
                         os.kill(children[0].pid, signal.SIGKILL)
                 except Exception, e:
                     logging.exception("Can't kill worker")
+        job = Job.fetch(job_id)
+        job.delete()
+
+
+def cancel_job(job_id):
+    with Connection():
         job = Job.fetch(job_id)
         job.delete()
 

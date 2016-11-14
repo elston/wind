@@ -87,3 +87,30 @@ def list_jobs():
         logger.exception(e)
         js = jsonify({'error': repr(e)})
         return js
+
+
+@app.route('/api/rqjobs/<job_id>/cancel', methods=['POST', ])
+def cancel_job(job_id):
+    if not current_user.is_authenticated:
+        return jsonify({'error': 'User unauthorized'})
+    try:
+        webapp.tasks.cancel_job(job_id)
+        js = jsonify({'data': 'OK'})
+        return js
+    except Exception, e:
+        logger.exception(e)
+        js = jsonify({'error': repr(e)})
+        return js
+
+@app.route('/api/rqjobs/<job_id>/kill', methods=['POST', ])
+def kill_job(job_id):
+    if not current_user.is_authenticated:
+        return jsonify({'error': 'User unauthorized'})
+    try:
+        webapp.tasks.kill_job(job_id)
+        js = jsonify({'data': 'OK'})
+        return js
+    except Exception, e:
+        logger.exception(e)
+        js = jsonify({'error': repr(e)})
+        return js

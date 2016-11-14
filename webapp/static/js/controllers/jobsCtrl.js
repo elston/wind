@@ -19,12 +19,12 @@ app.controller('JobsCtrl', ['$scope', '$uibModal', 'jobsService', function ($sco
                 '{{grid.getCellValue(row, col)}}</div>'
             },
             {field: 'status'},
-            {
-                field: 'created_at',
-                cellTemplate: '<div class="ui-grid-cell-contents" uib-tooltip="{{grid.getCellValue(row, col)}}" ' +
-                'tooltip-append-to-body="true">' +
-                '{{grid.getCellValue(row, col)}}</div>'
-            },
+//            {
+//                field: 'created_at',
+//                cellTemplate: '<div class="ui-grid-cell-contents" uib-tooltip="{{grid.getCellValue(row, col)}}" ' +
+//                'tooltip-append-to-body="true">' +
+//                '{{grid.getCellValue(row, col)}}</div>'
+//            },
             {
                 field: 'enqueued_at',
                 cellTemplate: '<div class="ui-grid-cell-contents" uib-tooltip="{{grid.getCellValue(row, col)}}" ' +
@@ -49,6 +49,20 @@ app.controller('JobsCtrl', ['$scope', '$uibModal', 'jobsService', function ($sco
                 '<a href="#" ng-click="$emit(\'log:open\', grid.getCellValue(row, col).log)" '+
                 'ng-show="grid.getCellValue(row, col).log.length">' +
                 '{{grid.getCellValue(row, col).log.length}} lines</a></div>'
+            },
+            {
+                field: 'action',
+                headerCellTemplate: ' ',
+                enableHiding: false,
+                width: 32,
+                cellTemplate: '<button type="button" class="btn btn-warning btn-xs" '+
+                'ng-show="row.entity.status==\'queued\'" ng-click="$emit(\'job:cancel\',row.entity.job_id)" ' +
+                'tooltip-append-to-body="true" uib-tooltip="Cancel">' +
+                '<span class="glyphicon glyphicon-remove-sign" aria-hidden="true"></span></button>' +
+                '<button type="button" class="btn btn-danger btn-xs" '+
+                'ng-show="row.entity.status==\'started\'" ng-click="$emit(\'job:kill\',row.entity.job_id)" ' +
+                'tooltip-append-to-body="true" uib-tooltip="Kill">' +
+                '<span class="glyphicon glyphicon-fire" aria-hidden="true"></span></button>'
             }
         ]
     };
@@ -84,4 +98,25 @@ app.controller('JobsCtrl', ['$scope', '$uibModal', 'jobsService', function ($sco
         });
     });
 
+    $scope.$on('job:cancel', function (event, data) {
+        jobsService.cancelJob(data).then(function () {
+                alertify.success('OK');
+            },
+            function (error) {
+                alertify.error(error);
+            });
+    });
+
+    $scope.$on('job:kill', function (event, data) {
+        alertify.confirm('Confirm', 'Your activity can break data integrity. Would you like to proceed anyway?',
+            function() {
+            jobsService.killJob(data).then(function () {
+                alertify.success('OK');
+            },
+            function (error) {
+                alertify.error(error);
+            })
+            },
+                        null);
+    });
 }]);
