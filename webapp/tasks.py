@@ -1,4 +1,3 @@
-from datetime import datetime
 import logging
 import signal
 import urllib
@@ -87,7 +86,8 @@ def windpark_optimizer_job(windpark_id, job_parameters=OptimizationJob()):
 
 
 def start_forecast_update(location_id):
-    job_id = urllib.urlencode({'job': 'wu_download', 'location': location_id, 'id': datetime.utcnow().isoformat()})
+    job_id = urllib.urlencode(
+        {'job': 'wu_download', 'location': location_id})  # , 'id': datetime.utcnow().isoformat()})
     job = q.enqueue(forecast_update_job, location_id, timeout=1200, result_ttl=-1, job_id=job_id)
     return job
 

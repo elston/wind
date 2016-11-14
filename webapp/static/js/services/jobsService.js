@@ -1,49 +1,30 @@
 /*global app,$SCRIPT_ROOT,alertify*/
 
-app.factory('jobsService', [function () {
+app.factory('jobsService', ['$interval', '$rootScope', function ($interval, $rootScope) {
     'use strict';
-    var sJobsList = [];
-    var rqJobsList = [];
+    var status = {};
 
-    var getSchedulerJobs = function () {
-        return sJobsList;
+    var getStatus = function () {
+        return status;
     };
 
-    var getRqJobs = function () {
-        return rqJobsList;
-    };
-
-    var loadJobsList = function () {
-        return $.when(
-            $.get($SCRIPT_ROOT + '/scheduler/jobs')
-                .then(function (response) {
-                        if ('error' in response) {
-                            throw response.error;
-                        } else {
-                            sJobsList = response.data;
-                        }
-                    },
-                    function (error) {
-                        throw error.statusText;
-                    }),
-            $.get($SCRIPT_ROOT + '/rq/jobs')
-                .then(function (response) {
-                        if ('error' in response) {
-                            throw response.error;
-                        } else {
-                            rqJobsList = response.data;
-                        }
-                    },
-                    function (error) {
-                        throw error.statusText;
-                    })
-        );
-    };
+    $interval(function () {
+        $.get($SCRIPT_ROOT + '/status')
+            .then(function (data) {
+                    if ('error' in data) {
+                        throw data.error;
+                    } else {
+                        status = data.data;
+                        $rootScope.$broadcast('status:update', status);
+                    }
+                },
+                function (error) {
+                    throw error.statusText;
+                });
+    }, 2000);
 
     return {
-        getSchedulerJobs: getSchedulerJobs,
-        getRqJobs: getRqJobs,
-        loadJobsList: loadJobsList
+        getStatus: getStatus
     };
 
 }]);

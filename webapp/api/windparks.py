@@ -15,7 +15,7 @@ from .math.wind_vs_power_model import fit, model_function
 from webapp.models import Windpark, Generation, Observation
 from webapp.models.optimization_job import OptimizationJob
 from webapp.models.windpark_turbines import WindparkTurbine
-from webapp.tasks import start_windpark_optimization, windpark_optimization_status, terminate_windpark_optimization
+import webapp.tasks
 from webapp.tz_utils import shift_ts, ts_to_tz_name, utc_naive_to_shifted_ts, utc_naive_to_tz_name, \
     utc_naive_to_location_aware
 from werkzeug.utils import secure_filename
@@ -517,7 +517,7 @@ def start_optimization(wpark_id):
         windpark.optimization_job = opt_job
         db.session.commit()
 
-        start_windpark_optimization(int(wpark_id), opt_job)
+        webapp.tasks.start_windpark_optimization(int(wpark_id), opt_job)
         js = jsonify({'data': 'OK'})
         return js
     except Exception, e:
@@ -532,7 +532,7 @@ def optimization_status(wpark_id):
         return jsonify({'error': 'User unauthorized'})
     try:
         try:
-            job = windpark_optimization_status(int(wpark_id))
+            job = webapp.tasks.windpark_optimization_status(int(wpark_id))
         except:
             return jsonify({'data': None})
         if job is None:
@@ -586,7 +586,7 @@ def terminate_optimization(wpark_id):
     if not current_user.is_authenticated:
         return jsonify({'error': 'User unauthorized'})
     try:
-        terminate_windpark_optimization(int(wpark_id))
+        webapp.tasks.terminate_windpark_optimization(int(wpark_id))
         js = jsonify({'data': 'OK'})
         return js
     except Exception, e:

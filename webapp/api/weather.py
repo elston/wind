@@ -10,9 +10,10 @@ from flask import jsonify, request, make_response
 from flask_login import current_user
 from scipy import stats
 from sqlalchemy import func
-from webapp import app, db, wuclient, sch
+from webapp import app, db, wuclient
+import webapp
 from webapp.models import Location, Forecast, HourlyForecast
-from webapp.tasks import start_forecast_update
+import webapp.tasks
 from webapp.tz_utils import utc_naive_to_ts, utc_naive_to_tz_name, utc_naive_to_shifted_ts, utc_naive_to_location_aware
 from werkzeug.utils import secure_filename
 
@@ -60,7 +61,7 @@ def add_locations():
             db.session.add(location)
         # location.update_history()
         # location.update_forecast()
-        sch.update_weather_schedules()
+        webapp.sch.update_weather_schedules()
         db.session.commit()
 
         js = jsonify({'data': 'OK'})
@@ -142,7 +143,7 @@ def update_history(loc_id):
     if not current_user.is_authenticated:
         return jsonify({'error': 'User unauthorized'})
     try:
-        start_forecast_update(loc_id)
+        webapp.tasks.start_forecast_update(loc_id)
         # location = db.session.query(Location).filter_by(id=loc_id).first()
         # location.update_history()
         js = jsonify({'data': 'OK'})

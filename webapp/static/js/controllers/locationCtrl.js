@@ -54,39 +54,55 @@ app.controller('LocationsCtrl', ['$rootScope', '$scope', '$uibModal', 'locationS
                 field: 'action',
                 headerCellTemplate: ' ',
                 enableHiding: false,
-                cellTemplate: '<button type="button" class="btn btn-warning btn-xs" ng-click="$emit(\'updateWeather\')" ' +
+                cellTemplate: '<button type="button" class="btn btn-warning btn-xs" ng-disabled="row.entity.busy" ng-click="$emit(\'updateWeather\')" ' +
                 'tooltip-append-to-body="true" uib-tooltip="Reload">' +
                 '<span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></button>' +
-                '<button type="button" class="btn btn-warning btn-xs" ng-click="$emit(\'viewData\')" ' +
+                '<button type="button" class="btn btn-warning btn-xs" ng-disabled="row.entity.busy" ng-click="$emit(\'viewData\')" ' +
                 'tooltip-append-to-body="true" uib-tooltip="Edit data">' +
                 '<span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></button>' +
-                '<button type="button" class="btn btn-info btn-xs" ng-disabled="row.entity.n_observations==0" ng-click="$emit(\'viewWeather\')" ' +
+                '<button type="button" class="btn btn-info btn-xs" ng-disabled="row.entity.busy || row.entity.n_observations==0" ng-click="$emit(\'viewWeather\')" ' +
                 'tooltip-append-to-body="true" uib-tooltip="View chart">' +
                 '<span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>' +
-                '<button type="button" class="btn btn-info btn-xs" ng-disabled="row.entity.n_observations==0" ng-click="$emit(\'viewDistribution\')" ' +
+                '<button type="button" class="btn btn-info btn-xs" ng-disabled="row.entity.busy || row.entity.n_observations==0" ng-click="$emit(\'viewDistribution\')" ' +
                 'tooltip-append-to-body="true" uib-tooltip="Fit and view wind speed distribution">' +
                 '<span class="glyphicon glyphicon-stats" aria-hidden="true"></span> 1</button>' +
-                '<button type="button" class="btn btn-info btn-xs" ng-disabled="row.entity.n_observations==0" ng-click="$emit(\'viewErrorModel\')" ' +
+                '<button type="button" class="btn btn-info btn-xs" ng-disabled="row.entity.busy || row.entity.n_observations==0" ng-click="$emit(\'viewErrorModel\')" ' +
                 'tooltip-append-to-body="true" uib-tooltip="View forecast error model">' +
                 '<span class="glyphicon glyphicon-stats" aria-hidden="true"></span> 2</button>' +
-                '<button type="button" class="btn btn-secondary btn-xs" ng-click="$emit(\'downloadData\')" ' +
+                '<button type="button" class="btn btn-secondary btn-xs" ng-disabled="row.entity.busy" ng-click="$emit(\'downloadData\')" ' +
                 'tooltip-append-to-body="true" uib-tooltip="Download data">' +
-                '<span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span></button>',
-                width: 200
+                '<span class="glyphicon glyphicon-download-alt" ng-disabled="row.entity.busy" aria-hidden="true"></span></button>' +
+                '<span ng-show="row.entity.busy" class="glyphicon glyphicon-refresh spinning"></span>',
+                width: 250
             }
         ]
     };
+
+    $scope.$on('status:update', function (event, data) {
+        $scope.gridOptions.data.forEach(function (location) {
+            var busy = false;
+            data.rqjobs.forEach(function (rqjob) {
+                if (+rqjob.location === location.id &&
+                    rqjob.job === 'wu_download' && !((rqjob.status === 'finished') || (rqjob.status === 'failed'))) {
+                    busy = true;
+                }
+            });
+            location.busy = busy;
+        });
+    });
 
     $scope.$on('updateWeather', function ($event) {
         var locationId = $event.targetScope.row.entity.id;
         var locationName = $event.targetScope.row.entity.name;
         locationService.updateHistory(locationId)
             .then(function () {
-                    alertify.success('History for location "' + locationName + '" updated');
-                    $scope.update();
+//                    alertify.success('History for location "' + locationName + '" updated');
+                    alertify.success('Download for "' + locationName + '" queued');
+//                    $scope.update();
                 },
                 function (error) {
-                    alertify.error('Error while updating history for location "' + locationName + '": ' + error);
+//                    alertify.error('Error while updating history for location "' + locationName + '": ' + error);
+                    alertify.error('Error while queuing download task for location "' + locationName + '": ' + error);
                 });
 
 //        locationService.updateForecast(locationId)
@@ -188,7 +204,7 @@ app.controller('LocationsCtrl', ['$rootScope', '$scope', '$uibModal', 'locationS
             var capacityCount = 0;
 
             $rootScope.windparksList.forEach(function (windpark) {
-                if (windpark.location.id == location.id){
+                if (windpark.location.id == location.id) {
                     windpark.turbines.forEach(function (turbin) {
                         capacityCount += turbin.count * turbin.rated_power;
                     });
@@ -215,13 +231,13 @@ app.controller('LocationsCtrl', ['$rootScope', '$scope', '$uibModal', 'locationS
         var isOpennedByClick = false;
         var isOpenedByMouseover = false;
 
-        infoWindow.addListener('closeclick',function(){
+        infoWindow.addListener('closeclick', function () {
             isOpennedByClick = false;
             currentMark.setMap(null);
         });
 
-        marker.addListener('click', function() {
-            setTimeout(function(){
+        marker.addListener('click', function () {
+            setTimeout(function () {
                 isOpenedByMouseover = false;
                 if (!isOpennedByClick) {
                     isOpennedByClick = true;
@@ -235,20 +251,20 @@ app.controller('LocationsCtrl', ['$rootScope', '$scope', '$uibModal', 'locationS
 
         });
 
-        marker.addListener('mouseover', function() {
-            if (!isOpennedByClick || infoWindow.getMap() == null){
+        marker.addListener('mouseover', function () {
+            if (!isOpennedByClick || infoWindow.getMap() == null) {
                 isOpenedByMouseover = true;
                 infoWindow.open(marker.get('map'), marker);
             }
         });
 
-        marker.addListener('mouseout', function() {
-            if(isOpenedByMouseover){
+        marker.addListener('mouseout', function () {
+            if (isOpenedByMouseover) {
                 isOpenedByMouseover = false;
                 infoWindow.close();
             }
         });
-    }
+    };
 
     $scope.update = function () {
         var locations = locationService.getLocations();
