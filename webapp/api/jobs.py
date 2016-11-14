@@ -85,7 +85,31 @@ def list_jobs():
             item['name'] = name
             rqjobs_data.append(item)
 
-        js = jsonify({'data': {'scheduler': scheduler_data, 'rqjobs': rqjobs_data}})
+        interlocks = {'windparks': set(), 'locations': set(), 'markets': set()}
+
+        for rqjob in rqjobs_data:
+            if 'windpark' in rqjob and rqjob.get('status') not in ('finished', 'failed'):
+                windpark_id = int(rqjob['windpark'])
+                interlocks['windparks'].add(windpark_id)
+                windpark = webapp.db.session.query(Windpark).filter_by(id=windpark_id).first()
+                interlocks['locations'].add(windpark.location_id)
+                interlocks['markets'].add(windpark.market_id)
+            elif 'location' in rqjob and rqjob.get('status') not in ('finished', 'failed'):
+                location_id = int(rqjob['location'])
+                interlocks['locations'].add(location_id)
+                windparks = webapp.db.session.query(Windpark).filter_by(location_id=location_id).all()
+                for windpark in windparks:
+                    interlocks['windparks'].add(windpark.id)
+            elif 'market' in rqjob and rqjob.get('status') not in ('finished', 'failed'):
+                market_id = int(rqjob['market'])
+                interlocks['markets'].add(market_id)
+                windparks = webapp.db.session.query(Windpark).filter_by(market_id=market_id).all()
+                for windpark in windparks:
+                    interlocks['windparks'].add(windpark.id)
+
+        interlocks = {k: list(v) for k, v in interlocks.iteritems()}
+
+        js = jsonify({'data': {'scheduler': scheduler_data, 'rqjobs': rqjobs_data, 'interlocks': interlocks}})
         return js
     except Exception, e:
         logger.exception(e)
@@ -105,6 +129,7 @@ def cancel_job(job_id):
         logger.exception(e)
         js = jsonify({'error': repr(e)})
         return js
+
 
 @app.route('/api/rqjobs/<job_id>/kill', methods=['POST', ])
 def kill_job(job_id):

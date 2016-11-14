@@ -4,7 +4,7 @@ app.controller('WindParkOptimizationCtrl', ['$scope', '$interval', '$timeout', '
     function ($scope, $interval, $timeout, windparkService) {
         'use strict';
 
-        $scope.startDisabled = false;
+        $scope.busy = false;
         $scope.statusData = null;
         $scope.optimizationResults = null;
         $scope.optimizationDate = new Date($scope.windpark.optimization_job.date);
@@ -21,7 +21,7 @@ app.controller('WindParkOptimizationCtrl', ['$scope', '$interval', '$timeout', '
         };
 
         var startOptimization = function () {
-            $scope.startDisabled = true;
+            $scope.busy = true;
             windparkService.startOptimization($scope.windpark.id, $scope.windpark.optimization_job).then(
                 function (data) {
                     $scope.jobId = data;
@@ -39,7 +39,7 @@ app.controller('WindParkOptimizationCtrl', ['$scope', '$interval', '$timeout', '
                     }
                 }
             });
-            $scope.startDisabled = busy;
+            $scope.busy = busy;
         });
 
         var confirmWarnings = function (warnings) {

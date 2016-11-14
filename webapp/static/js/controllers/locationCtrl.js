@@ -72,7 +72,8 @@ app.controller('LocationsCtrl', ['$rootScope', '$scope', '$uibModal', 'locationS
                 '<button type="button" class="btn btn-secondary btn-xs" ng-disabled="row.entity.busy" ng-click="$emit(\'downloadData\')" ' +
                 'tooltip-append-to-body="true" uib-tooltip="Download data">' +
                 '<span class="glyphicon glyphicon-download-alt" ng-disabled="row.entity.busy" aria-hidden="true"></span></button>' +
-                '<span ng-show="row.entity.busy" class="glyphicon glyphicon-refresh spinning"></span>',
+                '<span ng-show="row.entity.busy" class="glyphicon glyphicon-refresh spinning"></span>' +
+                '<span ng-show="row.entity.interlocked && !row.entity.busy" class="glyphicon glyphicon-lock"></span>',
                 width: 250
             }
         ]
@@ -88,6 +89,7 @@ app.controller('LocationsCtrl', ['$rootScope', '$scope', '$uibModal', 'locationS
                 }
             });
             location.busy = busy;
+            location.interlocked = data.interlocks.locations.indexOf(location.id) !== -1;
         });
     });
 
