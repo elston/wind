@@ -42,15 +42,6 @@ class RqLogHandler(logging.Handler):
             self.handleError(record)
 
 
-def start_windpark_optimization(windpark_id, job_parameters=OptimizationJob()):
-    job_id = 'windpark_opt_%d' % windpark_id
-    job = q.enqueue(windpark_optimizer_job, windpark_id, job_parameters, job_id=job_id, timeout=1200, result_ttl=-1)
-    return job
-
-
-def windpark_optimization_status(windpark_id):
-    return q.fetch_job('windpark_opt_%d' % windpark_id)
-
 def kill_job(job_id):
     with Connection():
         ws = Worker.all()
@@ -73,6 +64,13 @@ def cancel_job(job_id):
     with Connection():
         job = Job.fetch(job_id)
         job.delete()
+
+
+def start_windpark_optimization(windpark_id, job_parameters=OptimizationJob()):
+    job_id = urllib.urlencode(
+        {'job': 'optimize', 'windpark': windpark_id})  # , 'id': datetime.utcnow().isoformat()})
+    job = q.enqueue(windpark_optimizer_job, windpark_id, job_parameters, job_id=job_id, timeout=1200, result_ttl=-1)
+    return job_id
 
 
 def windpark_optimizer_job(windpark_id, job_parameters=OptimizationJob()):

@@ -9,7 +9,7 @@ from rq.exceptions import UnpickleError
 from rq.utils import utcparse
 from webapp import app
 import webapp
-from webapp.models import Location
+from webapp.models import Location, Windpark
 import webapp.tasks
 
 logger = logging.getLogger(__name__)
@@ -73,6 +73,10 @@ def list_jobs():
                     location_id = id_data.get('location')
                     location = webapp.db.session.query(Location).filter_by(id=location_id).first()
                     name = 'WU download for location %s' % location.name
+                elif id_data.get('job') == 'optimize':
+                    windpark_id = id_data.get('windpark')
+                    windpark = webapp.db.session.query(Windpark).filter_by(id=windpark_id).first()
+                    name = 'Optimization for wind park %s' % windpark.name
                 else:
                     name = item['job_id']
             except:

@@ -9,11 +9,10 @@ app.controller('WindParkOptimizationCtrl', ['$scope', '$interval', '$timeout', '
         $scope.optimizationResults = null;
         $scope.optimizationDate = new Date($scope.windpark.optimization_job.date);
 
-        var stopRefresh;
-
         $scope.overrideVariance = false;
-        if ($scope.location.forecast_error_model)
+        if ($scope.location.forecast_error_model) {
             $scope.forecastErrorVariance = $scope.location.forecast_error_model.sigma2;
+        }
 
         $scope.overrideVarianceChanged = function () {
             if (!$scope.overrideVariance) {
@@ -22,22 +21,31 @@ app.controller('WindParkOptimizationCtrl', ['$scope', '$interval', '$timeout', '
         };
 
         var startOptimization = function () {
-                        $scope.startDisabled = true;
-                        windparkService.startOptimization($scope.windpark.id, $scope.windpark.optimization_job);
-
-                        if (angular.isDefined(stopRefresh)) {
-                            return;
-                        }
-
-                        stopRefresh = $interval(function () {
-                            refresh();
-                        }, 2000);
+            $scope.startDisabled = true;
+            windparkService.startOptimization($scope.windpark.id, $scope.windpark.optimization_job).then(
+                function (data) {
+                    $scope.jobId = data;
+                }
+            );
         };
 
-        var confirmWarnings = function(warnings) {
-            if(warnings.length == 0)
+        $scope.$on('status:update', function (event, data) {
+            var busy = false;
+            data.rqjobs.forEach(function (rqjob) {
+                if (+rqjob.windpark === $scope.windpark.id && rqjob.job === 'optimize') {
+                    $scope.statusData = rqjob;
+                    if (rqjob.status !== 'finished' && rqjob.status !== 'failed') {
+                        busy = true;
+                    }
+                }
+            });
+            $scope.startDisabled = busy;
+        });
+
+        var confirmWarnings = function (warnings) {
+            if (warnings.length === 0) {
                 startOptimization();
-            else {
+            } else {
                 var warning = warnings.shift();
                 alertify.confirm('Confirm', warning,
                     function () {
@@ -62,17 +70,6 @@ app.controller('WindParkOptimizationCtrl', ['$scope', '$interval', '$timeout', '
                     },
                     function (error) {
                         alertify.alert('Fatal error', error);
-                    });
-        };
-
-        $scope.terminate = function () {
-            windparkService.terminateOptimization($scope.windpark.id)
-                .then(function (statusData) {
-                        alertify.success('OK');
-                        refresh();
-                    },
-                    function (error) {
-                        alertify.error(error);
                     });
         };
 
@@ -281,38 +278,83 @@ app.controller('WindParkOptimizationCtrl', ['$scope', '$interval', '$timeout', '
                     });
         };
 
-        var refresh = function () {
-            windparkService.optimizationStatus($scope.windpark.id)
-                .then(function (statusData) {
-                        $scope.statusData = statusData;
-                        if (statusData === null) {
-                            $scope.startDisabled = false;
-                            $interval.cancel(stopRefresh);
-                            stopRefresh = undefined;
-                            return;
-                        }
-                        $scope.startDisabled = statusData.isStarted || statusData.isQueued;
-                        if (statusData.isFinished || statusData.isFailed) {
-                            $interval.cancel(stopRefresh);
-                            stopRefresh = undefined;
-                            refreshOptimizationResults();
-                        }
-                    },
-                    function (error) {
-                        alertify.error(error);
-                        $interval.cancel(stopRefresh);
-                        stopRefresh = undefined;
-                    });
-        };
-
-        refreshOptimizationResults();
-        refresh();
-
-        if (!angular.isDefined(stopRefresh)) {
-            stopRefresh = $interval(function () {
-                refresh();
-            }, 2000);
-        }
+        $timeout(function () {
+            refreshOptimizationResults();
+            $scope.$broadcast('rzSliderForceRender');
+            $scope.$watch(
+                function (scope) {
+                    return scope.daOfferingCurveHour.value;
+                },
+                function (newVal, oldVal) {
+                    windparkService.getDaOfferingCurve($scope.windpark.id, newVal)
+                        .then(function (data) {
+                                if (!data) {
+                                    return;
+                                }
+                                $timeout(function () {
+                                    var chart = new Highcharts.Chart({
+                                        chart: {
+                                            renderTo: 'da-offering-curve',
+                                            animation: false
+                                        },
+                                        title: {
+                                            text: 'DA offering curve'
+                                        },
+                                        credits: {
+                                            enabled: false
+                                        },
+                                        legend: {
+                                            enabled: false
+                                        },
+                                        plotOptions: {
+                                            line: {
+                                                animation: false,
+                                                marker: {
+                                                    enabled: true
+                                                }
+                                            }
+                                        },
+                                        xAxis: [{
+                                            title: {
+                                                text: 'Volume, MWh'
+                                            },
+                                            max: Math.max.apply(null, data.map(function (x) {
+                                                return x[0];
+                                            })) + 1,
+                                            min: Math.min.apply(null, data.map(function (x) {
+                                                return x[0];
+                                            })) - 1
+                                        }],
+                                        yAxis: [{
+                                            title: {
+                                                text: 'DA price, €/MWh'
+                                            },
+                                            max: Math.max.apply(null, data.map(function (x) {
+                                                return x[1];
+                                            })) + 1,
+                                            min: Math.min.apply(null, data.map(function (x) {
+                                                return x[1];
+                                            })) - 1
+                                        }],
+                                        series: [{
+                                            name: 'DA price, €/MWh',
+                                            data: data,
+                                            animation: false,
+                                            tooltip: {
+                                                headerFormat: 'Volume, MWh: <b>{point.x:.3f}</b><br/>',
+                                                pointFormat: '{series.name}: <b>{point.y}</b><br/>',
+                                                valueDecimals: 1
+                                            }
+                                        }]
+                                    });
+                                });
+                            },
+                            function (error) {
+                                alertify.error(error);
+                            });
+                }
+            );
+        }, 2000);
 
         $scope.downloadOptRes = function () {
             windparkService.downloadOptRes($scope.windpark.id);
@@ -327,86 +369,4 @@ app.controller('WindParkOptimizationCtrl', ['$scope', '$interval', '$timeout', '
             }
         };
 
-        $timeout(function () {
-            $scope.$broadcast('rzSliderForceRender');
-        });
-
-        $scope.$watch(
-            function (scope) {
-                return scope.daOfferingCurveHour.value;
-            },
-            function (newVal, oldVal) {
-                windparkService.getDaOfferingCurve($scope.windpark.id, newVal)
-                    .then(function (data) {
-                            if (!data) return;
-                            $timeout(function () {
-                                var chart = new Highcharts.Chart({
-                                    chart: {
-                                        renderTo: 'da-offering-curve',
-                                        animation: false
-                                    },
-                                    title: {
-                                        text: 'DA offering curve'
-                                    },
-                                    credits: {
-                                        enabled: false
-                                    },
-                                    legend: {
-                                        enabled: false
-                                    },
-                                    plotOptions: {
-                                        line: {
-                                            animation: false,
-                                            marker: {
-                                                enabled: true
-                                            }
-                                        }
-                                    },
-                                    xAxis: [{
-                                        title: {
-                                            text: 'Volume, MWh'
-                                        },
-                                        max: Math.max.apply(null, data.map(function (x) {
-                                            return x[0];
-                                        })) + 1,
-                                        min: Math.min.apply(null, data.map(function (x) {
-                                            return x[0];
-                                        })) - 1
-                                    }],
-                                    yAxis: [{
-                                        title: {
-                                            text: 'DA price, €/MWh'
-                                        },
-                                        max: Math.max.apply(null, data.map(function (x) {
-                                            return x[1];
-                                        })) + 1,
-                                        min: Math.min.apply(null, data.map(function (x) {
-                                            return x[1];
-                                        })) - 1
-                                    }],
-                                    series: [{
-                                        name: 'DA price, €/MWh',
-                                        data: data,
-                                        animation: false,
-                                        tooltip: {
-                                            headerFormat: 'Volume, MWh: <b>{point.x:.3f}</b><br/>',
-                                            pointFormat: '{series.name}: <b>{point.y}</b><br/>',
-                                            valueDecimals: 1
-                                        }
-                                    }]
-                                });
-                            });
-                        },
-                        function (error) {
-                            alertify.error(error);
-                        });
-            }
-        );
-
-        $scope.$on('$destroy', function () {
-            if (angular.isDefined(stopRefresh)) {
-                $interval.cancel(stopRefresh);
-                stopRefresh = undefined;
-            }
-        });
     }]);
