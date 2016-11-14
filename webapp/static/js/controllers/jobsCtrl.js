@@ -46,7 +46,8 @@ app.controller('JobsCtrl', ['$scope', '$uibModal', 'jobsService', function ($sco
             {
                 field: 'meta', name: 'Log',
                 cellTemplate: '<div class="ui-grid-cell-contents">' +
-                '<a href="#" ng-click="$emit(\'log:open\', grid.getCellValue(row, col).log)">' +
+                '<a href="#" ng-click="$emit(\'log:open\', grid.getCellValue(row, col).log)" '+
+                'ng-show="grid.getCellValue(row, col).log.length">' +
                 '{{grid.getCellValue(row, col).log.length}} lines</a></div>'
             }
         ]
