@@ -68,6 +68,11 @@ app.controller('WindparkTurbinesCtrl', ['$scope', '$rootScope', '$timeout', '$ui
             ]
         };
 
+        $scope.$watch(
+            function(scope) { return scope.interlocked },
+            function(newValue) { $scope.actualListOptions.enableGridMenu = !newValue }
+        );
+
         $scope.actualListOptions.data = $scope.windpark.turbines;
 
         var reloadTotalPowerCurve = function () {

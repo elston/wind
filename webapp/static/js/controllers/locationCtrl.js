@@ -54,19 +54,19 @@ app.controller('LocationsCtrl', ['$rootScope', '$scope', '$uibModal', 'locationS
                 field: 'action',
                 headerCellTemplate: ' ',
                 enableHiding: false,
-                cellTemplate: '<button type="button" class="btn btn-warning btn-xs" ng-disabled="row.entity.busy" ng-click="$emit(\'updateWeather\')" ' +
+                cellTemplate: '<button type="button" class="btn btn-warning btn-xs" ng-disabled="row.entity.busy || row.entity.interlocked" ng-click="$emit(\'updateWeather\')" ' +
                 'tooltip-append-to-body="true" uib-tooltip="Reload">' +
                 '<span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></button>' +
-                '<button type="button" class="btn btn-warning btn-xs" ng-disabled="row.entity.busy" ng-click="$emit(\'viewData\')" ' +
+                '<button type="button" class="btn btn-warning btn-xs" ng-disabled="row.entity.busy || row.entity.interlocked" ng-click="$emit(\'viewData\')" ' +
                 'tooltip-append-to-body="true" uib-tooltip="Edit data">' +
                 '<span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></button>' +
-                '<button type="button" class="btn btn-info btn-xs" ng-disabled="row.entity.busy || row.entity.n_observations==0" ng-click="$emit(\'viewWeather\')" ' +
+                '<button type="button" class="btn btn-info btn-xs" ng-disabled="row.entity.busy || row.entity.n_observations==0 " ng-click="$emit(\'viewWeather\')" ' +
                 'tooltip-append-to-body="true" uib-tooltip="View chart">' +
                 '<span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>' +
-                '<button type="button" class="btn btn-info btn-xs" ng-disabled="row.entity.busy || row.entity.n_observations==0" ng-click="$emit(\'viewDistribution\')" ' +
+                '<button type="button" class="btn btn-info btn-xs" ng-disabled="row.entity.busy || row.entity.n_observations==0 || row.entity.interlocked" ng-click="$emit(\'viewDistribution\')" ' +
                 'tooltip-append-to-body="true" uib-tooltip="Fit and view wind speed distribution">' +
                 '<span class="glyphicon glyphicon-stats" aria-hidden="true"></span> 1</button>' +
-                '<button type="button" class="btn btn-info btn-xs" ng-disabled="row.entity.busy || row.entity.n_observations==0" ng-click="$emit(\'viewErrorModel\')" ' +
+                '<button type="button" class="btn btn-info btn-xs" ng-disabled="row.entity.busy || row.entity.n_observations==0 || row.entity.interlocked" ng-click="$emit(\'viewErrorModel\')" ' +
                 'tooltip-append-to-body="true" uib-tooltip="View forecast error model">' +
                 '<span class="glyphicon glyphicon-stats" aria-hidden="true"></span> 2</button>' +
                 '<button type="button" class="btn btn-secondary btn-xs" ng-disabled="row.entity.busy" ng-click="$emit(\'downloadData\')" ' +
