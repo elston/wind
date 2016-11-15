@@ -143,7 +143,7 @@ def update_history(loc_id):
     if not current_user.is_authenticated:
         return jsonify({'error': 'User unauthorized'})
     try:
-        webapp.tasks.start_forecast_update(loc_id)
+        webapp.tasks.start_forecast_update(loc_id, current_user.id)
         # location = db.session.query(Location).filter_by(id=loc_id).first()
         # location.update_history()
         js = jsonify({'data': 'OK'})

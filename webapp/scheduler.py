@@ -1,4 +1,5 @@
 import logging
+import urllib
 
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.jobstores.sqlalchemy import SQLAlchemyJobStore
@@ -34,9 +35,11 @@ class Scheduler(object):
             timezone = pytz.timezone(location.tz_long)
             if timezone is None:
                 continue
-            job_id = 'user_%s_forecast_update_%s_11am' % (location.user_id, location.l)
+            job_id = urllib.urlencode({'job': 'wu_download', 'user': location.user_id, 'location': location.id,
+                                       'time': '11am'})
             if location.update_at_11am:
-                job = self.scheduler.add_job(webapp.tasks.start_forecast_update, args=(location.id,), id=job_id,
+                job = self.scheduler.add_job(webapp.tasks.start_forecast_update, args=(location.id, location.user_id),
+                                             id=job_id,
                                              trigger='cron',
                                              hour=11, minute=0, replace_existing=True, timezone=timezone)
             else:
@@ -44,9 +47,11 @@ class Scheduler(object):
                     self.scheduler.remove_job(job_id)
                 except:
                     pass
-            job_id = 'user_%s_forecast_update_%s_11pm' % (location.user_id, location.l)
+            job_id = urllib.urlencode({'job': 'wu_download', 'user': location.user_id, 'location': location.id,
+                                       'time': '11pm'})
             if location.update_at_11pm:
-                job = self.scheduler.add_job(webapp.tasks.start_forecast_update, args=(location.id,), id=job_id,
+                job = self.scheduler.add_job(webapp.tasks.start_forecast_update, args=(location.id, location.user_id),
+                                             id=job_id,
                                              trigger='cron',
                                              hour=23, minute=0, replace_existing=True, timezone=timezone)
             else:

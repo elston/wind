@@ -517,7 +517,7 @@ def start_optimization(wpark_id):
         windpark.optimization_job = opt_job
         db.session.commit()
 
-        rqjob_id = webapp.tasks.start_windpark_optimization(int(wpark_id), opt_job)
+        rqjob_id = webapp.tasks.start_windpark_optimization(int(wpark_id), current_user.id, opt_job)
         js = jsonify({'data': rqjob_id})
         return js
     except Exception, e:

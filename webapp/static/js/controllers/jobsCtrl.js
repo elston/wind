@@ -5,7 +5,7 @@ app.controller('JobsCtrl', ['$scope', '$uibModal', 'jobsService', function ($sco
 
     $scope.sjGridOptions = {
         columnDefs: [
-            {field: 'id', name: 'Name'},
+            {field: 'name', name: 'Name'},
             {field: 'next_run_time', name: 'Next run time'}
         ]
     };

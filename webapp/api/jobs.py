@@ -60,23 +60,56 @@ def list_jobs():
         return jsonify({'error': 'User unauthorized'})
     try:
         jobs = webapp.sch.scheduler.get_jobs()
-        scheduler_data = [{'name': x.name,
-                           'id': x.id,
-                           'next_run_time': x.next_run_time.strftime('%d %b %Y %I:%M%p %Z%z')
-                           } for x in jobs]
+        scheduler_data = []
+        for sjob in jobs:
+            job_data = {k: v[0] for k, v in urlparse.parse_qs(sjob.id).iteritems()}
+
+            if not current_user.has_role('admin') and int(job_data['user']) != current_user.id:
+                continue
+
+            try:
+                if job_data.get('job') == 'wu_download':
+                    location_id = job_data.get('location')
+                    location = webapp.db.session.query(Location).filter_by(id=location_id).first()
+                    if current_user.has_role('admin'):
+                        user = webapp.db.session.query(webapp.User).filter_by(id=location.user_id).first()
+                        name = 'Weather download for %s, user %s, %s' % (location.name, user.email, job_data['time'])
+                    else:
+                        name = 'Weather download for %s, %s' % (location.name, job_data['time'])
+                else:
+                    name = sjob.id
+            except Exception, e:
+                logging.exception(e)
+                name = sjob.id
+            job_data['id'] = sjob.id
+            job_data['name'] = name
+            job_data['next_run_time'] = sjob.next_run_time.strftime('%d %b %Y %I:%M%p %Z%z')
+            scheduler_data.append(job_data)
 
         rqjobs_data = []
         for item in get_all_jobs().itervalues():
             id_data = {k: v[0] for k, v in urlparse.parse_qs(item['job_id']).iteritems()}
+
+            if not current_user.has_role('admin') and (None if 'user' not in id_data else int(id_data['user'])) != current_user.id:
+                continue
+
             try:
                 if id_data.get('job') == 'wu_download':
                     location_id = id_data.get('location')
                     location = webapp.db.session.query(Location).filter_by(id=location_id).first()
-                    name = 'WU download for location %s' % location.name
+                    if current_user.has_role('admin'):
+                        user = webapp.db.session.query(webapp.User).filter_by(id=location.user_id).first()
+                        name = 'Weather download for %s, user %s' % (location.name, user.email)
+                    else:
+                        name = 'Weather download for %s' % location.name
                 elif id_data.get('job') == 'optimize':
                     windpark_id = id_data.get('windpark')
                     windpark = webapp.db.session.query(Windpark).filter_by(id=windpark_id).first()
-                    name = 'Optimization for wind park %s' % windpark.name
+                    if current_user.has_role('admin'):
+                        user = webapp.db.session.query(webapp.User).filter_by(id=windpark.user_id).first()
+                        name = 'Optimization for %s, user %s' % (windpark.name, user.email)
+                    else:
+                        name = 'Optimization for %s' % windpark.name
                 else:
                     name = item['job_id']
             except:

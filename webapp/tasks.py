@@ -66,9 +66,9 @@ def cancel_job(job_id):
         job.delete()
 
 
-def start_windpark_optimization(windpark_id, job_parameters=OptimizationJob()):
+def start_windpark_optimization(windpark_id, user_id, job_parameters=OptimizationJob()):
     job_id = urllib.urlencode(
-        {'job': 'optimize', 'windpark': windpark_id})  # , 'id': datetime.utcnow().isoformat()})
+        {'job': 'optimize', 'windpark': windpark_id, 'user': user_id})  # , 'id': datetime.utcnow().isoformat()})
     job = q.enqueue(windpark_optimizer_job, windpark_id, job_parameters, job_id=job_id, timeout=1200, result_ttl=-1)
     return job_id
 
@@ -87,9 +87,9 @@ def windpark_optimizer_job(windpark_id, job_parameters=OptimizationJob()):
         return result.to_dict()
 
 
-def start_forecast_update(location_id):
+def start_forecast_update(location_id, user_id):
     job_id = urllib.urlencode(
-        {'job': 'wu_download', 'location': location_id})  # , 'id': datetime.utcnow().isoformat()})
+        {'job': 'wu_download', 'location': location_id, 'user': user_id})  # , 'id': datetime.utcnow().isoformat()})
     job = q.enqueue(forecast_update_job, location_id, timeout=1200, result_ttl=-1, job_id=job_id)
     return job
 
