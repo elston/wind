@@ -39,6 +39,9 @@ app.controller('WindParkOptimizationCtrl', ['$scope', '$interval', '$timeout', '
                     }
                 }
             });
+            if (!busy && $scope.busy) {
+                refreshOptimizationResults();
+            }
             $scope.busy = busy;
         });
 
