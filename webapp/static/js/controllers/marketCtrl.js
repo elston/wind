@@ -37,7 +37,8 @@ app.controller('MarketsCtrl', ['$scope', '$uibModal', 'marketService',
                     field: 'action',
                     headerCellTemplate: ' ',
                     enableHiding: false,
-                    cellTemplate: '<button type="button" class="btn btn-warning btn-xs" ng-click="$emit(\'uploadPrices\')" ' +
+                    cellTemplate: '<button type="button" class="btn btn-warning btn-xs" ng-disabled="row.entity.busy || row.entity.interlocked" '+
+                    'ng-click="$emit(\'uploadPrices\')" ' +
                     'tooltip-append-to-body="true" uib-tooltip="Upload prices">' +
                     '<span class="glyphicon glyphicon-upload" aria-hidden="true"></span></button>' +
                     '<button type="button" class="btn btn-info btn-xs" ng-click="$emit(\'viewData\')" ' +
@@ -45,11 +46,27 @@ app.controller('MarketsCtrl', ['$scope', '$uibModal', 'marketService',
                     '<span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span></button>' +
                     '<button type="button" class="btn btn-secondary btn-xs" ng-click="$emit(\'downloadData\')" ' +
                     'tooltip-append-to-body="true" uib-tooltip="Download data">' +
-                    '<span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span></button>',
+                    '<span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span></button>' +
+                    '<span ng-show="row.entity.busy" class="glyphicon glyphicon-refresh spinning"></span>' +
+                    '<span ng-show="row.entity.interlocked && !row.entity.busy" class="glyphicon glyphicon-lock"></span>',
                     width: 200
                 }
             ]
         };
+
+        $scope.$on('status:update', function (event, data) {
+            $scope.gridOptions.data.forEach(function (market) {
+                var busy = false;
+                data.rqjobs.forEach(function (rqjob) {
+                    if (+rqjob.market === market.id &&
+                        rqjob.job === 'fit_price' && !((rqjob.status === 'finished') || (rqjob.status === 'failed'))) {
+                        busy = true;
+                    }
+                });
+                market.busy = busy;
+                market.interlocked = data.interlocks.markets.indexOf(market.id) !== -1;
+            });
+        });
 
         $scope.autoGridSize = function () {
             if ($scope.gridOptions && $scope.gridOptions.data.length > 0) {

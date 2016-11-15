@@ -8,7 +8,7 @@ from rq import Queue, get_current_job, Connection, Worker
 from redis import Redis
 from rq.job import Job
 from webapp import db
-from webapp.models import Windpark, Location
+from webapp.models import Windpark, Location, Market
 from webapp.models.optimization_job import OptimizationJob
 from webapp.optimizer import Optimizer
 
@@ -108,5 +108,24 @@ def forecast_update_job(location_id):
         try:
             location = db.session.query(Location).filter_by(id=location_id).first()
             location.update_forecast()
+        finally:
+            db.session.remove()
+
+
+def start_price_model_fit(market_id, user_id):
+    job_id = urllib.urlencode(
+        {'job': 'fit_price', 'market': market_id, 'user': user_id})  # , 'id': datetime.utcnow().isoformat()})
+    job = q.enqueue(price_model_fit, market_id, timeout=1200, result_ttl=-1, job_id=job_id)
+    return job_id
+
+
+def price_model_fit(market_id):
+    with Connection():
+        job = get_current_job()
+        print 'Current job: %s' % (job.id,)
+        logging.getLogger().addHandler(RqLogHandler(job))
+        try:
+            market = db.session.query(Market).filter_by(id=market_id).first()
+            market.fit_price_model()
         finally:
             db.session.remove()
