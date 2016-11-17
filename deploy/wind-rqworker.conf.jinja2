@@ -1,0 +1,8 @@
+description "wind-rqworker applications ({{ ansible_managed }})"
+
+start on runlevel [2345]
+stop on runlevel [016]
+
+respawn
+chdir {{ tools_dir }}
+exec su -s /bin/sh -c 'FLASK_ENV=PRODUCTION exec "$0" "$@"' {{ apps_user }} -- env/bin/rqworker

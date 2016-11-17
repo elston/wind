@@ -1,3 +1,7 @@
+.vagrant/
+env-/
+*.sublime-workspace
+*.retry
 *.sqlite
 *.sql
 *_api_key

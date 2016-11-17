@@ -3,6 +3,9 @@
   connection: local
   vars:
     tools_dir: /srv/apps/tools
+    MySQL_root_pass: ReplaceWithYourPassword
+    apps_user: www-data
+    n_processes: 4
 
   tasks:
 
@@ -17,6 +20,12 @@
   - name: add R repository for fresh packages
     sudo: yes
     apt_repository: repo='deb https://cloud.r-project.org/bin/linux/ubuntu trusty/' state=present
+
+  - name: Set MySQL root password before installing
+    debconf: name='mysql-server' question='mysql-server/root_password' value='{{MySQL_root_pass | quote}}' vtype='password'
+
+  - name: Confirm MySQL root password before installing
+    debconf: name='mysql-server' question='mysql-server/root_password_again' value='{{MySQL_root_pass | quote}}' vtype='password'
 
   - name: install packages
     sudo: yes
@@ -37,6 +46,7 @@
       - mysql-server
       - libmysqlclient-dev
       - python-mysqldb
+      - nginx
     when: ansible_os_family == "Debian"
 
   - name: install packages
@@ -65,11 +75,25 @@
       - rpm-build
     when: ansible_os_family == "RedHat"
 
+  - name: Deletes anonymous MySQL server user for localhost
+    mysql_user: user="" state="absent" login_password="{{ MySQL_root_pass }}" login_user=root
+
+  - name: Secures the MySQL root user
+    mysql_user: user="root" password="{{ MySQL_root_pass }}" host="{{ item }}" login_password="{{MySQL_root_pass}}" login_user=root
+    with_items:
+      - 127.0.0.1
+      - localhost
+      - ::1
+      - "{{ ansible_fqdn }}"
+
+  - name: Removes the MySQL test database
+    mysql_db: db=test state=absent login_password="{{ MySQL_root_pass }}" login_user=root
+
   - name: create a new database
-  - mysql_db: name=wind state=present
+    mysql_db: db=wind state=present login_password="{{ MySQL_root_pass }}" login_user=root
 
   - name: create database user 'wind' and password 'wind' with 'wind' database privileges
-  - mysql_user: name=wind password=wind priv=wind.*:ALL state=present
+    mysql_user: name=wind password=wind priv=wind.*:ALL state=present login_password="{{ MySQL_root_pass }}" login_user=root
 
   - name: create virtualenv
     command: virtualenv env
@@ -84,7 +108,10 @@
       creates: env/lib/python2.7/site-packages/numpy/__init__.py
 
   - name: download lpsolve
-    get_url: url=http://sourceforge.net/projects/lpsolve/files/lpsolve/5.5.2.0/lp_solve_5.5.2.0_source.tar.gz/download dest=/tmp/lp_solve_5.5.2.0_source.tar.gz
+    get_url:
+      url: http://sourceforge.net/projects/lpsolve/files/lpsolve/5.5.2.0/lp_solve_5.5.2.0_source.tar.gz/download
+      dest: /tmp/lp_solve_5.5.2.0_source.tar.gz
+      validate_certs: False
 
   - name: unpack lpsolve
     command: tar xvfz lp_solve_5.5.2.0_source.tar.gz creates=lp_solve_5.5 chdir=/tmp
@@ -131,7 +158,10 @@
     when: install_lpsolve|success
 
   - name: download lpsolve-python
-    get_url: url=http://sourceforge.net/projects/lpsolve/files/lpsolve/5.5.2.0/lp_solve_5.5.2.0_Python_source.tar.gz/download dest=/tmp/lp_solve_5.5.2.0_Python_source.tar.gz
+    get_url:
+      url: http://sourceforge.net/projects/lpsolve/files/lpsolve/5.5.2.0/lp_solve_5.5.2.0_Python_source.tar.gz/download
+      dest: /tmp/lp_solve_5.5.2.0_Python_source.tar.gz
+      validate_certs: False
 
   - name: unpack lpsolve-python
     command: tar xvfz lp_solve_5.5.2.0_Python_source.tar.gz creates=lp_solve_5.5/extra/Python chdir=/tmp
@@ -148,3 +178,35 @@
         chdir: "{{ tools_dir }}"
 #        creates: env/lib/python2.7/site-packages/flask
 
+  - name: install gunicorn
+    command: env/bin/pip install gunicorn
+    args:
+      chdir: "{{ tools_dir }}"
+      creates: env/bin/gunicorn
+
+  - name: create nginx config
+    template: src=nginx_config.jinja2 dest=/etc/nginx/sites-available/wind
+    register: nginx_reconfigured
+
+  - name: enable wind site
+    file: dest=/etc/nginx/sites-enabled/wind src=/etc/nginx/sites-available/wind state=link
+    register: nginx_reconfigured
+
+  - name: make sure that nginx works and enabled at boot
+    service: name=nginx state=started enabled=yes
+
+  - name: reload nginx if reconfigured
+    service: name=nginx state=restarted
+    when: nginx_reconfigured|changed
+
+  - name: add wind-gunicorn to boot sequence
+    template: src=wind-gunicorn.conf.jinja2 dest=/etc/init/wind-gunicorn.conf
+
+  - name: start wind-gunicorn as service
+    service: name=wind-gunicorn state=started enabled=yes
+
+  - name: add wind-rqworker to boot sequence
+    template: src=wind-rqworker.conf.jinja2 dest=/etc/init/wind-rqworker.conf
+
+  - name: start wind-rqworker as service
+    service: name=wind-rqworker state=started enabled=yes

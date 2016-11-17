@@ -1,0 +1,17 @@
+# {{ ansible_managed }}
+server {
+    listen 8080;
+    location ~* /static/  {
+        root {{ tools_dir }}/webapp;
+    }
+
+    location / {
+        proxy_pass         http://127.0.0.1:12080/;
+        proxy_redirect     off;
+
+        proxy_set_header   Host                 $host;
+        proxy_set_header   X-Real-IP            $remote_addr;
+        proxy_set_header   X-Forwarded-For      $proxy_add_x_forwarded_for;
+        proxy_set_header   X-Forwarded-Proto    $scheme;
+    }
+}

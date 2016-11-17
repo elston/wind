@@ -1,0 +1,8 @@
+description "wind-gunicorn applications ({{ ansible_managed }})"
+
+start on runlevel [2345]
+stop on runlevel [016]
+
+respawn
+chdir {{ tools_dir }}
+exec su -s /bin/sh -c 'FLASK_ENV=PRODUCTION exec "$0" "$@"' {{ apps_user }} -- env/bin/gunicorn -w {{ n_processes }} -b 127.0.0.1:12080 --timeout 120 --log-level=debug webapp:app
