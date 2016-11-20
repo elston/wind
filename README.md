@@ -5,7 +5,8 @@
     sudo apt-get install build-essential python git python-dev python-pip -y
     sudo pip install markupsafe
     sudo pip install ansible 
-
+    
+    git pull https://testing12@bitbucket.org/firsttier/wind.git
     cd deploy
 
     ansible-playbook main.yml -i hosts -e tools_dir=`pwd`/.. --ask-sudo-pass
