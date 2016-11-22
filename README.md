@@ -6,7 +6,11 @@
     sudo pip install markupsafe
     sudo pip install ansible
 
-Clone git repository. Got to the repository working directory.
+Clone git repository. 
+
+    git pull https://testing12@bitbucket.org/firsttier/wind.git
+
+Go to the repository working directory. `cd wind`
 
     cd deploy
 
