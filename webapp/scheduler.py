@@ -1,5 +1,6 @@
 import logging
 import urllib
+import urlparse
 
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.jobstores.sqlalchemy import SQLAlchemyJobStore
@@ -9,6 +10,7 @@ from sqlalchemy import create_engine
 from webapp import db, app
 from .models import Location
 import webapp.tasks
+import webapp
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
@@ -61,6 +63,18 @@ class Scheduler(object):
                     self.scheduler.remove_job(job_id)
                 except:
                     pass
+
+        jobs = self.scheduler.get_jobs()
+        for sjob in jobs:
+            try:
+                job_data = {k: v[0] for k, v in urlparse.parse_qs(sjob.id).iteritems()}
+                if job_data.get('job') == 'wu_download':
+                    location_id = job_data.get('location')
+                    location = db.session.query(Location).filter_by(id=location_id).first()
+                    if location is None:
+                        self.scheduler.remove_job(sjob.id)
+            except Exception, e:
+                logging.warning(e)
 
     def start(self):
         self.scheduler.start()

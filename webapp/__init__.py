@@ -12,11 +12,11 @@ from flask_security import RoleMixin, UserMixin, SQLAlchemyUserDatastore, Securi
 
 class FlaskApp(Flask):
     def run(self, *args, **rest):
+        sch.start()
         try:
             sch.update_weather_schedules()
         except Exception, e:
             logging.info("update weather schedules ", e)
-        sch.start()
         rest1 = dict(rest)
         del rest1['host']
         del rest1['port']
