@@ -1,5 +1,6 @@
 import logging
 import signal
+import urllib
 
 import psutil as psutil
 import os
@@ -7,7 +8,7 @@ from rq import Queue, get_current_job, Connection, Worker
 from redis import Redis
 from rq.job import Job
 from webapp import db
-from webapp.models import Windpark
+from webapp.models import Windpark, Location, Market
 from webapp.models.optimization_job import OptimizationJob
 from webapp.optimizer import Optimizer
 
@@ -41,18 +42,7 @@ class RqLogHandler(logging.Handler):
             self.handleError(record)
 
 
-def start_windpark_optimization(windpark_id, job_parameters=OptimizationJob()):
-    job_id = 'windpark_opt_%d' % windpark_id
-    job = q.enqueue(windpark_optimizer_job, windpark_id, job_parameters, job_id=job_id, timeout=1200, result_ttl=-1)
-    return job
-
-
-def windpark_optimization_status(windpark_id):
-    return q.fetch_job('windpark_opt_%d' % windpark_id)
-
-
-def terminate_windpark_optimization(windpark_id):
-    job_id = 'windpark_opt_%d' % windpark_id
+def kill_job(job_id):
     with Connection():
         ws = Worker.all()
         for w in ws:
@@ -70,6 +60,19 @@ def terminate_windpark_optimization(windpark_id):
         job.delete()
 
 
+def cancel_job(job_id):
+    with Connection():
+        job = Job.fetch(job_id)
+        job.delete()
+
+
+def start_windpark_optimization(windpark_id, user_id, job_parameters=OptimizationJob()):
+    job_id = urllib.urlencode(
+        {'job': 'optimize', 'windpark': windpark_id, 'user': user_id})  # , 'id': datetime.utcnow().isoformat()})
+    job = q.enqueue(windpark_optimizer_job, windpark_id, job_parameters, job_id=job_id, timeout=1200, result_ttl=-1)
+    return job_id
+
+
 def windpark_optimizer_job(windpark_id, job_parameters=OptimizationJob()):
     with Connection():
         job = get_current_job()
@@ -82,3 +85,47 @@ def windpark_optimizer_job(windpark_id, job_parameters=OptimizationJob()):
         db.session.commit()
 
         return result.to_dict()
+
+
+def start_forecast_update(location_id, user_id):
+    job_id = urllib.urlencode(
+        {'job': 'wu_download', 'location': location_id, 'user': user_id})  # , 'id': datetime.utcnow().isoformat()})
+    job = q.enqueue(forecast_update_job, location_id, timeout=1200, result_ttl=-1, job_id=job_id)
+    return job
+
+
+def forecast_update_job(location_id):
+    with Connection():
+        job = get_current_job()
+        print 'Current job: %s' % (job.id,)
+        logging.getLogger().addHandler(RqLogHandler(job))
+        # logging.info("Scheduled update for location %s", location.name)
+        try:
+            location = db.session.query(Location).filter_by(id=location_id).first()
+            location.update_history()
+        finally:
+            db.session.remove()
+        try:
+            location = db.session.query(Location).filter_by(id=location_id).first()
+            location.update_forecast()
+        finally:
+            db.session.remove()
+
+
+def start_price_model_fit(market_id, user_id):
+    job_id = urllib.urlencode(
+        {'job': 'fit_price', 'market': market_id, 'user': user_id})  # , 'id': datetime.utcnow().isoformat()})
+    job = q.enqueue(price_model_fit, market_id, timeout=1200, result_ttl=-1, job_id=job_id)
+    return job_id
+
+
+def price_model_fit(market_id):
+    with Connection():
+        job = get_current_job()
+        print 'Current job: %s' % (job.id,)
+        logging.getLogger().addHandler(RqLogHandler(job))
+        try:
+            market = db.session.query(Market).filter_by(id=market_id).first()
+            market.fit_price_model()
+        finally:
+            db.session.remove()

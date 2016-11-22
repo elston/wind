@@ -165,7 +165,9 @@
                         </div>
                     </div>
 
-                    <button type="button" class="btn btn-warning pull-right" ng-click="update()">Update</button>
+                    <button type="button" class="btn btn-warning pull-right" ng-disabled="interlocked"
+                            ng-click="update()">Update
+                    <span ng-show="interlocked" class="glyphicon glyphicon-lock"></span></button>
                 </form>
             </div>
         </div>
@@ -634,21 +636,23 @@
                         <div class="row">
                             <div class="col-xs-4 col-xs-offset-4">
                                 <button type="button" class="btn btn-primary btn-lg" ng-click="optimize()"
-                                        ng-disabled="startDisabled"
+                                        ng-disabled="busy || interlocked"
                                         style="width: 100%">Optimize
+                                    <span ng-show="busy" class="glyphicon glyphicon-refresh spinning"></span>
+                                    <span ng-show="interlocked && !busy" class="glyphicon glyphicon-lock"></span>
                                 </button>
                             </div>
-                            <div class="col-xs-4">
-                                <button type="button" class="btn btn-danger btn-lg" ng-click="terminate()"
-                                        ng-if="startDisabled"
-                                        style="width: 100%">Terminate
-                                </button>
-                            </div>
+                            <!--<div class="col-xs-4">-->
+                            <!--<button type="button" class="btn btn-danger btn-lg" ng-click="terminate()"-->
+                            <!--ng-if="startDisabled"-->
+                            <!--style="width: 100%">Terminate-->
+                            <!--</button>-->
+                            <!--</div>-->
                         </div>
                     </div>
                     <h4>Status: {{ statusData.status }}</h4>
-                    <pre>{{ statusData.log }}</pre>
-                    <pre class="bg-danger" ng-if="statusData.isFailed">{{ statusData.error }}</pre>
+                    <!--<pre>{{ statusData.log }}</pre>-->
+                    <!--<pre class="bg-danger" ng-if="statusData.isFailed">{{ statusData.error }}</pre>-->
                     <!--<pre>{{ optimizationResults }}</pre>-->
                     <div ng-hide="statusData.status != 'finished'">
                         <dl class="dl-horizontal">

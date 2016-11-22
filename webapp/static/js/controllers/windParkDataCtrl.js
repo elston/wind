@@ -13,6 +13,12 @@ app.controller('WindParkDataCtrl', ['$scope', '$rootScope', 'locationService', '
         $scope.location = $scope.windpark.location;
         $scope.market = $scope.windpark.market;
 
+        $scope.interlocked = false;
+
+        $scope.$on('status:update', function (event, data) {
+            $scope.interlocked = data.interlocks.windparks.indexOf($scope.windpark.id) !== -1;
+        });
+
         $scope.update = function () {
             windparkService.updateWindpark({
                     id: $scope.windpark.id,

@@ -5,6 +5,7 @@ from flask import jsonify, request, make_response
 from flask_login import current_user
 import pandas as pd
 from webapp import app, db
+import webapp.tasks
 from webapp.models import Market, Prices
 from werkzeug.utils import secure_filename
 
@@ -256,11 +257,8 @@ def fit_model(mkt_id):
     if not current_user.is_authenticated:
         return jsonify({'error': 'User unauthorized'})
     try:
-        market = db.session.query(Market).filter_by(id=mkt_id).first()
-        market.fit_price_model()
-        db.session.commit()
-
-        js = jsonify({'data': 'OK'})
+        rqjob_id = webapp.tasks.start_price_model_fit(int(mkt_id), current_user.id)
+        js = jsonify({'data': rqjob_id})
         return js
     except Exception, e:
         logger.exception(e)

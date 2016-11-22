@@ -13,3 +13,28 @@
         </div>
     </div>
 </div>
+{% raw %}  <!-- Angular templating -->
+<script type="text/ng-template" id="jobErrorModal.html">
+    <div class="modal-header">
+        <h3 class="modal-title">Error message</h3>
+    </div>
+    <div class="modal-body">
+        <pre>{{ errorMessage }}</pre>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-default" ng-click="close()">Close</button>
+    </div>
+</script>
+
+<script type="text/ng-template" id="jobLogModal.html">
+    <div class="modal-header">
+        <h3 class="modal-title">Job log</h3>
+    </div>
+    <div class="modal-body">
+        <pre>{{ jobLog }}</pre>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-default" ng-click="close()">Close</button>
+    </div>
+</script>
+{% endraw %}

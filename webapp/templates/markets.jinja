@@ -4,7 +4,8 @@
             <h1>Markets</h1>
 
             <div ng-controller="MarketsCtrl">
-                <div id="markets-grid" ui-grid="gridOptions" ui-grid-selection class="grid grid-market" ui-grid-auto-resize></div>
+                <div id="markets-grid" ui-grid="gridOptions" ui-grid-selection class="grid grid-market"
+                     ui-grid-auto-resize></div>
                 <div class="ng-cloak" ng-if='noMarkets'>
                     <h3 align="center">No data. Use "hamburger" menu at top right corner to add market.</h3>
                 </div>
@@ -172,12 +173,19 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-xs-4 col-xs-offset-1">
-                    <button class="btn btn-warning" style="width:100%" ng-click="calculateMissing()">Calculate missing
-                        values
+                    <button class="btn btn-warning" style="width:100%"
+                            ng-disabled="busy || interlocked"
+                            ng-click="calculateMissing()">Calculate missing values
+                        <span ng-show="interlocked" class="glyphicon glyphicon-lock"></span>
                     </button>
                 </div>
                 <div class="col-xs-4 col-xs-offset-2">
-                    <button class="btn btn-warning" style="width:100%" ng-click="fitModel()">Fit model</button>
+                    <button class="btn btn-warning" style="width:100%"
+                            ng-disabled="busy || interlocked"
+                            ng-click="fitModel()">Fit model
+                        <span ng-show="busy" class="glyphicon glyphicon-refresh spinning"></span>
+                        <span ng-show="interlocked && !busy" class="glyphicon glyphicon-lock"></span>
+                    </button>
                 </div>
             </div>
         </div>
@@ -205,46 +213,57 @@
                         <div class="row summary-model-row">
                             <div class="col-xs-4">
                                 <ul class="list-group">
-                                  <li class="list-group-item" ng-repeat="(key, value) in summary[item[0] + '_model'].coef" ng-if="$index < 5">
-                                    <strong>{{ key }}</strong> = {{ value | number: 4 }} ± {{ summary[item[0] + '_model'].s_e[key] | number:4 }}
-                                  </li>
+                                    <li class="list-group-item"
+                                        ng-repeat="(key, value) in summary[item[0] + '_model'].coef" ng-if="$index < 5">
+                                        <strong>{{ key }}</strong> = {{ value | number: 4 }} ± {{ summary[item[0] +
+                                        '_model'].s_e[key] | number:4 }}
+                                    </li>
                                 </ul>
                             </div>
 
                             <div class="col-xs-4">
                                 <ul class="list-group">
-                                  <li class="list-group-item" ng-repeat="(key, value) in summary[item[0] + '_model'].coef" ng-if="$index >= 5 && $index < 10">
-                                    <strong>{{ key }}</strong> = {{ value | number: 4 }} ± {{ summary[item[0] + '_model'].s_e[key] | number:4 }}
-                                  </li>
+                                    <li class="list-group-item"
+                                        ng-repeat="(key, value) in summary[item[0] + '_model'].coef"
+                                        ng-if="$index >= 5 && $index < 10">
+                                        <strong>{{ key }}</strong> = {{ value | number: 4 }} ± {{ summary[item[0] +
+                                        '_model'].s_e[key] | number:4 }}
+                                    </li>
                                 </ul>
                             </div>
 
                             <div class="col-xs-4">
                                 <ul class="list-group">
-                                  <li class="list-group-item" ng-repeat="(key, value) in summary[item[0] + '_model'].coef" ng-if="$index >= 10 && $index < 15">
-                                    <strong>{{ key }}</strong> = {{ value | number: 4 }} ± {{ summary[item[0] + '_model'].s_e[key] | number:4 }}
-                                  </li>
+                                    <li class="list-group-item"
+                                        ng-repeat="(key, value) in summary[item[0] + '_model'].coef"
+                                        ng-if="$index >= 10 && $index < 15">
+                                        <strong>{{ key }}</strong> = {{ value | number: 4 }} ± {{ summary[item[0] +
+                                        '_model'].s_e[key] | number:4 }}
+                                    </li>
                                 </ul>
                             </div>
                             <div class="col-xs-4">
                                 <ul class="list-group">
-                                  <li class="list-group-item" ng-repeat="(key, value) in summary[item[0] + '_model'].coef" ng-if="$index >= 15 && $index < 20">
-                                    <strong>{{ key }}</strong> = {{ value | number: 4 }} ± {{ summary[item[0] + '_model'].s_e[key] | number:4 }}
-                                  </li>
+                                    <li class="list-group-item"
+                                        ng-repeat="(key, value) in summary[item[0] + '_model'].coef"
+                                        ng-if="$index >= 15 && $index < 20">
+                                        <strong>{{ key }}</strong> = {{ value | number: 4 }} ± {{ summary[item[0] +
+                                        '_model'].s_e[key] | number:4 }}
+                                    </li>
                                 </ul>
                             </div>
 
 
                         </div>
                         <div class="col-xs-12 col-lg-5">
-                        <dl class="dl-horizontal">
-                            <dt>sigma<sup>2</sup>:</dt>
-                            <dd>{{ summary[item[0] + '_model'].sigma2 | number:4 }}</dd>
-                            <dt>log likelihood:</dt>
-                            <dd>{{ summary[item[0] + '_model'].loglik | number:4 }}</dd>
-                            <dt>AIC:</dt>
-                            <dd>{{ summary[item[0] + '_model'].aic | number:4 }}</dd>
-                        </dl>
+                            <dl class="dl-horizontal">
+                                <dt>sigma<sup>2</sup>:</dt>
+                                <dd>{{ summary[item[0] + '_model'].sigma2 | number:4 }}</dd>
+                                <dt>log likelihood:</dt>
+                                <dd>{{ summary[item[0] + '_model'].loglik | number:4 }}</dd>
+                                <dt>AIC:</dt>
+                                <dd>{{ summary[item[0] + '_model'].aic | number:4 }}</dd>
+                            </dl>
                         </div>
                     </div>
                     <div uib-collapse="!(summary.selectedAnalyticPlot[item[0]] == 'prediction')"

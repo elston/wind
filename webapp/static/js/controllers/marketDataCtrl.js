@@ -5,6 +5,24 @@ app.controller('MarketDataCtrl', ['$scope', '$uibModalInstance', 'entity', 'mark
         'use strict';
 
         $scope.marketName = entity.name;
+        $scope.busy = false;
+
+        $scope.$on('status:update', function (event, data) {
+            $scope.interlocked = data.interlocks.markets.indexOf(entity.id) !== -1;
+
+            var busy = false;
+            data.rqjobs.forEach(function (rqjob) {
+                if (+rqjob.market === entity.id && rqjob.job === 'fit_price') {
+                    if (rqjob.status !== 'finished' && rqjob.status !== 'failed') {
+                        busy = true;
+                    }
+                }
+            });
+            if (!busy && $scope.busy) {
+                $scope.update();
+            }
+            $scope.busy = busy;
+        });
 
         $scope.chartsMetadata = [
             ['lambdaD', 'Day ahead prices'],
@@ -118,10 +136,10 @@ app.controller('MarketDataCtrl', ['$scope', '$uibModalInstance', 'entity', 'mark
         };
 
         $scope.fitModel = function () {
+            $scope.busy = true;
             marketService.fitModel(entity.id)
                 .then(function (response) {
                         alertify.success('OK');
-                        $scope.update();
                     },
                     function (error) {
                         alertify.error(error);

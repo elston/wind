@@ -102,6 +102,8 @@ app.factory('marketService', ['$http', 'Upload', function ($http, Upload) {
             .then(function (response) {
                     if ('error' in response.data) {
                         throw response.data.error;
+                    } else {
+                        return response.data.data
                     }
                 },
                 function (error) {

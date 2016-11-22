@@ -15,7 +15,7 @@ from .math.wind_vs_power_model import fit, model_function
 from webapp.models import Windpark, Generation, Observation
 from webapp.models.optimization_job import OptimizationJob
 from webapp.models.windpark_turbines import WindparkTurbine
-from webapp.tasks import start_windpark_optimization, windpark_optimization_status, terminate_windpark_optimization
+import webapp.tasks
 from webapp.tz_utils import shift_ts, ts_to_tz_name, utc_naive_to_shifted_ts, utc_naive_to_tz_name, \
     utc_naive_to_location_aware
 from werkzeug.utils import secure_filename
@@ -517,36 +517,8 @@ def start_optimization(wpark_id):
         windpark.optimization_job = opt_job
         db.session.commit()
 
-        start_windpark_optimization(int(wpark_id), opt_job)
-        js = jsonify({'data': 'OK'})
-        return js
-    except Exception, e:
-        logger.exception(e)
-        js = jsonify({'error': repr(e)})
-        return js
-
-
-@app.route('/api/windparks/<wpark_id>/optimization_status')
-def optimization_status(wpark_id):
-    if not current_user.is_authenticated:
-        return jsonify({'error': 'User unauthorized'})
-    try:
-        try:
-            job = windpark_optimization_status(int(wpark_id))
-        except:
-            return jsonify({'data': None})
-        if job is None:
-            return jsonify({'data': None})
-        else:
-            result = {'error': job.exc_info if job.is_failed else None,
-                      'status': job.status,
-                      'isFailed': job.is_failed,
-                      'isFinished': job.is_finished,
-                      'isStarted': job.is_started,
-                      'isQueued': job.is_queued}
-            if 'log' in job.meta:
-                result['log'] = '\n'.join(job.meta.get('log'))
-            js = jsonify({'data': result})
+        rqjob_id = webapp.tasks.start_windpark_optimization(int(wpark_id), current_user.id, opt_job)
+        js = jsonify({'data': rqjob_id})
         return js
     except Exception, e:
         logger.exception(e)
@@ -574,20 +546,6 @@ def optimization_results(wpark_id):
             charts_data['Pd'] = [zip(dates[12:], x) for x in charts_data['Pd']]
             charts_data['tzinfo'] = tzinfo
         js = jsonify({'data': charts_data})
-        return js
-    except Exception, e:
-        logger.exception(e)
-        js = jsonify({'error': repr(e)})
-        return js
-
-
-@app.route('/api/windparks/<wpark_id>/terminate_optimization', methods=['POST', ])
-def terminate_optimization(wpark_id):
-    if not current_user.is_authenticated:
-        return jsonify({'error': 'User unauthorized'})
-    try:
-        terminate_windpark_optimization(int(wpark_id))
-        js = jsonify({'data': 'OK'})
         return js
     except Exception, e:
         logger.exception(e)

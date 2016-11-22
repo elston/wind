@@ -9,7 +9,22 @@ from flask_sqlalchemy import SQLAlchemy
 from werkzeug.exceptions import HTTPException
 from flask_security import RoleMixin, UserMixin, SQLAlchemyUserDatastore, Security
 
-app = Flask(__name__, template_folder='templates', static_folder='static')
+
+class FlaskApp(Flask):
+    def run(self, *args, **rest):
+        try:
+            sch.update_weather_schedules()
+        except Exception, e:
+            logging.info("update weather schedules ", e)
+        sch.start()
+        rest1 = dict(rest)
+        del rest1['host']
+        del rest1['port']
+        del rest1['debug']
+        super(FlaskApp, self).run(host=rest.get('host'), port=rest.get('port'), debug=rest.get('debug'), **rest1)
+
+
+app = FlaskApp(__name__, template_folder='templates', static_folder='static')
 Bootstrap(app)
 
 
@@ -81,11 +96,6 @@ security = Security(app, user_datastore)
 from scheduler import Scheduler
 
 sch = Scheduler()
-try:
-    sch.update_weather_schedules()
-except Exception, e:
-    logging.info("update weather schedules ", e)
-sch.start()
 
 
 @app.before_first_request

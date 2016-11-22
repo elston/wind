@@ -33,19 +33,19 @@ app.factory('locationService', ['$http', function ($http) {
                 });
     };
 
-    var updateForecast = function (locationId) {
-        return $http.post($SCRIPT_ROOT + '/locations/' + locationId + '/update_forecast')
-            .then(function (response) {
-                    if ('error' in response.data) {
-                        throw response.data.error;
-                    } else {
-                        return reload();
-                    }
-                },
-                function (error) {
-                    throw error.statusText;
-                });
-    };
+//    var updateForecast = function (locationId) {
+//        return $http.post($SCRIPT_ROOT + '/locations/' + locationId + '/update_forecast')
+//            .then(function (response) {
+//                    if ('error' in response.data) {
+//                        throw response.data.error;
+//                    } else {
+//                        return reload();
+//                    }
+//                },
+//                function (error) {
+//                    throw error.statusText;
+//                });
+//    };
 
     var deleteLocation = function (id) {
         return $http.delete($SCRIPT_ROOT + '/locations/' + id)
@@ -210,7 +210,7 @@ app.factory('locationService', ['$http', function ($http) {
     return {
         reload: reload,
         updateHistory: updateHistory,
-        updateForecast: updateForecast,
+//        updateForecast: updateForecast,
         deleteLocation: deleteLocation,
         getLocations: getLocations,
         updateLocation: updateLocation,

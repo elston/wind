@@ -10,8 +10,10 @@ from flask import jsonify, request, make_response
 from flask_login import current_user
 from scipy import stats
 from sqlalchemy import func
-from webapp import app, db, wuclient, sch
+from webapp import app, db, wuclient
+import webapp
 from webapp.models import Location, Forecast, HourlyForecast
+import webapp.tasks
 from webapp.tz_utils import utc_naive_to_ts, utc_naive_to_tz_name, utc_naive_to_shifted_ts, utc_naive_to_location_aware
 from werkzeug.utils import secure_filename
 
@@ -59,7 +61,7 @@ def add_locations():
             db.session.add(location)
         # location.update_history()
         # location.update_forecast()
-        sch.update_weather_schedules()
+        webapp.sch.update_weather_schedules()
         db.session.commit()
 
         js = jsonify({'data': 'OK'})
@@ -141,8 +143,9 @@ def update_history(loc_id):
     if not current_user.is_authenticated:
         return jsonify({'error': 'User unauthorized'})
     try:
-        location = db.session.query(Location).filter_by(id=loc_id).first()
-        location.update_history()
+        webapp.tasks.start_forecast_update(loc_id, current_user.id)
+        # location = db.session.query(Location).filter_by(id=loc_id).first()
+        # location.update_history()
         js = jsonify({'data': 'OK'})
         return js
     except Exception, e:
@@ -172,19 +175,19 @@ def get_history(loc_id):
         return js
 
 
-@app.route('/api/locations/<loc_id>/update_forecast', methods=['POST', ])
-def update_forecast(loc_id):
-    if not current_user.is_authenticated:
-        return jsonify({'error': 'User unauthorized'})
-    try:
-        location = db.session.query(Location).filter_by(id=loc_id).first()
-        location.update_forecast()
-        js = jsonify({'data': 'OK'})
-        return js
-    except Exception, e:
-        logger.exception(e)
-        js = jsonify({'error': repr(e)})
-        return js
+# @app.route('/api/locations/<loc_id>/update_forecast', methods=['POST', ])
+# def update_forecast(loc_id):
+#     if not current_user.is_authenticated:
+#         return jsonify({'error': 'User unauthorized'})
+#     try:
+#         location = db.session.query(Location).filter_by(id=loc_id).first()
+#         location.update_forecast()
+#         js = jsonify({'data': 'OK'})
+#         return js
+#     except Exception, e:
+#         logger.exception(e)
+#         js = jsonify({'error': repr(e)})
+#         return js
 
 
 @app.route('/api/locations/<loc_id>/forecast')
