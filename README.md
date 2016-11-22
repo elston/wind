@@ -8,7 +8,7 @@
 
 Clone git repository. 
 
-    git pull https://testing12@bitbucket.org/firsttier/wind.git
+    git clone https://testing12@bitbucket.org/firsttier/wind.git
 
 Go to the repository working directory. `cd wind`
 
