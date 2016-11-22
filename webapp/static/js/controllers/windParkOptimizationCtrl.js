@@ -77,7 +77,7 @@ app.controller('WindParkOptimizationCtrl', ['$scope', '$interval', '$timeout', '
         };
 
         var refreshCharts = function (data) {
-            var i, j;
+            var i, j, k;
 
             var red_power_series = [];
             for (i = 0; i < data.reduced_simulated_power.length; i++) {
@@ -127,6 +127,36 @@ app.controller('WindParkOptimizationCtrl', ['$scope', '$interval', '$timeout', '
                         },
                         name: 'd' + i + ',l' + j
                     });
+                }
+            }
+
+            var desvP_series = [];
+            for (i = 0; i < data.desvP.length; i++) {
+                for (j = 0; j < data.desvP[i].length; j++) {
+                    for (k = 0; k < data.desvP[i][j].length; k++) {
+                        desvP_series.push({
+                            data: data.desvP[i][j][k],
+                            tooltip: {
+                                valueDecimals: 3
+                            },
+                            name: 'd' + i + ',l' + j + ',w' + k
+                        });
+                    }
+                }
+            }
+
+            var desvN_series = [];
+            for (i = 0; i < data.desvN.length; i++) {
+                for (j = 0; j < data.desvN[i].length; j++) {
+                    for (k = 0; k < data.desvN[i][j].length; k++) {
+                        desvN_series.push({
+                            data: data.desvN[i][j][k],
+                            tooltip: {
+                                valueDecimals: 3
+                            },
+                            name: 'd' + i + ',l' + j + ',w' + k
+                        });
+                    }
                 }
             }
 
@@ -261,6 +291,72 @@ app.controller('WindParkOptimizationCtrl', ['$scope', '$interval', '$timeout', '
                             }
                         }],
                         series: Ps_series
+                    });
+
+                    $scope.chart4 = new Highcharts.Chart({
+                        chart: {
+                            renderTo: 'positive-devs',
+                            animation: false
+                        },
+                        title: {
+                            text: 'Positive deviation'
+                        },
+                        credits: {
+                            enabled: false
+                        },
+                        plotOptions: {
+                            line: {
+                                animation: false,
+                                marker: {
+                                    enabled: false
+                                }
+                            }
+                        },
+                        yAxis: [{
+                            title: {
+                                text: 'Volume, MWh'
+                            }
+                        }],
+                        xAxis: [{
+                            type: 'datetime',
+                            title: {
+                                text: 'Time (' + data.tzinfo + ')'
+                            }
+                        }],
+                        series: desvP_series
+                    });
+
+                    $scope.chart5 = new Highcharts.Chart({
+                        chart: {
+                            renderTo: 'negative-devs',
+                            animation: false
+                        },
+                        title: {
+                            text: 'Negative deviation'
+                        },
+                        credits: {
+                            enabled: false
+                        },
+                        plotOptions: {
+                            line: {
+                                animation: false,
+                                marker: {
+                                    enabled: false
+                                }
+                            }
+                        },
+                        yAxis: [{
+                            title: {
+                                text: 'Volume, MWh'
+                            }
+                        }],
+                        xAxis: [{
+                            type: 'datetime',
+                            title: {
+                                text: 'Time (' + data.tzinfo + ')'
+                            }
+                        }],
+                        series: desvN_series
                     });
 
                 }

@@ -544,6 +544,8 @@ def optimization_results(wpark_id):
             charts_data['Pa'] = [[zip(dates[12:], x) for x in y] for y in charts_data['Pa']]
             charts_data['Ps'] = [[zip(dates[12:], x) for x in y] for y in charts_data['Ps']]
             charts_data['Pd'] = [zip(dates[12:], x) for x in charts_data['Pd']]
+            charts_data['desvP'] = [[[zip(dates[12:], x) for x in y] for y in z] for z in charts_data['desvP']]
+            charts_data['desvN'] = [[[zip(dates[12:], x) for x in y] for y in z] for z in charts_data['desvN']]
             charts_data['tzinfo'] = tzinfo
         js = jsonify({'data': charts_data})
         return js
