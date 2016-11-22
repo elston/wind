@@ -39,7 +39,7 @@ in another screen session
 
 # Update
 
-Got to the repository working directory.
+Go to the repository working directory.
 
     git pull
 
