@@ -1,44 +1,57 @@
-# install
+# Install
 
     sudo apt-get update -y
     sudo apt-get upgrade -y
-    sudo apt-get install build-essential python git python-dev python-pip -y
+    sudo apt-get install build-essential python git python-dev libffi-dev libssl-dev python-pip -y
     sudo pip install markupsafe
-    sudo pip install ansible 
+    sudo pip install ansible
+
+Clone git repository. Got to the repository working directory.
 
     cd deploy
 
     ansible-playbook main.yml -i hosts -e tools_dir=`pwd`/.. --ask-sudo-pass
 
-enter you user pass
+Enter you user pass.
 
-put WU API key in the file named wu_api_key in this directory
+    cd ..
+    env/bin/alembic stamp head
 
-put Google maps API key in the file named gmap_api_key in this directory
+Put WU API key in the file named wu_api_key in this directory.
 
-production environment is ready
+Put Google maps API key in the file named gmap_api_key in this directory.
 
-## run test environment
+**Production environment is ready**
 
-    FLASK_ENV=PRODUCTION venv/bin/python run_server.py in screen session
+## Run test environment
 
-    FLASK_ENV=PRODUCTION venv/bin/rqworker in another screen session
+in screen session
 
-    venv/bin/alembic stamp head
+    FLASK_ENV=PRODUCTION venv/bin/python run_server.py
 
-# update
+in another screen session
+
+    FLASK_ENV=PRODUCTION venv/bin/rqworker
+
+# Update
+
+Got to the repository working directory.
 
     git pull
 
-    venv/bin/alembic upgrade head if database schema changed
+if database schema changed
 
-    venv/bin/pip install -r requirements.txt if Python dependencies changed
+    env/bin/alembic upgrade head
 
-## production environment
+if Python dependencies changed
+
+    env/bin/pip install -r requirements.txt
+
+## Production environment
 
     service wind-gunicorn restart
     service wind-rqworker restart
 
-## test environment
+## Test environment
 
 restart both run_server.py and rqworker
